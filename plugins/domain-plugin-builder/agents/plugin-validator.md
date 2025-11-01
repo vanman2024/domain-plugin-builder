@@ -137,6 +137,39 @@ For each agent in `agents/`:
 - Compare agents against appropriate agent templates
 - Verify consistency across files
 
+### Step 7: Verify Marketplace Integration
+
+**Check marketplace.json registration:**
+- Read `.claude/marketplace.json` or `marketplace.json`
+- Verify plugin entry exists in marketplaces array
+- Confirm plugin ID, name, description, path are correct
+- Verify version number is present
+- Check component counts match (agents, commands, skills)
+
+**Check settings.json registration:**
+- Read `.claude/settings.local.json`
+- Verify plugin slash commands are registered in permissions.allow array
+- Check for wildcard permission: `"SlashCommand(/<plugin-name>:*)"`
+- Verify individual command permissions if needed
+- Confirm plugin path is correctly registered
+
+### Step 8: Verify Git Integration
+
+**Check git commit status:**
+- Run: `git status --porcelain <plugin-path>`
+- Verify plugin files are committed (not showing as untracked or modified)
+- If files are uncommitted, report as CRITICAL ISSUE
+
+**Check git push status:**
+- Run: `git log origin/master..<current-branch> --oneline -- <plugin-path>`
+- If commits exist that haven't been pushed, report as WARNING
+- Recommend: `git push origin master`
+
+**Check commit history:**
+- Run: `git log -1 --oneline -- <plugin-path>`
+- Verify plugin has at least one commit
+- Display most recent commit message
+
 ## Validation Report Format
 
 Provide a comprehensive report:
@@ -150,18 +183,30 @@ Provide a comprehensive report:
 - Agents: X/Y passed
 - Plugin structure: PASS | FAIL
 
+**Integration Checks**:
+- Marketplace.json: REGISTERED | NOT REGISTERED | INCORRECT
+- Settings.json: REGISTERED | NOT REGISTERED | INCOMPLETE
+- Git commit: COMMITTED | UNCOMMITTED
+- Git push: PUSHED | NOT PUSHED
+
 **Critical Issues** (if any):
 - Issues preventing plugin from functioning
 - Missing required files or directories
 - Invalid frontmatter or structure
 - Validation script failures
 - Security problems
+- Plugin not registered in marketplace.json
+- Plugin not registered in settings.json
+- Plugin files uncommitted to git
 
 **Warnings** (if any):
 - Suboptimal patterns or structure
 - Missing optional components
 - Deviations from best practices
 - Documentation gaps
+- Plugin committed but not pushed to GitHub
+- Marketplace.json entry incomplete (missing component counts)
+- Settings.json missing individual command permissions
 
 **Passed Checks**:
 - What is correctly structured
@@ -205,5 +250,9 @@ A plugin passes validation when:
 - ✅ No hardcoded secrets or absolute paths
 - ✅ Template compliance is verified
 - ✅ Framework conventions are followed
+- ✅ **Plugin is registered in marketplace.json with correct metadata**
+- ✅ **Plugin slash commands are registered in .claude/settings.local.json**
+- ✅ **All plugin files are committed to git**
+- ✅ **Plugin commits are pushed to GitHub (origin/master)**
 
 Be thorough but constructive. Focus on helping build a compliant, well-structured Claude Code plugin that follows framework conventions and is ready for marketplace deployment.
