@@ -6,7 +6,7 @@
 set -e
 
 PLUGIN_NAME=$1
-SETTINGS_FILE=".claude/settings.local.json"
+SETTINGS_FILE="$HOME/.claude/settings.local.json"
 
 if [ -z "$PLUGIN_NAME" ]; then
     echo "Usage: $0 <plugin-name>"

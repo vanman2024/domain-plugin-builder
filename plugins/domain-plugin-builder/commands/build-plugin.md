@@ -131,7 +131,7 @@ Phase 8: Register in Settings
 
 Read current settings and add plugin commands:
 
-@.claude/settings.local.json
+@~/.claude/settings.local.json
 
 List plugin commands:
 
@@ -168,7 +168,7 @@ Phase 10: Git Commit and Push
 
 Stage all plugin files:
 
-!{bash git add plugins/$ARGUMENTS .claude/marketplace.json .claude/settings.local.json}
+!{bash git add plugins/$ARGUMENTS .claude/marketplace.json ~/.claude/settings.local.json}
 
 Commit:
 

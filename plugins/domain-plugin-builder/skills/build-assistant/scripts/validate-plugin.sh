@@ -8,7 +8,7 @@
 set -euo pipefail
 
 PLUGIN_DIR="${1:?Usage: $0 <plugin-directory>}"
-SETTINGS_FILE=".claude/settings.local.json"
+SETTINGS_FILE="$HOME/.claude/settings.local.json"
 
 echo "[INFO] Validating plugin directory: $PLUGIN_DIR"
 

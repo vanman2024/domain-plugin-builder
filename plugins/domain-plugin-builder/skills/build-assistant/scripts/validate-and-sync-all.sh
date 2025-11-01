@@ -68,7 +68,7 @@ echo "[STEP 4/4] Final validation checks..."
 echo ""
 
 # Check settings.local.json is valid JSON
-if python3 -m json.tool .claude/settings.local.json > /dev/null 2>&1; then
+if python3 -m json.tool "$HOME/.claude/settings.local.json" > /dev/null 2>&1; then
     echo "  ✅ settings.local.json is valid JSON"
 else
     echo "  ❌ settings.local.json is INVALID JSON"
@@ -84,7 +84,7 @@ else
 fi
 
 # Count registrations
-SETTINGS_PERMISSIONS=$(grep -c "SlashCommand" .claude/settings.local.json || echo "0")
+SETTINGS_PERMISSIONS=$(grep -c "SlashCommand" "$HOME/.claude/settings.local.json" || echo "0")
 MARKETPLACE_PLUGINS=$(python3 -c "import json; print(len(json.load(open('.claude-plugin/marketplace.json'))['plugins']))" 2>/dev/null || echo "0")
 
 echo "  ✅ $SETTINGS_PERMISSIONS slash commands registered in settings"

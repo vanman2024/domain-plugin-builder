@@ -74,7 +74,7 @@ Use ONLY this command as the TOP-LEVEL ORCHESTRATOR:
       └─ Builds agents sequentially (ONE AT A TIME)
       └─ Builds skills in parallel
       └─ Syncs to marketplace.json
-      └─ Registers commands in settings.local.json
+      └─ Registers commands in ~/.claude/settings.local.json
       └─ Creates .mcp.json
   └─ Validates entire plugin with plugin-validator agent
   └─ Commits and pushes to GitHub
@@ -101,7 +101,7 @@ Use ONLY this command as the TOP-LEVEL ORCHESTRATOR:
      * `/domain-plugin-builder:skills-create` (for all skills in parallel)
    - Validates plugin manifest
    - Syncs to marketplace.json
-   - Registers ALL commands in settings.local.json
+   - Registers ALL commands in ~/.claude/settings.local.json
    - Creates .mcp.json file
    - Generates README.md
 4. Validates entire plugin with plugin-validator agent
@@ -111,7 +111,7 @@ Use ONLY this command as the TOP-LEVEL ORCHESTRATOR:
 **Critical files created by the workflow:**
 - ✅ `.claude-plugin/plugin.json` - Plugin manifest
 - ✅ `.mcp.json` - MCP server configuration (even if empty)
-- ✅ Commands registered in `.claude/settings.local.json`
+- ✅ Commands registered in `~/.claude/settings.local.json`
 - ✅ Plugin registered in `.claude-plugin/marketplace.json`
 - ✅ README.md generated
 - ✅ All committed and pushed to GitHub
@@ -476,7 +476,7 @@ Commands follow one of four patterns based on complexity:
    - Wait for all
 8. Validate all components
 9. Update marketplace.json
-10. Register in settings.local.json
+10. Register in ~/.claude/settings.local.json
 11. Git commit and push
 12. Display summary
 ```

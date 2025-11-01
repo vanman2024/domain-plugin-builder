@@ -174,7 +174,7 @@ For each agent in `agents/`:
 - Check component counts match (agents, commands, skills)
 
 **Check settings.json registration:**
-- Read `.claude/settings.local.json`
+- Read `~/.claude/settings.local.json`
 - Verify plugin slash commands are registered in permissions.allow array
 - Check for wildcard permission: `"SlashCommand(/<plugin-name>:*)"`
 - Verify individual command permissions if needed
@@ -300,7 +300,7 @@ A plugin passes validation when:
 - ✅ Template compliance is verified
 - ✅ Framework conventions are followed
 - ✅ **Plugin is registered in marketplace.json with correct metadata**
-- ✅ **Plugin slash commands are registered in .claude/settings.local.json**
+- ✅ **Plugin slash commands are registered in ~/.claude/settings.local.json**
 - ✅ **All plugin files are committed to git**
 - ✅ **Plugin commits are pushed to GitHub (origin/master)**
 

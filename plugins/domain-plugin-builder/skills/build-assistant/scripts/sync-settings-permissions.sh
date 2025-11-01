@@ -6,8 +6,8 @@
 
 set -euo pipefail
 
-SETTINGS_FILE=".claude/settings.local.json"
-BACKUP_FILE=".claude/settings.local.json.backup"
+SETTINGS_FILE="$HOME/.claude/settings.local.json"
+BACKUP_FILE="$HOME/.claude/settings.local.json.backup"
 
 echo "[INFO] Syncing plugin commands to settings.local.json"
 
