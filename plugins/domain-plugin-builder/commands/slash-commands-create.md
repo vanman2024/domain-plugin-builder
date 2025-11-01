@@ -1,7 +1,7 @@
 ---
-allowed-tools: Read, Write, Edit, Bash(*), Grep, Glob, AskUserQuestion
-description: Create new slash command following standardized structure
-argument-hint: <command-name> "<description>" [--plugin=name] [--mcp=server1,server2] [agent1] [agent2] [agent3]
+allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, AskUserQuestion
+description: Create slash command(s) following standardized structure - supports parallel creation for 3+ commands
+argument-hint: <command-name> "<description>" [--plugin=name] | <cmd-1> "<desc-1>" <cmd-2> "<desc-2>" ... [--plugin=name]
 ---
 
 **Arguments**: $ARGUMENTS
@@ -182,35 +182,67 @@ Register in: ~/.claude/marketplaces/MARKETPLACE/plugins/PLUGIN_NAME/.claude-plug
 
 ## Workflow (Beginning → Middle → End → Review)
 
-**Phase 1: BEGINNING (Understand & Select Pattern)**
-1. Read the master template: @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
-2. Understand what the command should accomplish from $ARGUMENTS and description
-3. **Auto-detect which pattern to use** based on Pattern Selection guide in master template:
-   - Simple mechanical task? → Pattern 1
-   - One AI capability needed? → Pattern 2
-   - Multi-phase with dependencies? → Pattern 3
-   - Independent parallel checks? → Pattern 4
-4. If arguments missing, use AskUserQuestion to gather info
-5. Build allowed-tools based on pattern needs
+**Phase 1: BEGINNING (Count Commands & Select Mode)**
+1. Parse $ARGUMENTS to count how many commands are being requested
+2. Determine execution mode:
+   - 1-2 commands: Sequential (create one at a time)
+   - 3+ commands: Parallel (use Task tool with general-purpose agents)
+3. Read the master template: @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
+4. For each command, understand what it should accomplish
+5. If arguments missing, use AskUserQuestion to gather info
 
-**Phase 2: MIDDLE (Create Command Using Template)**
-6. Use the appropriate pattern template from template-command-patterns.md
-7. Create command file following the Goal → Actions → Phase structure
-8. Use natural language for agent invocation (not Task() syntax)
-9. Use proper syntax: $ARGUMENTS only, !{bash command} for execution, @filename for loading
+**Phase 2: MIDDLE (Create Command(s))**
 
-**Phase 3: END (Validate)**
-6. Use Bash tool to run validation: `bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh COMMAND_FILE`
-7. If validation fails, fix errors and re-validate until passing
+**For Single Command (1 command):**
+- Use the appropriate pattern template from template-command-patterns.md
+- Create command file following the Goal → Actions → Phase structure
+- Use natural language for agent invocation (not Task() syntax)
+- Use proper syntax: $ARGUMENTS only, !{bash command} for execution, @filename for loading
+- Validate immediately
+
+**For 2 Commands (Sequential):**
+- Create first command, validate it, then create second command and validate it
+
+**For 3+ Commands (Parallel):**
+
+Launch multiple general-purpose agents IN PARALLEL (all at once) using multiple Task() calls:
+
+Task(description="Create command 1", subagent_type="general-purpose", prompt="Create a slash command following the template patterns.
+
+Command name: $CMD_1_NAME
+Description: $CMD_1_DESC
+Plugin: $PLUGIN_NAME (if specified)
+
+Load template: @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
+
+Create command file at: plugins/$PLUGIN_NAME/commands/$CMD_1_NAME.md
+- Follow Goal → Actions → Phase structure
+- Use proper frontmatter (description, argument-hint, allowed-tools)
+- Select appropriate pattern (1-4) based on command needs
+- Validate with validation script
+
+Deliverable: Complete validated command file")
+
+Task(description="Create command 2", subagent_type="general-purpose", prompt="[Same structure for command 2]")
+
+Task(description="Create command 3", subagent_type="general-purpose", prompt="[Same structure for command 3]")
+
+[Continue for all N commands]
+
+Wait for ALL agents to complete before proceeding to Phase 3.
+
+**Phase 3: END (Validate All)**
+- Use Bash tool to run validation on each command: `bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh COMMAND_FILE`
+- If validation fails, fix errors and re-validate until passing
 
 **Phase 4: REVIEW (Finalize & Commit)**
-8. Register in plugin.json if --plugin flag provided
-9. **CRITICAL: Git commit and push immediately**
-   - Add the new command file to git
+- Register all commands in plugin.json if --plugin flag provided
+- **CRITICAL: Git commit and push immediately**
+   - Add all command files to git
    - Add marketplace.json if it was updated
    - Commit with descriptive message
    - Push to origin/master
-10. Display summary with file path and usage
+- Display summary with file paths and usage for all commands
 
 **Git Commit Steps:**
 

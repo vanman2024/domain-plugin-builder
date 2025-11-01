@@ -1,25 +1,29 @@
 ---
-allowed-tools: Read, Write, Bash(*)
-description: Create new agent using templates - references fullstack-web-builder as gold standard
-argument-hint: <agent-name> "<description>" "<tools>"
+allowed-tools: Task, Read, Write, Bash
+description: Create agent(s) using templates - supports parallel creation for 3+ agents
+argument-hint: <agent-name> "<description>" "<tools>" | <agent-1> "<desc-1>" "<tools-1>" <agent-2> "<desc-2>" "<tools-2>" ...
 ---
 
 **Arguments**: $ARGUMENTS
 
-Goal: Create a properly structured agent file following framework templates, ensuring it includes phased WebFetch for documentation and stays concise (under 300 lines).
+Goal: Create properly structured agent file(s) following framework templates. For 3+ agents, creates them in parallel for faster execution.
 
 Core Principles:
 - Study templates before generating
 - Keep agents concise using WebFetch (not embedding docs)
 - Match complexity to task (simple vs complex)
 - Validate line count and structure
+- Use parallel execution for 3+ agents
 
-Phase 1: Parse Arguments
-Goal: Extract agent specifications
+Phase 1: Parse Arguments & Count Agents
+Goal: Extract agent specifications and determine execution mode
 
 Actions:
-- Parse $ARGUMENTS to extract agent name, description, tools
-- Determine complexity: complex (multi-step) vs simple (focused task)
+- Parse $ARGUMENTS to count how many agents are being requested
+- Extract each agent specification (name, description, tools)
+- Determine execution mode:
+  - 1-2 agents: Sequential (one at a time)
+  - 3+ agents: Parallel (all at once using Task tool)
 
 Phase 2: Load Templates
 Goal: Study framework patterns
@@ -27,45 +31,65 @@ Goal: Study framework patterns
 Actions:
 - Load agent template:
   - @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md
-- Load gold standard:
-  - @plugins/vercel-ai-sdk/agents/vercel-ai-ui-agent.md
-- Study structure, WebFetch patterns, how to stay under 300 lines
+- Determine plugin location from context (default: domain-plugin-builder)
 
-Phase 3: Determine Location
-Goal: Identify where to create file
+Phase 3: Create Agent(s)
+Goal: Generate agent file(s) using appropriate execution mode
 
 Actions:
-- Detect plugin from context (invocation path, arguments, or default to domain-plugin-builder)
-- Store as PLUGIN_NAME
 
-Phase 4: Create Agent
-Goal: Generate agent file
+**For Single Agent (1 agent):**
 
-Actions:
 - Create: plugins/PLUGIN_NAME/agents/AGENT_NAME.md
 - **Frontmatter**: name, description ("Use this agent to..."), model: inherit, color: yellow, tools (optional)
 - **Body for complex**: Role, Core Competencies (3-5), Implementation Process (5-6 phases with WebFetch URLs), Decision Framework, Communication, Output Standards, Verification
 - **Body for simple**: Role, Process steps (3-5), Success criteria
 - **CRITICAL**: Include progressive WebFetch for docs
-
-Phase 5: Validate
-Goal: Ensure framework compliance
-
-Actions:
-- Check exists: !{bash test -f "plugins/PLUGIN_NAME/agents/AGENT_NAME.md" && echo "✅ Created" || echo "❌ Failed"}
 - Validate: !{bash bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/PLUGIN_NAME/agents/AGENT_NAME.md}
-- Check lines: !{bash wc -l plugins/PLUGIN_NAME/agents/AGENT_NAME.md}
 
-Phase 6: Git Commit and Push
+**For 2 Agents (Sequential):**
+
+Create first agent, validate it, then create second agent and validate it.
+
+**For 3+ Agents (Parallel):**
+
+Launch multiple agents-builder agents IN PARALLEL (all at once) using multiple Task() calls:
+
+Task(description="Create agent 1", subagent_type="domain-plugin-builder:agents-builder", prompt="You are the agents-builder agent. Create a complete agent following framework templates.
+
+Agent name: $AGENT_1_NAME
+Description: $AGENT_1_DESC
+Tools: $AGENT_1_TOOLS
+
+Load templates:
+- Read: plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md
+
+Create agent file at: plugins/$PLUGIN_NAME/agents/$AGENT_1_NAME.md
+- Frontmatter with name, description, model: inherit, color: yellow, tools
+- Include progressive WebFetch for documentation
+- Keep under 300 lines
+- Validate with validation script
+
+Deliverable: Complete validated agent file")
+
+Task(description="Create agent 2", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure for agent 2]")
+
+Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure for agent 3]")
+
+[Continue for all N agents]
+
+Wait for ALL agents to complete before proceeding to Phase 4.
+
+Phase 4: Git Commit and Push
 Goal: Save work immediately
 
 Actions:
-- Add agent file to git: !{bash git add plugins/PLUGIN_NAME/agents/AGENT_NAME.md}
+- Add all agent files to git: !{bash git add plugins/*/agents/*.md}
 - Commit with message:
   !{bash git commit -m "$(cat <<'EOF'
-feat: Add AGENT_NAME agent
+feat: Add agent(s) - AGENT_NAMES
 
-AGENT_DESCRIPTION
+Complete agent structure with framework compliance.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -74,8 +98,11 @@ EOF
 )"}
 - Push to GitHub: !{bash git push origin master}
 
-Phase 7: Summary
+Phase 5: Summary
 Goal: Report results
 
 Actions:
-- Display agent name, location, line count, validation status, template type, git status (committed and pushed)
+- Display results for all agents (names, locations, line counts, validation status)
+- Show git status (committed and pushed)
+- Show next steps for using the agents
+- If multiple agents created, list all successfully created agents
