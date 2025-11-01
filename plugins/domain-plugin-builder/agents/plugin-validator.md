@@ -114,6 +114,12 @@ For each command in `commands/`:
 - Check `$ARGUMENTS` usage
 - Verify `@` symbol for file loading
 - Check line count
+- **Validate agent references in Task() calls:**
+  - Extract all `subagent_type="..."` values from command
+  - Check each agent exists: `ls agents/{agent-name}.md`
+  - Verify agent name format matches plugin structure
+  - Confirm no references to non-existent agents
+  - Example: `subagent_type="domain-plugin-builder:slash-commands-builder"` requires `agents/slash-commands-builder.md` to exist
 
 ### Step 4: Validate Agents
 
@@ -219,6 +225,11 @@ Provide a comprehensive report:
 - Git commit: COMMITTED | UNCOMMITTED
 - Git push: PUSHED | NOT PUSHED
 
+**Agent Reference Validation**:
+- Commands referencing agents: X/Y valid
+- Missing agent files: NONE | LIST
+- Invalid agent names: NONE | LIST
+
 **Critical Issues** (if any):
 - Issues preventing plugin from functioning
 - Missing required files or directories
@@ -231,6 +242,8 @@ Provide a comprehensive report:
 - Invalid hooks.json structure
 - Hook scripts referenced but not found
 - Hook scripts not executable
+- **Commands reference non-existent agents**
+- **Agent names in Task() calls don't match agent files**
 
 **Warnings** (if any):
 - Suboptimal patterns or structure
