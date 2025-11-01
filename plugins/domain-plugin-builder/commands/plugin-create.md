@@ -67,13 +67,147 @@ Write plugins/$ARGUMENTS/hooks/hooks.json:
 
 This is a placeholder. Use /domain-plugin-builder:hooks-create to add hooks.
 
-Phase 6: Create README.md
+Phase 6: Create .gitignore
+
+Write plugins/$ARGUMENTS/.gitignore:
+
+```
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# MCP
+.mcp_cache/
+```
+
+Phase 7: Create .mcp.json
+
+Write plugins/$ARGUMENTS/.mcp.json:
+
+```json
+{
+  "mcpServers": {}
+}
+```
+
+This is a placeholder for MCP server configurations.
+
+Phase 8: Create LICENSE
+
+Write plugins/$ARGUMENTS/LICENSE:
+
+```
+MIT License
+
+Copyright (c) 2025 Plugin Builder
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+Phase 9: Create CHANGELOG.md
+
+Write plugins/$ARGUMENTS/CHANGELOG.md:
+
+```markdown
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.0] - $(date +%Y-%m-%d)
+
+### Added
+- Initial plugin scaffold
+- Plugin directory structure
+- Plugin manifest (plugin.json)
+```
+
+Phase 10: Create README.md
 
 Write plugins/$ARGUMENTS/README.md with basic plugin info.
 
-Phase 7: Summary
+Phase 11: Summary
 
 Display:
 - Plugin created: $ARGUMENTS
 - Location: plugins/$ARGUMENTS
+- Files created:
+  - .claude-plugin/plugin.json
+  - hooks/hooks.json
+  - .gitignore
+  - .mcp.json
+  - LICENSE
+  - CHANGELOG.md
+  - README.md
 - Next steps: Use /domain-plugin-builder:build-plugin $ARGUMENTS to add components
