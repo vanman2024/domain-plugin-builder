@@ -42,26 +42,28 @@ Actions:
 
 **For 3+ Commands (Parallel):**
 
-Launch multiple general-purpose agents IN PARALLEL:
+Launch multiple slash-commands-builder agents IN PARALLEL:
 
-Task(description="Create command 1", subagent_type="general-purpose", prompt="Create slash command: $CMD_1_NAME
+Task(description="Create command 1", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="You are the slash-commands-builder agent. Create a complete slash command following framework templates.
 
+Command name: $CMD_1_NAME
 Description: $CMD_1_DESC
 Plugin: $PLUGIN_NAME
 
-Load template: @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
+Load template: plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
 
-Create: plugins/$PLUGIN_NAME/commands/$CMD_1_NAME.md
-- Frontmatter: description, argument-hint, allowed-tools
+Create command file at: plugins/$PLUGIN_NAME/commands/$CMD_1_NAME.md
+- Select appropriate pattern (1-4) based on command needs
+- Frontmatter with description, argument-hint, allowed-tools
 - Goal → Actions → Phase structure
-- Select pattern based on needs
+- Keep under 150 lines
 - Validate with validation script
 
-Deliverable: Complete validated command")
+Deliverable: Complete validated command file")
 
-Task(description="Create command 2", subagent_type="general-purpose", prompt="[Same for command 2]")
+Task(description="Create command 2", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="[Same structure for command 2]")
 
-Task(description="Create command 3", subagent_type="general-purpose", prompt="[Same for command 3]")
+Task(description="Create command 3", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="[Same structure for command 3]")
 
 Wait for ALL agents to complete.
 
