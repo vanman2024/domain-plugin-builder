@@ -126,7 +126,27 @@ Add ALL plugin commands to the permissions.allow array in settings.local.json:
 
 Use Edit tool to insert commands after the last existing plugin's commands but before "Bash".
 
-### Step 5: Git Commit and Push
+### Step 5: Run Final Validation with Plugin Validator Agent
+
+Run comprehensive validation using the validate command:
+
+Run /domain-plugin-builder:validate $ARGUMENTS
+(Wait for validation to complete)
+
+This invokes the plugin-validator agent which:
+- Runs all validation scripts (validate-plugin.sh, validate-command.sh, validate-agent.sh)
+- Checks directory structure compliance
+- Verifies all agents and commands follow framework conventions
+- Validates tool formatting and line counts
+- Checks plugin manifest correctness
+- Provides comprehensive validation report
+
+If validation fails:
+- Review critical issues in the report
+- Fix issues identified
+- Re-run validation before proceeding
+
+### Step 6: Git Commit and Push
 
 **CRITICAL: Always commit AND push to GitHub immediately after plugin creation**
 
