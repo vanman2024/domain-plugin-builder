@@ -1,12 +1,16 @@
-# Domain Plugin Builder - Critical Rules & Patterns
+# CLAUDE.md
 
-This file contains CRITICAL rules for building plugins correctly. Follow these EXACTLY.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ---
 
 ## 🚨 CRITICAL: Slash Command Execution Rules
 
 ### DO NOT Run Slash Commands in Parallel
+
+**The most important rule learned from extensive testing:**
+
+Slash commands CANNOT execute in parallel. They sit in queue and don't run.
 
 **WRONG:**
 ```
@@ -31,14 +35,14 @@ Run /skills-create skill1
 
 ### Why This Matters
 
-- Slash commands DO NOT execute in parallel
-- They sit in queue and don't run
+- Slash commands execute ONE AT A TIME sequentially
+- Running multiple at once causes them to sit in queue
 - You MUST wait for each command to complete before running the next
-- Takes longer but is more consistent
+- Takes longer but is the only consistent way that works
 
 ### Exception: Task Tool for Parallel Agents
 
-You CAN run agents in parallel using Task() tool:
+You CAN run agents in parallel using the Task() tool:
 
 ```
 Task(description="Scan code", subagent_type="code-scanner", prompt="Scan for $ARGUMENTS")
@@ -52,174 +56,277 @@ This is for AGENTS, not slash commands!
 
 ---
 
-## 🛠️ Tool Formatting Rules
+## 🚨 CRITICAL: How to Build Plugins - CORRECT WORKFLOW
 
-### Agent Tools (agents/*.md)
+**IF YOU NEED TO BUILD A NEW PLUGIN:**
 
-**CORRECT Format:**
-```yaml
----
-name: agent-name
-tools: Bash, Read, Write, Edit, mcp__supabase
----
+Use ONLY this command as the TOP-LEVEL ORCHESTRATOR:
+```bash
+/domain-plugin-builder:build-plugin <plugin-name>
 ```
 
-**WRONG Formats:**
+**The CORRECT hierarchy:**
+```
+/domain-plugin-builder:build-plugin (TOP-LEVEL ORCHESTRATOR)
+  └─ Calls /domain-plugin-builder:plugin-create
+      └─ Which creates directory structure
+      └─ Builds commands sequentially (ONE AT A TIME)
+      └─ Builds agents sequentially (ONE AT A TIME)
+      └─ Builds skills in parallel
+      └─ Syncs to marketplace.json
+      └─ Registers commands in settings.local.json
+      └─ Creates .mcp.json
+  └─ Validates entire plugin with plugin-validator agent
+  └─ Commits and pushes to GitHub
+```
+
+**DO NOT:**
+- ❌ Try to build plugins manually
+- ❌ Call `/domain-plugin-builder:plugin-create` directly (use build-plugin instead)
+- ❌ Call `/domain-plugin-builder:slash-commands-create` directly for new plugins
+- ❌ Call `/domain-plugin-builder:agents-create` directly for new plugins
+- ❌ Call `/domain-plugin-builder:skills-create` directly for new plugins
+- ❌ Invoke agents via Task tool to build plugin components
+- ❌ Skip the build-plugin orchestrator and try to piece things together
+
+**What `/domain-plugin-builder:build-plugin` does:**
+1. Loads framework documentation
+2. Creates TodoWrite list for tracking
+3. Invokes `/domain-plugin-builder:plugin-create` which:
+   - Asks interactive questions about the plugin
+   - Creates complete directory structure
+   - **Automatically invokes** the other commands sequentially (ONE AT A TIME):
+     * `/domain-plugin-builder:slash-commands-create` (for each command - waits for completion)
+     * `/domain-plugin-builder:agents-create` (for each agent - waits for completion)
+     * `/domain-plugin-builder:skills-create` (for all skills in parallel)
+   - Validates plugin manifest
+   - Syncs to marketplace.json
+   - Registers ALL commands in settings.local.json
+   - Creates .mcp.json file
+   - Generates README.md
+4. Validates entire plugin with plugin-validator agent
+5. Commits and pushes to GitHub
+6. Displays comprehensive summary
+
+**Critical files created by the workflow:**
+- ✅ `.claude-plugin/plugin.json` - Plugin manifest
+- ✅ `.mcp.json` - MCP server configuration (even if empty)
+- ✅ Commands registered in `.claude/settings.local.json`
+- ✅ Plugin registered in `.claude-plugin/marketplace.json`
+- ✅ README.md generated
+- ✅ All committed and pushed to GitHub
+
+**Only use the individual commands** (`slash-commands-create`, `agents-create`, `skills-create`) when **adding to an EXISTING plugin**, never when building a new plugin from scratch.
+
+### Quick Reference Decision Tree
+
+```
+Need to build something?
+│
+├─ Building a NEW plugin?
+│  └─ ✅ /domain-plugin-builder:plugin-create <name>
+│     (It handles everything else automatically)
+│
+└─ Modifying EXISTING plugin?
+   ├─ Adding command?
+   │  └─ ✅ /domain-plugin-builder:slash-commands-create <name> "desc" --plugin=<plugin>
+   │
+   ├─ Adding agent?
+   │  └─ ✅ /domain-plugin-builder:agents-create <name> "desc" "tools"
+   │
+   └─ Adding skill?
+      └─ ✅ /domain-plugin-builder:skills-create <name> "desc"
+```
+
+**Remember: plugin-create is your starting point for ALL new plugins!**
+
+---
+
+## 🛠️ CRITICAL: Correct Tool Format
+
+**When defining tools in agents and commands, use the correct format:**
+
+### ✅ CORRECT Format
+
+**For Agents** (`tools:` field):
 ```yaml
-# ❌ JSON array with quotes
+tools: Bash, Read, Write, Edit, Grep, Glob
+tools: Bash, Read, WebFetch, mcp__github
+```
+
+**For Commands** (`allowed-tools:` field):
+```yaml
+allowed-tools: Task, Read, Write, Bash, Grep, Glob
+allowed-tools: Task, Read, Write, Bash, mcp__github
+```
+
+### ❌ WRONG Format
+
+```yaml
+# NO JSON arrays
 tools: ["Bash", "Read", "Write"]
 
-# ❌ Vertical list
+# NO vertical lists
 tools:
   - Bash
   - Read
   - Write
 
-# ❌ Wildcards on MCP
-tools: Bash, Read, mcp__github__*
+# NO wildcards in parentheses
+tools: Bash(*), Task(mcp__*)
 
-# ❌ Task with wildcards
-tools: Bash, Task(mcp__*)
+# NO trailing underscores
+tools: mcp__context7__
 
-# ❌ Brackets without restrictions
-tools: Bash(*), Read(*), Task(*)
+# NO wildcards in MCP tool names
+tools: mcp__github__*
 ```
-
-### Command Tools (commands/*.md)
-
-**CORRECT Format:**
-```yaml
----
-allowed-tools: Task, Read, Write, Edit, Bash, Glob, Grep, TodoWrite
----
-```
-
-**Rules:**
-- Commands need MORE than just Task
-- Include: Task, Read, Write, Edit, Bash, Glob, Grep, TodoWrite
-- Use `Bash(git add:*)` for Bash restrictions ONLY
-- Never use `Task(agent-name)` - just `Task`
-- Never use wildcards with MCP tools
 
 ### MCP Tool Rules
 
-**CORRECT:**
-- `mcp__github` - Approves ALL tools from github server
-- `mcp__github__get_issue` - Approves specific tool only
+- ✅ `mcp__github` - Approves ALL tools from github server
+- ✅ `mcp__github__get_issue` - Approves specific tool only
+- ❌ `mcp__github__*` - Wildcards NOT supported
+- ❌ `mcp__context7__` - No trailing underscores
 
-**WRONG:**
-- `mcp__github__*` - Wildcards NOT supported
-- `Task(mcp__*)` - No wildcards in Task
-- `mcp__servername` - Replace with actual server name
+### Bash Restrictions (Optional)
 
-### Bash Restrictions
-
-**When to use:**
 ```yaml
-allowed-tools: Bash(git add:*), Bash(git commit:*), Bash(git push:*)
-```
+# Restrict to specific commands
+allowed-tools: Bash(git add:*), Bash(git commit:*)
 
-**When NOT to use:**
-```yaml
-# ❌ Wrong - don't restrict all bash
-allowed-tools: Bash(*)
-
-# ✅ Correct - no restrictions needed
+# Allow all bash commands
 allowed-tools: Bash
 ```
 
----
+### Commands Need MORE Than Just Task
 
-## 📝 Command Pattern Rules
-
-### Pattern 1: Simple (No Agents)
-Use for: Mechanical tasks, file operations, git commands
-
-**Template:**
-```markdown
----
-allowed-tools: Read, Write, Bash, Glob, Grep
----
-
-Phase 1: Discovery
-- Parse $ARGUMENTS
-- Detect project type
-
-Phase 2: Execution
-- !{bash npm run build}
-
-Phase 3: Summary
-- Display results
+**WRONG:**
+```yaml
+allowed-tools: Task
 ```
 
-### Pattern 2: Single Agent
-Use for: One AI capability needed
-
-**Template:**
-```markdown
----
-allowed-tools: Task, Read, Write, Edit, Bash
----
-
-Phase 1: Discovery
-- Gather context
-
-Phase 2: Implementation
-
-Task(description="Build feature", subagent_type="feature-builder", prompt="You are the feature-builder agent. Build $ARGUMENTS...")
-
-Phase 3: Verification
-- Check output
+**CORRECT:**
+```yaml
+allowed-tools: Task, Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 ```
 
-### Pattern 3: Sequential Slash Commands
-Use for: Multi-phase workflows with dependencies
+Commands need access to multiple tools, not just Task!
 
-**Template:**
+---
+
+## 📋 $ARGUMENTS Usage Rules
+
+### NEVER Use Numbered Arguments
+
+**WRONG:**
 ```markdown
----
-allowed-tools: SlashCommand, Task, Read, Write, Bash
----
-
-Phase 1: Setup
-Run /plugin:init $ARGUMENTS
-(Wait for completion)
-
-Phase 2: Configuration
-Run /plugin:configure
-(Wait for completion)
-
-Phase 3: Validation
-Run /plugin:validate
+Run command with $1, $2, $3
 ```
 
-**CRITICAL:** Each command must COMPLETE before running next!
-
-### Pattern 4: Parallel Agents
-Use for: Independent validation tasks
-
-**Template:**
+**CORRECT:**
 ```markdown
----
-allowed-tools: Task, Read, Write, Bash, TodoWrite
----
-
-Phase 1: Discovery
-- Parse target
-
-Phase 2: Parallel Execution
-
-Run the following agents IN PARALLEL (all at once):
-
-Task(description="Security check", subagent_type="security-checker", prompt="Audit $ARGUMENTS")
-Task(description="Code scan", subagent_type="code-scanner", prompt="Scan $ARGUMENTS")
-Task(description="Performance test", subagent_type="perf-analyzer", prompt="Analyze $ARGUMENTS")
-
-Wait for ALL agents to complete before proceeding.
-
-Phase 3: Consolidation
-- Review all outputs
+Run command with $ARGUMENTS
+Parse $ARGUMENTS to extract individual values
 ```
+
+### How to Parse Arguments
+
+Use bash to parse $ARGUMENTS:
+
+```bash
+!{bash echo "$ARGUMENTS" | grep -oE '<[^>]+>' | wc -l}
+```
+
+Then extract values based on count and use them.
+
+**Never use $1, $2, $3 - Always use $ARGUMENTS!**
+
+---
+
+## 🎯 Agent Invocation in Commands
+
+### Natural Language DOES NOT WORK
+
+**WRONG (Natural Language):**
+```markdown
+Launch the security-specialist agent to audit authentication.
+
+Provide the agent with:
+- Provider list: [providers]
+- Focus: RLS policies, OAuth config
+```
+
+This doesn't work! Natural language doesn't execute Task() calls.
+
+### CORRECT (Task Tool Syntax):
+```markdown
+Task(description="Audit authentication", subagent_type="security-specialist", prompt="You are the security-specialist agent. Audit authentication for $ARGUMENTS.
+
+Provider list: [providers]
+Focus: RLS policies, OAuth config
+Deliverable: Security audit report")
+```
+
+**Always use proper Task() syntax, never natural language!**
+
+---
+
+## 📚 Template Loading Requirements
+
+### Commands MUST Load Templates
+
+Before building components, commands MUST load relevant templates:
+
+**Example for slash command creation:**
+```markdown
+Phase 1: Load Templates
+
+@plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
+@plugins/domain-plugin-builder/docs/frameworks/claude/component-decision-framework.md
+```
+
+**Example for agent creation:**
+```markdown
+Phase 1: Load Agent Templates
+
+@plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md
+@plugins/domain-plugin-builder/docs/frameworks/claude/component-decision-framework.md
+```
+
+**Never build without loading templates first!**
+
+---
+
+## 📐 Agent Length Best Practice
+
+### Keep Agents Under 300 Lines
+
+**Problem:** Agents with 400-500 lines don't work well
+
+**Solution:** Use WebFetch for documentation instead of inline code
+
+**WRONG (Inline Code Examples):**
+```python
+# Python example
+if __name__ == "__main__":
+    import uvicorn
+    mcp.run(transport="http", port=8000)
+```
+
+**CORRECT (WebFetch References):**
+```markdown
+Phase 2: Load Documentation
+
+WebFetch: https://docs.example.com/deployment/http-configuration
+WebFetch: https://docs.example.com/deployment/cors
+
+**Configure Transport Based on Fetched Docs**:
+- HTTP: Configure uvicorn/server for remote access
+- CORS: Set up origins and headers
+```
+
+**Target: Under 300 lines using progressive documentation loading**
 
 ---
 
@@ -255,156 +362,145 @@ Co-Authored-By: Claude <noreply@anthropic.com>"}
 - GitHub is source of truth
 - Local directory can be deleted/recreated
 
+**CRITICAL: Always push immediately after committing!**
+
 ---
 
-## 🏗️ Plugin Building Workflow
+## 🏗️ Command Pattern Rules
+
+### Four Command Patterns
+
+Commands follow one of four patterns based on complexity:
+
+**Pattern 1: Simple (No Agents)**
+- Mechanical tasks: version bumping, file operations, config updates
+- Direct script execution without AI decision-making
+- Examples: `/version`, `/git-setup`, `/mcp-clear`
+
+**Pattern 2: Single Agent**
+- One AI capability needed (analysis, generation, refactoring)
+- Use Task() tool to invoke one agent
+- Examples: `/detect` (uses project-detector), `/init`
+
+**Pattern 3: Sequential Slash Commands**
+- **PREFERRED for orchestrators** - Chain slash commands sequentially
+- Each slash command handles its own agent delegation
+- **CRITICAL: Wait for each command to complete before running next!**
+- Examples: `/core` (chains /init → /git-setup → /mcp-setup)
+- **Why better**: Granular commands are reusable, testable, composable
+
+**Pattern 4: Parallel Agents**
+- **ONLY for parallel agent execution** (not slash commands)
+- Independent validation tasks that can run simultaneously
+- All agents start together via multiple Task tool calls in ONE message
+- Examples: `/validate` (lint + test + security all at once)
+
+### Orchestration Best Practices
+
+**DO:**
+- ✅ Orchestrate by invoking slash commands: `/command-1` → `/command-2` → `/command-3`
+- ✅ Let each command handle its own agent delegation
+- ✅ Use Task tool when a command needs an agent
+- ✅ Launch multiple agents in parallel with multiple Task calls in ONE message
+- ✅ **WAIT for each slash command to complete before running the next**
+
+**DON'T:**
+- ❌ Call agents directly from orchestrator commands
+- ❌ Hardcode frameworks (Next.js, React) - DETECT them
+- ❌ Assume project structure - ANALYZE it
+- ❌ Send separate messages for each parallel agent (breaks parallelism)
+- ❌ Try to run multiple slash commands at once (they won't execute)
+
+---
+
+## ✅ Validation Requirements
+
+### Before ANY Commit
+
+**Run validation scripts:**
+
+1. **Command Validation:**
+   ```bash
+   bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh plugins/{plugin}/commands/{command}.md
+   ```
+
+2. **Agent Validation:**
+   ```bash
+   bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/{plugin}/agents/{agent}.md
+   ```
+
+3. **Skill Validation:**
+   ```bash
+   bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh plugins/{plugin}/skills/{skill}
+   ```
+
+4. **Complete Plugin Validation:**
+   ```bash
+   bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh plugins/{plugin}
+   ```
+
+### Validation is Critical
+
+- Always validate before committing
+- Fix validation errors immediately
+- Don't commit plugins with validation failures
+- Validation scripts auto-correct many issues
+
+**100% validation compliance required!**
+
+---
+
+## 📝 Plugin Building Workflow
 
 ### Correct Order (plugin-create command)
 
 ```
 1. Verify location (pwd check)
 2. Gather requirements (AskUserQuestion)
-3. Create directory structure
-4. Build commands (ONE AT A TIME):
+3. Load framework documentation
+4. Create directory structure
+5. Build commands (ONE AT A TIME):
    - Run /slash-commands-create command1
-   - Wait for completion
+   - WAIT FOR COMPLETION
    - Run /slash-commands-create command2
-   - Wait for completion
-5. Build agents (ONE AT A TIME):
+   - WAIT FOR COMPLETION
+6. Build agents (ONE AT A TIME):
    - Run /agents-create agent1
-   - Wait for completion
+   - WAIT FOR COMPLETION
    - Run /agents-create agent2
-   - Wait for completion
-6. Build skills (can be parallel via Task):
+   - WAIT FOR COMPLETION
+7. Build skills (can be parallel via Task):
    - Task() for skill1
    - Task() for skill2
    - Task() for skill3
    - Wait for all
-7. Validate all components
-8. Update marketplace.json
-9. Register in settings.local.json
-10. Git commit and push
-11. Display summary
+8. Validate all components
+9. Update marketplace.json
+10. Register in settings.local.json
+11. Git commit and push
+12. Display summary
 ```
 
-**CRITICAL:** Steps 4-5 must run sequentially, one command at a time!
-
----
-
-## 📚 Documentation Rules
-
-### Documentation Location
-
-**Each plugin should have its own docs:**
-```
-plugins/{plugin-name}/
-├── docs/
-│   ├── getting-started.md
-│   ├── commands.md
-│   ├── agents.md
-│   ├── skills.md
-│   └── api-reference.md
-```
-
-**Root docs/ is ONLY for:**
-- Cross-plugin documentation
-- Framework documentation
-- Architecture documentation
-
-**SDK documentation stays in:**
-```
-plugins/domain-plugin-builder/docs/sdks/
-├── fastmcp-documentation.md
-├── vercel-ai-sdk-documentation.md
-├── supabase-documentation.md
-└── elevenlabs-documentation.md
-```
-
-### WebFetch Pattern
-
-Commands and agents should use WebFetch for latest docs:
-```
-Phase 1: Load Documentation
-- Load SDK docs: @plugins/domain-plugin-builder/docs/sdks/{sdk}-documentation.md
-- WebFetch latest API changes from official docs
-```
-
----
-
-## ✅ Validation Requirements
-
-### Before ANY commit:
-
-1. **Command Validation:**
-   ```bash
-   bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh
-   ```
-
-2. **Agent Validation:**
-   ```bash
-   bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh
-   ```
-
-3. **Skill Validation:**
-   ```bash
-   bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh
-   ```
-
-4. **Complete Plugin Validation:**
-   ```bash
-   bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh plugins/{name}
-   ```
-
-### Auto-Fix Tools
-
-**Fix tool formatting:**
-```bash
-bash plugins/domain-plugin-builder/skills/build-assistant/scripts/fix-tool-formatting.sh
-```
-
-**Fix plugin manifest:**
-```bash
-bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin-manifest.sh {plugin} --fix
-```
-
----
-
-## 🎯 Agent Invocation in Commands
-
-### WRONG (Natural Language):
-```
-Launch the security-specialist agent to audit authentication.
-
-Provide the agent with:
-- Provider list: [providers]
-- Focus: RLS policies, OAuth config
-```
-
-This doesn't work! Natural language doesn't execute Task() calls.
-
-### CORRECT (Task Tool Syntax):
-```
-Task(description="Audit authentication", subagent_type="security-specialist", prompt="You are the security-specialist agent. Audit authentication for $ARGUMENTS.
-
-Provider list: [providers]
-Focus: RLS policies, OAuth config
-Deliverable: Security audit report")
-```
+**CRITICAL:** Steps 5-6 must run sequentially, ONE command at a time with waits between each!
 
 ---
 
 ## 🔍 Common Mistakes to Avoid
 
-1. **Running slash commands in parallel** - They don't execute
+1. **Running slash commands in parallel** - They queue up and don't execute
 2. **Using Task(agent-name) in allowed-tools** - Should just be `Task`
 3. **Forgetting git push** - Work gets lost
 4. **Using wildcards with MCP tools** - Not supported
 5. **Vertical tool lists** - Use horizontal comma-separated
 6. **JSON array tools** - Use plain comma-separated
 7. **Missing basic tools in commands** - Need Read, Write, Bash, etc.
-8. **Not waiting for command completion** - Sequential commands fail
+8. **Not waiting for slash command completion** - Sequential commands fail
 9. **Natural language agent invocation** - Use Task() syntax
 10. **Commands with only Task tool** - Need full tool set
+11. **Using $1, $2, $3** - Always use $ARGUMENTS
+12. **Not loading templates** - Must load before building
+13. **Agents over 300 lines** - Use WebFetch instead of inline docs
+14. **Skipping validation** - Run validation scripts before committing
 
 ---
 
@@ -432,8 +528,12 @@ plugins/{plugin-name}/
 ### Command Patterns
 1. Simple - No agents
 2. Single Agent - One Task()
-3. Sequential - Multiple slash commands (wait between each)
+3. Sequential - Multiple slash commands (**wait between each!**)
 4. Parallel - Multiple Task() calls (all at once)
+
+### Argument Usage
+- ✅ `$ARGUMENTS` - Always use this
+- ❌ `$1, $2, $3` - Never use these
 
 ### Git Workflow
 1. Create/modify
@@ -442,7 +542,20 @@ plugins/{plugin-name}/
 4. `git commit`
 5. **`git push`** ← MANDATORY!
 
+### Agent Best Practices
+- Keep under 300 lines
+- Use WebFetch for documentation
+- Load templates before building
+- Follow phased approach
+
+### Slash Command Execution
+- **NEVER** run in parallel
+- **ALWAYS** wait for completion
+- Run ONE AT A TIME sequentially
+
 ---
 
 **Last Updated:** 2025-10-31
-**Maintained By:** domain-plugin-builder team
+**Source:** Extracted from extensive conversation history in /home/gotime2022/.claude/history.jsonl
+
+This document represents lessons learned through extensive testing and iteration. Follow these rules exactly!
