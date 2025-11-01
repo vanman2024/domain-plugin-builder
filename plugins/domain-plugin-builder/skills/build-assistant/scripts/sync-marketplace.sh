@@ -6,10 +6,16 @@
 
 set -euo pipefail
 
+# Find script location and navigate to marketplace root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MARKETPLACE_ROOT="$(cd "$SCRIPT_DIR/../../../../.." && pwd)"
+
+cd "$MARKETPLACE_ROOT"
+
 MARKETPLACE_FILE=".claude-plugin/marketplace.json"
 BACKUP_FILE=".claude-plugin/marketplace.json.backup"
 
-echo "[INFO] Syncing plugins to marketplace.json"
+echo "[INFO] Syncing plugins to marketplace.json in: $MARKETPLACE_ROOT"
 
 # Find all plugins with plugin.json
 PLUGINS=()

@@ -6,10 +6,16 @@
 
 set -euo pipefail
 
+# Find script location and navigate to marketplace root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MARKETPLACE_ROOT="$(cd "$SCRIPT_DIR/../../../../.." && pwd)"
+
+cd "$MARKETPLACE_ROOT"
+
 SETTINGS_FILE="$HOME/.claude/settings.local.json"
 BACKUP_FILE="$HOME/.claude/settings.local.json.backup"
 
-echo "[INFO] Syncing plugin commands to settings.local.json"
+echo "[INFO] Syncing plugin commands to settings.local.json from: $MARKETPLACE_ROOT"
 
 # Find all plugins
 PLUGINS=$(find plugins -mindepth 1 -maxdepth 1 -type d | sort)

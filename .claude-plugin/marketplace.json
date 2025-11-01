@@ -1,33 +1,33 @@
 {
-  "name": "domain-plugin-builder",
-  "description": "Meta-framework for building Claude Code plugins, agents, commands, and skills. Works across all codebases and marketplaces.",
-  "version": "1.0.0",
-  "owner": {
-    "name": "vanman2024",
-    "email": "noreply@domain-plugin-builder.dev"
-  },
-  "plugins": [
-    {
-      "name": "domain-plugin-builder",
-      "description": "Universal plugin builder for Claude Code - creates plugins, agents, commands, and skills with proper structure and validation",
-      "version": "1.0.0",
-      "author": {
-        "name": "vanman2024",
-        "email": "noreply@domain-plugin-builder.dev"
-      },
-      "source": "./plugins/domain-plugin-builder",
-      "category": "development",
-      "keywords": [
-        "meta-framework",
-        "plugin-builder",
-        "agent-builder",
-        "command-builder",
-        "skill-builder",
-        "development",
-        "tooling",
-        "validation",
-        "templates"
-      ]
-    }
-  ]
+    "name": "ai-dev-marketplace",
+    "version": "1.0.0",
+    "description": "AI Development Marketplace - Master repository for tech-specific plugins (SDKs, frameworks, platforms)",
+    "owner": {
+        "name": "AI Development Team",
+        "email": "noreply@ai-dev-marketplace.dev"
+    },
+    "plugins": [
+        {
+            "name": "domain-plugin-builder",
+            "description": "Universal plugin builder for Claude Code - creates plugins, agents, commands, and skills with proper structure and validation",
+            "version": "1.0.0",
+            "author": {
+                "name": "vanman2024",
+                "email": "noreply@domain-plugin-builder.dev"
+            },
+            "source": "./plugins/domain-plugin-builder",
+            "category": "development",
+            "keywords": [
+                "meta-framework",
+                "plugin-builder",
+                "agent-builder",
+                "command-builder",
+                "skill-builder",
+                "development",
+                "tooling",
+                "validation",
+                "templates"
+            ]
+        }
+    ]
 }
