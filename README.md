@@ -17,13 +17,16 @@ The Domain Plugin Builder is a universal toolkit for creating production-ready C
 
 ### Installation
 
-Add this marketplace to your Claude Code configuration:
+See the comprehensive [INSTALLATION.md](INSTALLATION.md) guide for detailed setup instructions.
+
+**Quick install**:
 
 ```bash
-# Add the domain-plugin-builder marketplace
-# In your Claude Code interface, add marketplace:
-https://github.com/anthropics/domain-plugin-builder
+cd ~/.claude/plugins/marketplaces
+git clone https://github.com/vanman2024/domain-plugin-builder.git
 ```
+
+**Migrating from ai-dev-marketplace?** See [MIGRATION.md](MIGRATION.md) for migration steps and benefits.
 
 ### Build Your First Plugin
 
