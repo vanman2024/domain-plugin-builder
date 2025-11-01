@@ -1,0 +1,18 @@
+{
+  "name": "Domain Plugin Builder Marketplace",
+  "description": "Meta-framework for building Claude Code plugins, agents, commands, and skills. Works across all codebases and marketplaces.",
+  "version": "1.0.0",
+  "author": "Claude Code Team",
+  "repository": "https://github.com/anthropics/domain-plugin-builder",
+  "plugins": [
+    {
+      "name": "domain-plugin-builder",
+      "displayName": "Domain Plugin Builder",
+      "description": "Universal plugin builder for Claude Code - creates plugins, agents, commands, and skills with proper structure and validation",
+      "version": "1.0.0",
+      "author": "Claude Code Team",
+      "tags": ["meta-framework", "plugin-builder", "development", "tooling"],
+      "path": "plugins/domain-plugin-builder"
+    }
+  ]
+}
