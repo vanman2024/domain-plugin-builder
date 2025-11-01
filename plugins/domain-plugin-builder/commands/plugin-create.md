@@ -1,223 +1,59 @@
 ---
-allowed-tools: Task, AskUserQuestion, Bash(*), Read, Write, Edit, TodoWrite
-description: Universal plugin builder - creates complete domain-specific plugins (SDK, Framework, Custom) with all components from start to finish
+allowed-tools: Bash, Read, Write, AskUserQuestion
+description: Create basic plugin directory structure and manifest
 argument-hint: <plugin-name>
 ---
 
 **Arguments**: $ARGUMENTS
 
-Goal: Build a complete, production-ready domain-specific plugin with ALL components: commands, agents, skills (with scripts/templates/examples), and full validation.
+Goal: Create the basic directory structure and plugin.json manifest for a new Claude Code plugin.
 
-Core Principles:
-- Build EVERYTHING by orchestrating slash commands sequentially
-- Create functional scripts, not placeholders
-- Validate all components
-- Ensure production readiness
+This is a simple command focused on creating the scaffold. Use /domain-plugin-builder:build-plugin for complete orchestration.
 
-## Phase 1: Verify Location
-
-Use Bash tool to check current directory:
+Phase 1: Verify Location
 
 !{bash pwd}
 
-Expected: ai-dev-marketplace directory. If not in correct location, tell user to cd there first.
+Expected: domain-plugin-builder directory. If not correct, inform user.
 
-## Phase 2: Load Framework Documentation & Gather Requirements
+Phase 2: Gather Basic Info
 
-**Load plugin building framework docs:**
+Use AskUserQuestion to get:
+- Plugin description (one sentence)
+- Plugin type (SDK, Framework, Custom)
 
-@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/component-decision-framework.md
-@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/plugins/claude-code-plugin-structure.md
+Phase 3: Create Directory Structure
 
-These provide critical context for:
-- When to use commands vs agents vs skills
-- Plugin directory structure and manifest format
-- Component design patterns
-- Validation requirements
+!{bash mkdir -p plugins/$ARGUMENTS/.claude-plugin}
+!{bash mkdir -p plugins/$ARGUMENTS/commands}
+!{bash mkdir -p plugins/$ARGUMENTS/agents}
+!{bash mkdir -p plugins/$ARGUMENTS/skills}
 
-**Use AskUserQuestion to gather plugin details:**
+Phase 4: Create plugin.json Manifest
 
-**Questions:**
-1. What type of plugin are you building?
-   - SDK Plugin (e.g., FastMCP, Claude Agent SDK, Vercel AI SDK)
-   - Framework Plugin (e.g., Next.js, FastAPI, Django)
-   - Custom Plugin (domain-specific tooling)
+Write plugins/$ARGUMENTS/.claude-plugin/plugin.json:
 
-2. Plugin description (one sentence)?
+```json
+{
+  "name": "$ARGUMENTS",
+  "version": "1.0.0",
+  "description": "<from Phase 2>",
+  "author": {
+    "name": "Plugin Builder",
+    "email": "builder@example.com"
+  },
+  "license": "MIT",
+  "keywords": []
+}
+```
 
-3. For SDK/Framework plugins:
-   - Documentation source (URL or Context7 package name)
-   - Languages supported (Python, TypeScript, JavaScript)
-   - Key features to support (comma-separated list)
+Phase 5: Create README.md
 
-4. For Custom plugins:
-   - Domain area (testing, deployment, analytics, etc.)
-   - Primary use cases
+Write plugins/$ARGUMENTS/README.md with basic plugin info.
 
-Store all answers for Phase 3.
+Phase 6: Summary
 
-## Phase 3: Build Complete Plugin
-
-Orchestrate slash commands to create the entire plugin from start to finish:
-
-### Step 1: Create Plugin Structure
-- Create complete directory structure
-- Build ALL commands: `/domain-plugin-builder:slash-commands-create` for each command
-- Build ALL agents: `/domain-plugin-builder:agents-create` for each agent
-- Build ALL skills: `/domain-plugin-builder:skills-create` for each skill
-  - Skills-builder agent handles complexity of:
-    - Functional scripts (NOT placeholders!)
-    - scripts/README.md
-    - templates/ with actual template files
-    - examples/ with working examples
-- Generate comprehensive README.md
-
-### Step 1.5: Validate and Fix plugin.json Manifest
-
-CRITICAL: Ensure plugin.json follows the correct schema
-
-Run the manifest validation script with auto-fix:
-
-!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin-manifest.sh $ARGUMENTS --fix}
-
-This will automatically check and fix:
-1. **repository field**: Must be a STRING, not an object
-   - ❌ Wrong: `"repository": { "type": "git", "url": "..." }`
-   - ✅ Correct: `"repository": "https://github.com/..."`
-
-2. **category field**: NOT a valid field, remove it
-   - ❌ Wrong: `"category": "sdk"`
-   - ✅ Correct: Remove this field entirely
-
-3. **Required fields**: name, version, description, author
-4. **Optional fields**: keywords, homepage, repository, license
-5. **JSON syntax**: Valid JSON structure
-
-If validation fails even after auto-fix, manually read and correct the manifest:
-
-@plugins/$ARGUMENTS/.claude-plugin/plugin.json
-
-### Step 2: Run Comprehensive Validation
-
-Run the validation script:
-
-!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh plugins/$ARGUMENTS}
-
-If validation fails, fix issues and re-run validation.
-
-### Step 3: Update Marketplace Configuration
-
-Register the plugin in marketplace.json:
-
-!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/sync-marketplace.sh}
-
-### Step 4: Register Commands in Settings
-
-CRITICAL: Register all slash commands in .claude/settings.local.json
-
-Read the current settings file and the plugin's commands:
-
-@.claude/settings.local.json
-!{bash ls plugins/$ARGUMENTS/commands/*.md | sed 's|plugins/||; s|/commands/|:|; s|.md||'}
-
-Add ALL plugin commands to the permissions.allow array in settings.local.json:
-- "SlashCommand(/$ARGUMENTS:*)"
-- "SlashCommand(/$ARGUMENTS:command-name)" for each command
-
-Use Edit tool to insert commands after the last existing plugin's commands but before "Bash".
-
-### Step 5: Run Final Validation with Plugin Validator Agent
-
-Run comprehensive validation using the validate command:
-
-Run /domain-plugin-builder:validate $ARGUMENTS
-(Wait for validation to complete)
-
-This invokes the plugin-validator agent which:
-- Runs all validation scripts (validate-plugin.sh, validate-command.sh, validate-agent.sh)
-- Checks directory structure compliance
-- Verifies all agents and commands follow framework conventions
-- Validates tool formatting and line counts
-- Checks plugin manifest correctness
-- Provides comprehensive validation report
-
-If validation fails:
-- Review critical issues in the report
-- Fix issues identified
-- Re-run validation before proceeding
-
-### Step 6: Git Commit and Push
-
-**CRITICAL: Always commit AND push to GitHub immediately after plugin creation**
-
-Stage and commit all plugin files:
-
-!{bash git add plugins/$ARGUMENTS ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/sdks/$ARGUMENTS-documentation.md .claude-plugin/marketplace.json .claude/settings.local.json}
-
-!{bash git commit -m "$(cat <<'EOF'
-feat: Add $ARGUMENTS plugin
-
-Complete plugin with commands, agents, and skills following domain-plugin-builder patterns.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-EOF
-)"}
-
-**IMMEDIATELY push to GitHub:**
-
-!{bash git push origin master}
-
-This ensures work is never lost. If push fails:
-- Check git remote configuration
-- Verify GitHub credentials
-- Push manually: `git push origin master`
-
-Context needed:
-- Plugin type, description, requirements from Phase 2
-- Plugin name: $ARGUMENTS
-- Expected output: Complete validated plugin committed AND pushed to GitHub
-
-## Phase 4: Display Results
-
-Count components and display comprehensive summary:
-
-!{bash ls plugins/$ARGUMENTS/commands/ | wc -l}
-!{bash ls plugins/$ARGUMENTS/agents/ | wc -l}
-!{bash ls -d plugins/$ARGUMENTS/skills/*/ 2>/dev/null | wc -l}
-
-Display formatted summary:
-
-**Plugin Created:** $ARGUMENTS
-**Location:** plugins/$ARGUMENTS
-**Type:** SDK | Framework | Custom (from Phase 2 answers)
-
-**Components:**
-- Commands: X/X validated ✅ (use count from first bash command)
-- Agents: Y/Y validated ✅ (use count from second bash command)
-- Skills: Z/Z validated ✅ (use count from third bash command)
-
-**Total Validation:** ALL PASSED ✅
-
-**Git Status:**
-- ✅ Committed to master branch
-- ✅ Pushed to GitHub origin/master
-
-**Next Steps:**
-1. Test the plugin:
-   `/$ARGUMENTS:init` (or first command from plugin)
-
-3. Install via marketplace:
-   `/plugin install $ARGUMENTS@ai-dev-marketplace`
-
-## Success Criteria
-
-- ✅ Plugin directory structure created
-- ✅ All commands created and validated
-- ✅ All agents created and validated
-- ✅ All skills created with complete structure
-- ✅ Skills have functional scripts (not placeholders)
-- ✅ README.md comprehensive
-- ✅ All validations passing
-- ✅ Plugin ready for production use
+Display:
+- Plugin created: $ARGUMENTS
+- Location: plugins/$ARGUMENTS
+- Next steps: Use /domain-plugin-builder:build-plugin $ARGUMENTS to add components

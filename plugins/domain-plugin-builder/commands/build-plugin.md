@@ -1,146 +1,145 @@
 ---
-description: Build a complete Claude Code plugin from scratch by orchestrating plugin creation, command building, agent building, and final validation
+description: Build complete plugin with all components and validation
 argument-hint: <plugin-name>
-allowed-tools: Task, Read, Write, Bash(*), Glob, Grep, AskUserQuestion, SlashCommand, TodoWrite
+allowed-tools: SlashCommand, Task, Read, Write, Edit, Bash, Glob, AskUserQuestion, TodoWrite
 ---
 
 **Arguments**: $ARGUMENTS
 
-Goal: Build a complete, validated Claude Code plugin from scratch by chaining all plugin builder commands and validating the final result.
+Goal: Build a complete, production-ready Claude Code plugin by orchestrating all builder commands and running comprehensive validation.
 
 Core Principles:
-- Track progress with TodoWrite throughout the build
-- Chain commands sequentially for proper dependencies
-- Validate at each major phase
-- Ensure 100% compliance before completion
+- Orchestrate all sub-commands sequentially
+- Track progress with TodoWrite
+- Validate at each phase
+- Ensure marketplace/settings integration
+- Commit and push to GitHub
 
-Phase 1: Load Framework Documentation & Discovery
-Goal: Understand plugin building framework and what needs to be built
+Phase 1: Initialize Todo List and Verify Location
 
-Actions:
-- Load plugin building framework docs:
-  @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/component-decision-framework.md
-  @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/plugins/claude-code-plugin-structure.md
+Create todo list:
 
-  These provide critical context for:
-  - When to use commands vs agents vs skills
-  - Plugin directory structure and manifest format
-  - Component design patterns
-  - Validation requirements
+TodoWrite with tasks:
+- Create plugin scaffold
+- Build commands
+- Build agents
+- Build skills
+- Run validation
+- Update marketplace.json
+- Update settings.json
+- Git commit and push
+- Display summary
 
-- Create todo list with all build phases using TodoWrite
-- Parse $ARGUMENTS for plugin name
-- If unclear or no plugin name provided, use AskUserQuestion to gather:
-  - What's the plugin name?
-  - Plugin type? (SDK, Framework, Custom)
-  - For SDK: Which SDK? (Claude Agent SDK, FastMCP, etc.)
-  - For Framework: Which framework? (React, Next.js, etc.)
-  - Languages supported? (TypeScript, Python, JavaScript)
+Verify location:
+
+!{bash pwd}
+
+Expected: domain-plugin-builder directory
 
 Phase 2: Create Plugin Scaffold
-Goal: Build initial plugin structure
 
-Actions:
+Run /domain-plugin-builder:plugin-create $ARGUMENTS
+(Wait for completion)
 
-Use SlashCommand tool to invoke plugin-create:
+This creates:
+- Directory structure
+- plugin.json manifest
+- README.md
 
-!{bash /domain-plugin-builder:plugin-create $ARGUMENTS}
+Update TodoWrite: Mark "Create plugin scaffold" as completed
 
-This will:
-- Create plugin directory structure
-- Generate plugin.json manifest
-- Create root files (README, LICENSE, etc.)
-- Build initial commands and agents
-- Run initial validation
+Phase 3: Build Commands
 
-Wait for plugin-create to complete before proceeding.
+Ask user how many commands and what they should do.
 
-Update TodoWrite to mark plugin scaffold complete.
+For each command, run sequentially:
 
-Phase 3: Verify Plugin Structure
-Goal: Ensure plugin was created correctly
+Run /domain-plugin-builder:slash-commands-create <command-name> "<description>"
+(Wait for completion)
 
-Actions:
+Update TodoWrite: Mark "Build commands" as completed
 
-Check that plugin exists and has basic structure:
-- Verify directory: plugins/$ARGUMENTS exists
-- Verify plugin.json exists
-- List created commands and agents
+Phase 4: Build Agents
 
-If any issues found, stop and report errors.
+Ask user how many agents and what they should do.
 
-Update TodoWrite to mark verification complete.
+For each agent, run sequentially:
 
-Phase 4: Final Validation
-Goal: Comprehensive validation of entire plugin
+Run /domain-plugin-builder:agents-create <agent-name> "<description>" "<tools>"
+(Wait for completion)
 
-Actions:
+Update TodoWrite: Mark "Build agents" as completed
 
-Use Task tool to invoke the plugin-validator agent:
+Phase 5: Build Skills
 
-Task(description="Validate complete plugin", subagent_type="domain-plugin-builder:plugin-validator", prompt="You are the plugin-validator agent. Validate the complete plugin at plugins/$ARGUMENTS.
+Ask user how many skills needed.
 
-Run all validation scripts:
-- validate-all.sh for comprehensive checks
-- Check command compliance
-- Check agent compliance
-- Verify documentation quality
-- Check template adherence
-- Validate framework conventions
+For each skill, run sequentially:
 
-Output comprehensive report with Overall Status: PASS/FAIL/PASS WITH WARNINGS
+Run /domain-plugin-builder:skills-create <skill-name> "<description>"
+(Wait for completion)
 
-Plugin to validate: plugins/$ARGUMENTS
-Expected deliverable: Detailed validation report with status and any issues found")
+Update TodoWrite: Mark "Build skills" as completed
 
-Wait for agent to complete and return its report.
+Phase 6: Update Marketplace Configuration
 
-Read the agent's validation report output.
+Run marketplace sync script:
 
-Parse the report for validation status:
-- Look for "Overall Status: PASS" → Validation successful, continue to Phase 5
-- Look for "Overall Status: FAIL" → Validation failed, need to fix issues
-- Look for "Overall Status: PASS WITH WARNINGS" → Acceptable, continue with warnings
+!{bash plugins/domain-plugin-builder/skills/build-assistant/scripts/sync-marketplace.sh}
 
-If validation status is FAIL:
-- Read the "Critical Issues" and "Warnings" sections from report
-- Identify auto-fixable issues:
-  - Line length problems → Trim descriptions
-  - ARGUMENTS usage errors → Replace numbered args with $ARGUMENTS
-  - Missing @ symbols → Add @ prefix to file loading
-  - Missing frontmatter fields → Add required fields
-- Show issues to user
-- Use AskUserQuestion: "Auto-fix common issues or manual fix?"
-- If auto-fix selected:
-  - Apply fixes using Edit tool based on issues in report
-  - Re-invoke plugin-validator agent using Task tool on plugins/$ARGUMENTS
-  - Wait for new report
-  - Parse new report status
-  - Loop until Overall Status is PASS or PASS WITH WARNINGS
-- If manual fix selected:
-  - Show detailed errors from report
-  - Pause for user to fix manually
-  - After user confirms fixes, re-invoke validator using Task tool
+This registers the plugin in marketplace.json
 
-Continue looping until Overall Status: PASS or PASS WITH WARNINGS achieved.
+Update TodoWrite: Mark "Update marketplace.json" as completed
 
-Update TodoWrite to mark validation complete.
+Phase 7: Register in Settings
 
-Phase 5: Git Commit and Push
-Goal: Save all work immediately to GitHub
+Read current settings and add plugin commands:
 
-Actions:
+@.claude/settings.local.json
 
-**CRITICAL: Commit and push ALL plugin files and marketplace updates**
+List plugin commands:
 
-Stage all files related to the plugin:
-!{bash git add plugins/$ARGUMENTS .claude-plugin/marketplace.json .claude/settings.local.json}
+!{bash ls plugins/$ARGUMENTS/commands/*.md 2>/dev/null | sed 's|plugins/||; s|/commands/|:|; s|.md||'}
 
-Commit with descriptive message:
+Add to settings.local.json permissions.allow array:
+- "SlashCommand(/$ARGUMENTS:*)"
+
+Use Edit tool to insert after last plugin entry.
+
+Update TodoWrite: Mark "Update settings.json" as completed
+
+Phase 8: Run Comprehensive Validation
+
+Run /domain-plugin-builder:validate $ARGUMENTS
+(Wait for validation to complete)
+
+The validate command will:
+- Invoke plugin-validator agent
+- Run all validation scripts
+- Check marketplace.json registration
+- Check settings.json registration
+- Verify git status
+- Provide comprehensive report
+
+If validation fails:
+- Review errors
+- Fix issues
+- Re-run validation
+
+Update TodoWrite: Mark "Run validation" as completed
+
+Phase 9: Git Commit and Push
+
+Stage all plugin files:
+
+!{bash git add plugins/$ARGUMENTS .claude/marketplace.json .claude/settings.local.json}
+
+Commit:
+
 !{bash git commit -m "$(cat <<'EOF'
 feat: Build complete $ARGUMENTS plugin
 
-Complete plugin with commands, agents, skills, validation, and documentation.
+Complete plugin with commands, agents, skills, and validation.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -148,37 +147,40 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"}
 
-**IMMEDIATELY push to GitHub:**
+Push to GitHub:
 
 !{bash git push origin master}
 
-This ensures work is never lost. If push fails:
-- Check git remote configuration
-- Verify GitHub credentials
-- Push manually: `git push origin master`
+Update TodoWrite: Mark "Git commit and push" as completed
 
-Update TodoWrite to mark git commit/push complete.
+Phase 10: Display Summary
 
-Phase 6: Summary
-Goal: Document what was built
+Count components:
 
-Actions:
-- Mark all todos as complete using TodoWrite
-- Display comprehensive summary:
-  - Plugin name and type
-  - Location: plugins/$ARGUMENTS
-  - Components created:
-    * X commands
-    * Y agents
-    * Z skills (if any)
-  - Validation status: ✅ ALL PASSED
-  - Plugin manifest: .claude-plugin/plugin.json
-  - Documentation: README.md
-  - **Git Status:**
-    * ✅ Committed to master branch
-    * ✅ Pushed to GitHub origin/master
-- Show next steps:
-  - Test plugin commands
-  - Deploy to marketplace
-  - Create additional features
-- Report format: Plugin name, type, location, component counts, validation status, next steps
+!{bash ls plugins/$ARGUMENTS/commands/ 2>/dev/null | wc -l}
+!{bash ls plugins/$ARGUMENTS/agents/ 2>/dev/null | wc -l}
+!{bash ls -d plugins/$ARGUMENTS/skills/*/ 2>/dev/null | wc -l}
+
+Display:
+
+**Plugin Built:** $ARGUMENTS
+**Location:** plugins/$ARGUMENTS
+
+**Components:**
+- Commands: X
+- Agents: Y
+- Skills: Z
+
+**Integration:**
+- ✅ Registered in marketplace.json
+- ✅ Registered in settings.json
+- ✅ All validations passed
+- ✅ Committed to git
+- ✅ Pushed to GitHub
+
+**Next Steps:**
+- Test commands: /$ARGUMENTS:<command-name>
+- Deploy to marketplace
+- Build additional features
+
+Update TodoWrite: Mark "Display summary" as completed
