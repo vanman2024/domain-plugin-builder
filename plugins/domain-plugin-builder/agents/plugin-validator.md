@@ -89,8 +89,9 @@ Before beginning validation, load the framework documentation and templates:
 
 - Read("plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md")
 - Read("plugins/domain-plugin-builder/docs/frameworks/plugins/claude-code-plugin-structure.md")
+- WebFetch: https://docs.claude.com/en/docs/claude-code/hooks-guide
 
-This provides the standards against which to validate the plugin.
+This provides the standards against which to validate the plugin, including hooks structure.
 
 ### Step 1: Run Validation Scripts
 
@@ -137,6 +138,26 @@ For each agent in `agents/`:
 - Compare agents against appropriate agent templates
 - Verify consistency across files
 
+### Step 6.5: Validate Hooks (if present)
+
+**Check hooks/hooks.json:**
+- Read `hooks/hooks.json` if it exists
+- Validate JSON syntax
+- Verify structure matches fetched hooks guide schema
+- Check all event types are valid: PreToolUse, PostToolUse, UserPromptSubmit, SessionStart, SessionEnd, PreCompact
+- Confirm hook entries have required fields: name, hooks array
+- Verify hooks array has type and command/script
+
+**For each hook that references a script:**
+- Check script exists in `scripts/` directory
+- Verify script is executable: `bash -c "[ -x scripts/hook-script.sh ]"`
+- Confirm path uses `${CLAUDE_PLUGIN_ROOT}` variable
+- Check script has shebang line (#!/bin/bash or #!/usr/bin/env python3)
+
+**For inline hooks:**
+- Verify command syntax is valid
+- Check for proper escaping
+
 ### Step 7: Verify Marketplace Integration
 
 **Check marketplace.json registration:**
@@ -181,7 +202,16 @@ Provide a comprehensive report:
 **Validation Script Results**:
 - Commands: X/Y passed
 - Agents: X/Y passed
+- Skills: X/Y passed
+- Hooks: X/Y passed (if present)
 - Plugin structure: PASS | FAIL
+
+**Hooks Validation** (if present):
+- hooks.json: VALID | INVALID | MISSING
+- Event types: VALID | INVALID
+- Script references: ALL FOUND | MISSING SCRIPTS
+- Script executability: ALL EXECUTABLE | NON-EXECUTABLE
+- Path format: CORRECT (uses ${CLAUDE_PLUGIN_ROOT}) | INCORRECT
 
 **Integration Checks**:
 - Marketplace.json: REGISTERED | NOT REGISTERED | INCORRECT
@@ -198,6 +228,9 @@ Provide a comprehensive report:
 - Plugin not registered in marketplace.json
 - Plugin not registered in settings.json
 - Plugin files uncommitted to git
+- Invalid hooks.json structure
+- Hook scripts referenced but not found
+- Hook scripts not executable
 
 **Warnings** (if any):
 - Suboptimal patterns or structure
@@ -207,6 +240,9 @@ Provide a comprehensive report:
 - Plugin committed but not pushed to GitHub
 - Marketplace.json entry incomplete (missing component counts)
 - Settings.json missing individual command permissions
+- Hook scripts missing shebang lines
+- Hooks using absolute paths instead of ${CLAUDE_PLUGIN_ROOT}
+- Empty hooks.json (no hooks defined)
 
 **Passed Checks**:
 - What is correctly structured
