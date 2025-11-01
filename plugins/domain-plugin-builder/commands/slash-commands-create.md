@@ -6,279 +6,95 @@ argument-hint: <command-name> "<description>" [--plugin=name] | <cmd-1> "<desc-1
 
 **Arguments**: $ARGUMENTS
 
-## Step 1: Gather Information
+Goal: Create properly structured slash command(s). For 3+ commands, creates them in parallel for faster execution.
 
-If arguments are missing or incomplete, use AskUserQuestion to gather:
+Core Principles:
+- Follow template patterns (Simple, Single Agent, Sequential, Parallel)
+- Use $ARGUMENTS for all argument references
+- Keep commands under 150 lines
+- Validate before committing
 
-1. **Command name** - What should the command be called?
-2. **Description** - What does this command do?
-3. **Command scope** - Global command or plugin-specific?
-   - If plugin: Which plugin?
-4. **Agent delegation** - Does this command use agents?
-   - None (Pattern 1 - simple command)
-   - Single agent (Pattern 2 - which agent?)
-   - Multiple agents sequential (Pattern 3 - which agents in order?)
-   - Multiple agents parallel (Pattern 4 - which agents run together?)
-   - Fallback: Use general-purpose agent if no specific agent needed
-5. **Execution mode** - For multi-agent commands:
-   - Sequential (one after another)
-   - Parallel (all at once)
-   - Hybrid (some parallel, then next group)
-6. **Script usage** - Will this execute scripts? (Bash, Python, Node.js)
-   - Location: Use shared scripts in skills/build-assistant/scripts/
-7. **MCP integration** - Does this need MCP server tools?
-   - Which MCP servers? (puppeteer, browserbase, github, etc.)
-8. **Tool restrictions** - Any specific tool limitations?
-   - Bash restrictions (git:*, npm:*, docker:*)
-   - Other tool constraints
+Phase 1: Parse Arguments & Count Commands
+Goal: Determine execution mode
 
-Parse provided arguments:
-- **Command name**: First argument
-- **Description**: Second argument in quotes
-- **--plugin=name**: Plugin flag
-- **--mcp=server1,server2**: MCP servers comma-separated
-- **Agent names**: Remaining arguments for multi-agent commands
+Actions:
+- Parse $ARGUMENTS to count how many commands requested
+- Extract each command specification (name, description, plugin)
+- Determine mode:
+  - 1-2 commands: Sequential
+  - 3+ commands: Parallel (use Task tool)
+- Load template: @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
 
-## Available Agents
+Phase 2: Create Command(s)
+Goal: Generate command files
 
-Use Bash tool to load current agent list for context:
-- Run: `bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/list-agents.sh`
+Actions:
 
-## Context Files (MUST Read Before Building)
-
-**CRITICAL - Read the master template file FIRST using Read tool:**
-Path: ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
-
-This master template is REQUIRED reading and contains:
-- Pattern selection guide (4 patterns: Simple, Single Agent, Sequential, Parallel)
-- Complete templates for all 4 patterns with Goal/Actions/Phase structure
-- Natural language agent invocation (NOT Task() syntax)
-- Syntax reference ($ARGUMENTS, @files, !{bash}, etc.)
-- When to use agents vs inline code
-
-**SDK Documentation Loading (for SDK plugin commands):**
-
-If building a command for an SDK plugin (detected from --plugin flag or plugin name):
-
-1. Check if SDK documentation exists:
-   - Path: ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/sdks/<sdk-name>-documentation.md
-2. If exists: Use Read tool to load it
-   - This provides SDK features, WebFetch URLs, and context
-3. In the command you create, add Phase 1 action to load this documentation:
-   ```markdown
-   Phase 1: Discovery
-   Actions:
-   - Load SDK documentation:
-     @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/sdks/<sdk-name>-documentation.md
-   ```
-4. Extract WebFetch URLs from docs for use in agents (Phase 4)
-
-Example:
-- Building: /claude-agent-sdk:add-streaming
-- Loads: @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/sdks/claude-agent-sdk-documentation.md
-- Provides agent WebFetch URL: https://docs.claude.com/en/api/agent-sdk/streaming
-
-## CRITICAL: Project-Agnostic Design
-
-**All commands MUST follow these principles:**
-- ❌ NEVER hardcode frameworks (Next.js, React, Django, etc.) - DETECT them
-- ❌ NEVER assume project structure - ANALYZE it
-- ❌ NEVER force conventions - ADAPT to existing patterns
-- ✅ DO detect what exists (package.json, requirements.txt, Cargo.toml, etc.)
-- ✅ DO adapt behavior based on findings
-- ✅ DO work in ANY project type (frontend, backend, monorepo, etc.)
-
-## Command Patterns Reference
-
-**Pattern 1: Simple (No Agents)** - Bash/script execution with $ARGUMENTS
-
-**Pattern 2: Single Agent** - One Task() call with agent or a general-purpose agent.
-
-**Pattern 3: Sequential** - Multiple phases with dependencies, one after another
-
-**Pattern 4: Multi-Agent Parallel** - Run multiple independent agents at the same time
-
-**SlashCommand Usage** - Invoke other slash commands (add SlashCommand to allowed-tools)
-
-Example showing 3 agents running together (natural language):
-
-Launch the following agents IN PARALLEL (all at once):
-- Launch the code-scanner agent to scan for issues in $ARGUMENTS
-- Launch the test-runner agent to test $ARGUMENTS
-- Launch the security-checker agent to audit $ARGUMENTS
-
-Wait for ALL agents to complete before proceeding.
-
-## Key Features
-
-Bash Execution: !{git status}
-Script Execution: !{bash script.sh $ARGUMENTS}
-File Loading: @package.json
-Shared Scripts: ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/
-SlashCommand Invocation: SlashCommand: /command-name args
-
-Allowed Tools: Task, Read, Write, Edit, Bash(*), Grep, Glob, AskUserQuestion, SlashCommand, mcp__servername
-Arguments: Always $ARGUMENTS (never $1/$2/$3)
-
-**CRITICAL - SlashCommand Anti-Pattern:**
-When invoking slash commands:
-- Use SlashCommand tool ONLY - do not type command in response text
-- Never mention the command before invoking (causes double execution)
-- Invoke silently, report results after completion
-
-## File Locations
-
-Global command: ~/.claude/commands/COMMAND_NAME.md
-Plugin command: ~/.claude/marketplaces/MARKETPLACE/plugins/PLUGIN_NAME/commands/COMMAND_NAME.md
-Register in: ~/.claude/marketplaces/MARKETPLACE/plugins/PLUGIN_NAME/.claude-plugin/plugin.json
-
-## Pattern Selection Decision Tree
-
-**Use this to determine which pattern to use:**
-
-**Step 1: Does this task require AI decision-making or complex analysis?**
-
-**NO → Pattern 1 (Simple - No Agents)**
-- Mechanical tasks: version bumping, file operations, config updates
-- Script execution: running tests, builds, deployments (without decision-making)
-- File manipulation: copying, moving, renaming
-- Simple checks: file existence, git status
-- Examples: `/version`, `/git-setup`, `/mcp-clear`
-
-**YES → Step 2: How many specialized capabilities does it need?**
-
-**ONE specialized capability → Pattern 2 (Single Agent)**
-- Project analysis: framework detection, stack analysis
-- Code generation: single component, single feature
-- Architecture: designing one system aspect
-- Refactoring: optimizing specific code area
-- Check available agents list for specialized match
-- Fallback: Use general-purpose agent if no specialist exists
-- Examples: `/detect` (uses project-detector), `/init` (uses project-detector)
-
-**MULTIPLE capabilities, must run in sequence → Pattern 3 (Sequential with SlashCommands)**
-- **PREFERRED for orchestrators:** Chain slash commands, don't invoke agents directly
-- Dependencies between steps (output of step 1 feeds step 2)
-- Multi-phase workflows: build → test → deploy
-- Orchestrator pattern: SlashCommand: /init → SlashCommand: /git-setup → SlashCommand: /mcp-setup
-- Each slash command completes before next starts
-- Each granular command handles its own agent delegation if needed
-- Examples: `/core` orchestrator (chains /init, /git-setup, /mcp-setup), `/deploy` (chains build, upload, verify)
-- **Why this is better than multiple agents:** Granular commands are reusable, testable, composable
-
-**MULTIPLE capabilities, can run simultaneously → Pattern 4 (Parallel Agents)**
-- **Use ONLY for parallel agent execution** (not slash commands - unknown if SlashCommands can run concurrently)
-- Independent validation tasks: lint + test + security
-- No dependencies between tasks
-- All agents start together, results collected at the end
-- Faster execution by running concurrently
-- Syntax: Multiple Task() calls in single step, then "Wait for ALL agents to complete"
-- Examples: `/validate` (lint agent + test agent + security agent all at once)
-- **Note:** If unsure whether SlashCommands can run in parallel, use Pattern 3 (sequential) instead
-
-**Pattern 3 vs Pattern 4 Decision:**
-- If Task B needs output from Task A → Sequential (Pattern 3)
-- If Task A and Task B are independent → Parallel (Pattern 4)
-
-## Workflow (Beginning → Middle → End → Review)
-
-**Phase 1: BEGINNING (Count Commands & Select Mode)**
-1. Parse $ARGUMENTS to count how many commands are being requested
-2. Determine execution mode:
-   - 1-2 commands: Sequential (create one at a time)
-   - 3+ commands: Parallel (use Task tool with general-purpose agents)
-3. Read the master template: @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
-4. For each command, understand what it should accomplish
-5. If arguments missing, use AskUserQuestion to gather info
-
-**Phase 2: MIDDLE (Create Command(s))**
-
-**For Single Command (1 command):**
-- Use the appropriate pattern template from template-command-patterns.md
-- Create command file following the Goal → Actions → Phase structure
-- Use natural language for agent invocation (not Task() syntax)
-- Use proper syntax: $ARGUMENTS only, !{bash command} for execution, @filename for loading
-- Validate immediately
+**For Single Command:**
+- Use AskUserQuestion if info missing
+- Select pattern from template (1: Simple, 2: Single Agent, 3: Sequential, 4: Parallel)
+- Create command file following Goal → Actions → Phase structure
+- Validate: !{bash bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh COMMAND_FILE}
 
 **For 2 Commands (Sequential):**
-- Create first command, validate it, then create second command and validate it
+- Create first command and validate
+- Create second command and validate
 
 **For 3+ Commands (Parallel):**
 
-Launch multiple general-purpose agents IN PARALLEL (all at once) using multiple Task() calls:
+Launch multiple general-purpose agents IN PARALLEL:
 
-Task(description="Create command 1", subagent_type="general-purpose", prompt="Create a slash command following the template patterns.
+Task(description="Create command 1", subagent_type="general-purpose", prompt="Create slash command: $CMD_1_NAME
 
-Command name: $CMD_1_NAME
 Description: $CMD_1_DESC
-Plugin: $PLUGIN_NAME (if specified)
+Plugin: $PLUGIN_NAME
 
 Load template: @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
 
-Create command file at: plugins/$PLUGIN_NAME/commands/$CMD_1_NAME.md
-- Follow Goal → Actions → Phase structure
-- Use proper frontmatter (description, argument-hint, allowed-tools)
-- Select appropriate pattern (1-4) based on command needs
+Create: plugins/$PLUGIN_NAME/commands/$CMD_1_NAME.md
+- Frontmatter: description, argument-hint, allowed-tools
+- Goal → Actions → Phase structure
+- Select pattern based on needs
 - Validate with validation script
 
-Deliverable: Complete validated command file")
+Deliverable: Complete validated command")
 
-Task(description="Create command 2", subagent_type="general-purpose", prompt="[Same structure for command 2]")
+Task(description="Create command 2", subagent_type="general-purpose", prompt="[Same for command 2]")
 
-Task(description="Create command 3", subagent_type="general-purpose", prompt="[Same structure for command 3]")
+Task(description="Create command 3", subagent_type="general-purpose", prompt="[Same for command 3]")
 
-[Continue for all N commands]
+Wait for ALL agents to complete.
 
-Wait for ALL agents to complete before proceeding to Phase 3.
+Phase 3: Validation
+Goal: Ensure all commands pass validation
 
-**Phase 3: END (Validate All)**
-- Use Bash tool to run validation on each command: `bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh COMMAND_FILE`
-- If validation fails, fix errors and re-validate until passing
+Actions:
+- Validate each command: !{bash bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh COMMAND_FILE}
+- Fix any validation errors
+- Re-validate until all pass
 
-**Phase 4: REVIEW (Finalize & Commit)**
-- Register all commands in plugin.json if --plugin flag provided
-- **CRITICAL: Git commit and push immediately**
-   - Add all command files to git
-   - Add marketplace.json if it was updated
-   - Commit with descriptive message
-   - Push to origin/master
-- Display summary with file paths and usage for all commands
+Phase 4: Git Commit and Push
+Goal: Save work immediately
 
-**Git Commit Steps:**
+Actions:
+- Add files: !{bash git add plugins/*/commands/*.md .claude-plugin/marketplace.json}
+- Commit:
+  !{bash git commit -m "$(cat <<'EOF'
+feat: Add slash command(s) - COMMAND_NAMES
 
-!{bash git add COMMAND_FILE_PATH}
-!{bash git add .claude-plugin/marketplace.json} (if plugin command)
-
-!{bash git commit -m "$(cat <<'EOF'
-feat: Add /COMMAND_NAME command
-
-COMMAND_DESCRIPTION
+Complete command structure following framework patterns.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"}
+- Push: !{bash git push origin master}
 
-!{bash git push origin master}
+Phase 5: Summary
+Goal: Report results
 
-## Success Criteria (ALL Required)
-
-- ✅ Interactive mode works, valid frontmatter, correct pattern (1/2/3/4)
-- ✅ Uses $ARGUMENTS (never $1/$2/$3)
-- ✅ Proper allowed-tools with MCP, ! prefix for bash, @ for files
-- ✅ No backticks, scripts in shared directory, under 150 lines
-- ✅ **VALIDATION PASSES** - validate-command.sh returns ✅
-- ✅ Registered in plugin.json if --plugin flag
-- ✅ Summary displayed with file path and usage
-
-## Usage Examples
-
-Interactive (recommended):
-/build-system:framework-slash-command
-
-With arguments:
-/build-system:framework-slash-command deploy "Deploy to production" --plugin=deployment deployment-manager
-
-Parallel agents:
-/build-system:framework-slash-command audit "Security audit" --parallel scanner validator reporter
+Actions:
+- Display all created commands (names, locations, patterns, validation status)
+- Show git status (committed and pushed)
+- Show usage examples
