@@ -20,7 +20,16 @@ If plugin not specified:
 
 Store plugin name for Phase 2.
 
-Phase 2: Count Hooks and Choose Execution Mode
+Phase 2: Load Hooks Documentation
+
+WebFetch: https://docs.claude.com/en/docs/claude-code/hooks-guide
+
+This provides context on:
+- Available event types and when they trigger
+- Hook configuration structure
+- Script patterns and best practices
+
+Phase 3: Count Hooks and Choose Execution Mode
 
 Count how many hooks were requested.
 
@@ -29,7 +38,7 @@ Execution modes:
 - 2 hooks: Sequential creation
 - 3+ hooks: Parallel creation (invoke multiple hooks-builder agents)
 
-Phase 3: Create Hooks
+Phase 4: Create Hooks
 
 **Mode 1: Single Hook (1 hook)**
 
@@ -99,7 +108,7 @@ Wait for ALL agents to complete before proceeding.
 
 Update TodoWrite as each completes.
 
-Phase 4: Summary
+Phase 5: Summary
 
 Display results:
 

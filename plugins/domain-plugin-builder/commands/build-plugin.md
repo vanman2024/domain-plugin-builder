@@ -24,6 +24,7 @@ TodoWrite with tasks:
 - Build commands
 - Build agents
 - Build skills
+- Build hooks
 - Run validation
 - Update marketplace.json
 - Update settings.json
@@ -81,7 +82,18 @@ Run /domain-plugin-builder:skills-create <skill-name> "<description>"
 
 Update TodoWrite: Mark "Build skills" as completed
 
-Phase 6: Update Marketplace Configuration
+Phase 6: Build Hooks
+
+Ask user how many hooks needed (optional - can skip).
+
+For each hook, run sequentially:
+
+Run /domain-plugin-builder:hooks-create <hook-name> <event-type> "<action>"
+(Wait for completion)
+
+Update TodoWrite: Mark "Build hooks" as completed
+
+Phase 7: Update Marketplace Configuration
 
 Run marketplace sync script:
 
@@ -91,7 +103,7 @@ This registers the plugin in marketplace.json
 
 Update TodoWrite: Mark "Update marketplace.json" as completed
 
-Phase 7: Register in Settings
+Phase 8: Register in Settings
 
 Read current settings and add plugin commands:
 
@@ -108,7 +120,7 @@ Use Edit tool to insert after last plugin entry.
 
 Update TodoWrite: Mark "Update settings.json" as completed
 
-Phase 8: Run Comprehensive Validation
+Phase 9: Run Comprehensive Validation
 
 Run /domain-plugin-builder:validate $ARGUMENTS
 (Wait for validation to complete)
@@ -128,7 +140,7 @@ If validation fails:
 
 Update TodoWrite: Mark "Run validation" as completed
 
-Phase 9: Git Commit and Push
+Phase 10: Git Commit and Push
 
 Stage all plugin files:
 
@@ -153,7 +165,7 @@ Push to GitHub:
 
 Update TodoWrite: Mark "Git commit and push" as completed
 
-Phase 10: Display Summary
+Phase 11: Display Summary
 
 Count components:
 
