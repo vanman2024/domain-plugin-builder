@@ -1,0 +1,23 @@
+{
+  "name": "domain-plugin-builder",
+  "version": "1.0.0",
+  "description": "Universal plugin builder for Claude Code - creates plugins, agents, commands, and skills with proper structure and validation",
+  "author": {
+    "name": "vanman2024",
+    "email": "noreply@domain-plugin-builder.dev"
+  },
+  "homepage": "https://github.com/vanman2024/domain-plugin-builder",
+  "repository": "https://github.com/vanman2024/domain-plugin-builder",
+  "license": "MIT",
+  "keywords": [
+    "meta-framework",
+    "plugin-builder",
+    "agent-builder",
+    "command-builder",
+    "skill-builder",
+    "development",
+    "tooling",
+    "validation",
+    "templates"
+  ]
+}
