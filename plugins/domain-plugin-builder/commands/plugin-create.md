@@ -28,6 +28,9 @@ Phase 3: Create Directory Structure
 !{bash mkdir -p plugins/$ARGUMENTS/commands}
 !{bash mkdir -p plugins/$ARGUMENTS/agents}
 !{bash mkdir -p plugins/$ARGUMENTS/skills}
+!{bash mkdir -p plugins/$ARGUMENTS/hooks}
+!{bash mkdir -p plugins/$ARGUMENTS/scripts}
+!{bash mkdir -p plugins/$ARGUMENTS/docs}
 
 Phase 4: Create plugin.json Manifest
 
@@ -47,11 +50,28 @@ Write plugins/$ARGUMENTS/.claude-plugin/plugin.json:
 }
 ```
 
-Phase 5: Create README.md
+Phase 5: Create Placeholder hooks.json
+
+Write plugins/$ARGUMENTS/hooks/hooks.json:
+
+```json
+{
+  "PreToolUse": [],
+  "PostToolUse": [],
+  "UserPromptSubmit": [],
+  "SessionStart": [],
+  "SessionEnd": [],
+  "PreCompact": []
+}
+```
+
+This is a placeholder. Use /domain-plugin-builder:hooks-create to add hooks.
+
+Phase 6: Create README.md
 
 Write plugins/$ARGUMENTS/README.md with basic plugin info.
 
-Phase 6: Summary
+Phase 7: Summary
 
 Display:
 - Plugin created: $ARGUMENTS

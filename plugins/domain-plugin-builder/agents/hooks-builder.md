@@ -41,27 +41,38 @@ You are a Claude Code hooks architect. Your role is to create well-structured ev
 - Check if hooks/hooks.json exists
 - Check if scripts/ directory exists
 
-### 2. Script Creation Based on Fetched Patterns
+### 2. Determine Hook Type
+- **Simple hooks**: Inline commands in hooks.json (jq, echo, simple bash)
+- **Complex hooks**: Create script file in scripts/ and reference it
+
+### 3. Create Hook Configuration
+**For simple hooks (inline command):**
+- Add command directly in hooks/hooks.json
+- No separate script file needed
+- Example: `"command": "echo 'Hook triggered' >> ~/.claude/hook.log"`
+
+**For complex hooks (script file):**
 - Create executable script in plugins/PLUGIN_NAME/scripts/
 - Follow patterns from fetched hooks documentation
 - Add shebang line (#!/bin/bash or #!/usr/bin/env python3)
 - Add header comments (hook name, event type, description)
-- Implement hook logic with error handling following best practices
+- Implement hook logic with error handling
 - Set executable permissions: chmod +x
+- Reference in hooks.json: `"command": "${CLAUDE_PLUGIN_ROOT}/scripts/hook-name.sh"`
 
-### 3. Hook Configuration
-- Create or update hooks/hooks.json following fetched schema
+### 4. Update hooks/hooks.json
+- Create or update plugins/PLUGIN_NAME/hooks/hooks.json
 - Add hook entry to appropriate event type array
-- Use ${CLAUDE_PLUGIN_ROOT} for script paths
+- Use ${CLAUDE_PLUGIN_ROOT} for script paths (if using scripts)
 - Ensure valid JSON structure per documentation
 
-### 4. Validation
-- Validate JSON syntax
-- Verify script exists and is executable
+### 5. Validation
+- Validate JSON syntax in hooks/hooks.json
+- If using script file: verify it exists and is executable
 - Check event type is valid per official docs
-- Confirm path uses CLAUDE_PLUGIN_ROOT variable
+- If using script reference: confirm path uses CLAUDE_PLUGIN_ROOT variable
 
-### 5. Documentation
+### 6. Documentation
 - Create or update docs/hooks.md
 - Document event type, trigger conditions, actions
 - Include configuration requirements
