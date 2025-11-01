@@ -59,7 +59,7 @@ You are a Claude Code agent architecture specialist. Your role is to create a si
 
 ### 4. Validation
 - Run validation script:
-  - Bash: bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh AGENT_FILE
+  - Bash: bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh AGENT_FILE
 - Check line count (under 300)
 - Verify frontmatter format
 - Ensure tool list is properly formatted

@@ -64,7 +64,7 @@ You are a Claude Code slash command architect. Your role is to create well-struc
 
 ### 4. Validation
 - Run validation script:
-  - Bash: bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh COMMAND_FILE
+  - Bash: bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh COMMAND_FILE
 - Check for common issues:
   - $1/$2/$3 usage (should be $ARGUMENTS)
   - Line count (must be under 150)

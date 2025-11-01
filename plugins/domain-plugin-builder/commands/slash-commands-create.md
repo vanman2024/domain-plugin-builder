@@ -94,7 +94,7 @@ Phase 5: Validation
 
 For each created command:
 
-!{bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh plugins/$PLUGIN_NAME/commands/$CMD_NAME.md}
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh plugins/$PLUGIN_NAME/commands/$CMD_NAME.md}
 
 If validation fails, read errors and fix issues.
 

@@ -485,6 +485,41 @@ Commands follow one of four patterns based on complexity:
 
 ---
 
+## 🚨 CRITICAL: Script Paths Must Be Absolute
+
+### ALWAYS Use Global Absolute Paths
+
+**NEVER use relative paths for validation scripts or any framework scripts!**
+
+Agents and commands can run from ANY directory (different projects, marketplaces, etc.). Relative paths like `plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh` will FAIL when executed from a different location.
+
+**WRONG (Relative Paths):**
+```bash
+bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh
+bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh
+bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh
+```
+
+**CORRECT (Absolute Paths):**
+```bash
+bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh
+bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh
+bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh
+bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent-references.sh
+bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/sync-marketplace.sh
+```
+
+### Why This Matters
+
+- Framework scripts live in global `~/.claude/plugins/marketplaces/domain-plugin-builder/`
+- Agents/commands execute from different working directories
+- Relative paths break when not in domain-plugin-builder directory
+- Absolute paths work from ANYWHERE in the system
+
+**CRITICAL: All framework script references MUST use absolute paths starting with `~/` or `$HOME/`**
+
+---
+
 ## 🔍 Common Mistakes to Avoid
 
 1. **Running slash commands in parallel** - They queue up and don't execute
@@ -501,6 +536,7 @@ Commands follow one of four patterns based on complexity:
 12. **Not loading templates** - Must load before building
 13. **Agents over 300 lines** - Use WebFetch instead of inline docs
 14. **Skipping validation** - Run validation scripts before committing
+15. **Using relative paths for scripts** - MUST use absolute paths (`~/.claude/plugins/marketplaces/...`)
 
 ---
 

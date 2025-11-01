@@ -121,7 +121,7 @@ Phase 7: Update Marketplace Configuration
 
 Run marketplace sync script:
 
-!{bash plugins/domain-plugin-builder/skills/build-assistant/scripts/sync-marketplace.sh}
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/sync-marketplace.sh}
 
 This registers the plugin in marketplace.json
 

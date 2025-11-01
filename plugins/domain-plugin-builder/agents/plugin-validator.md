@@ -63,6 +63,7 @@ Your validation should prioritize plugin functionality and framework compliance 
 7. **Validation Scripts**:
    - Run `validate-command.sh` on all commands
    - Run `validate-agent.sh` on all agents
+   - Run `validate-agent-references.sh` on plugin to verify all agent references exist
    - Run `validate-plugin.sh` on plugin structure
    - All validation scripts must pass
    - No hardcoded paths (absolute paths)
@@ -95,7 +96,7 @@ This provides the standards against which to validate the plugin, including hook
 
 ### Step 1: Run Validation Scripts
 
-- Execute: `bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-all.sh <plugin-path>`
+- Execute: `bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-all.sh <plugin-path>`
 - Review all outputs from validation scripts
 - Note any failures or warnings
 
@@ -115,11 +116,13 @@ For each command in `commands/`:
 - Verify `@` symbol for file loading
 - Check line count
 - **Validate agent references in Task() calls:**
-  - Extract all `subagent_type="..."` values from command
-  - Check each agent exists: `ls agents/{agent-name}.md`
-  - Verify agent name format matches plugin structure
-  - Confirm no references to non-existent agents
+  - Execute: `bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent-references.sh <plugin-path>`
+  - This script extracts all `subagent_type="..."` values from commands
+  - Checks each agent exists: `ls agents/{agent-name}.md`
+  - Verifies agent name format matches plugin structure
+  - Confirms no references to non-existent agents
   - Example: `subagent_type="domain-plugin-builder:slash-commands-builder"` requires `agents/slash-commands-builder.md` to exist
+  - Report any missing agents as CRITICAL ISSUES
 
 ### Step 4: Validate Agents
 
@@ -275,16 +278,16 @@ Use these scripts during validation:
 
 ```bash
 # Validate entire plugin
-bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-all.sh <plugin-path>
+bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-all.sh <plugin-path>
 
 # Validate individual command
-bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh <command-file>
+bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh <command-file>
 
 # Validate individual agent
-bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh <agent-file>
+bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh <agent-file>
 
 # Validate plugin structure
-bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh <plugin-path>
+bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh <plugin-path>
 ```
 
 ## Success Criteria

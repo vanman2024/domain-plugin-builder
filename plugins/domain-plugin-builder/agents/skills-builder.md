@@ -109,7 +109,7 @@ You are a Claude Code skill architecture specialist. Your role is to design and 
 
 ### 5. Verification
 - Validate skill structure using framework validation:
-  - Bash: bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh
+  - Bash: bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh
 - Test scripts execute correctly with sample inputs
 - Verify templates generate valid code
 - Check frontmatter follows schema
