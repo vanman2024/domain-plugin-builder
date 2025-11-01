@@ -1,5 +1,5 @@
 ---
-allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, AskUserQuestion, TodoWrite
+allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite
 description: Create slash command(s) following standardized structure - supports parallel creation for 3+ commands
 argument-hint: <command-name> "<description>" [--plugin=name] | <cmd-1> "<desc-1>" <cmd-2> "<desc-2>" ... [--plugin=name]
 ---
@@ -14,38 +14,46 @@ Parse $ARGUMENTS to extract:
 - Command names and descriptions
 - Plugin name (from --plugin=name or detect from pwd)
 
-If plugin not specified, detect from current directory:
+If plugin not specified:
 
 !{bash basename $(pwd)}
 
 Store plugin name for Phase 2.
 
-Phase 2: Count Commands and Choose Execution Mode
+Phase 2: Load Templates
 
-Count how many commands were requested.
-
-Load template for reference:
+Load command template for reference:
 
 @plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
 
-Execution modes:
-- 1 command: Direct creation
-- 2 commands: Sequential creation
-- 3+ commands: Parallel creation (invoke multiple slash-commands-builder agents)
+Phase 3: Parse Arguments & Determine Mode
 
-Phase 3: Create Commands
+Actions:
 
-**Mode 1: Single Command (1 command)**
+Use bash to parse $ARGUMENTS and count how many commands are being requested:
+
+!{bash echo "$ARGUMENTS" | grep -oE '<[^>]+>' | wc -l}
+
+Store the count. Then extract each command specification:
+- If count = 1: Single command mode - extract <command-name> and "<description>"
+- If count = 2: Two commands mode - extract both <cmd-N> "<desc-N>" pairs
+- If count >= 3: Multiple commands mode - extract all <cmd-N> "<desc-N>" pairs
+
+Phase 4: Create Commands
+
+Actions:
+
+**For Single Command:**
 
 Task(description="Create command", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="You are the slash-commands-builder agent. Create a complete slash command.
 
-Command name: <name-from-args>
-Description: <description-from-args>
-Plugin: <plugin-name>
+Command name: $CMD_NAME
+Description: $DESCRIPTION
+Plugin: $PLUGIN_NAME
 
 Load template: plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
 
-Create command file at: plugins/<plugin-name>/commands/<command-name>.md
+Create command file at: plugins/$PLUGIN_NAME/commands/$CMD_NAME.md
 
 Follow framework structure:
 - Frontmatter with description, argument-hint, allowed-tools
@@ -54,114 +62,58 @@ Follow framework structure:
 - Use $ARGUMENTS for all argument references
 - Validate with validation script
 
-Deliverable: Complete validated command file at plugins/<plugin-name>/commands/<command-name>.md")
-
-**Mode 2: Sequential (2 commands)**
-
-For each command sequentially:
-
-Task(description="Create command N", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="<same structure as Mode 1>")
-
-Wait for completion, then create next command.
-
-**Mode 3: Parallel (3+ commands)**
-
-Create TODO list:
-
-TodoWrite with list of all commands to create.
-
-Launch ALL slash-commands-builder agents IN PARALLEL (all at once):
-
-For command 1:
-Task(description="Create <cmd-1-name>", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="You are the slash-commands-builder agent. Create a complete slash command.
-
-Command name: <cmd-1-name>
-Description: <cmd-1-desc>
-Plugin: <plugin-name>
-
-Load template: plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
-
-Create command file at: plugins/<plugin-name>/commands/<cmd-1-name>.md
-
-Follow framework structure:
-- Frontmatter: description, argument-hint, allowed-tools
-- Goal → Actions → Phase pattern
-- Keep under 150 lines
-- Use $ARGUMENTS not numbered args
-- Validate with validation script
-
 Deliverable: Complete validated command file")
 
-For command 2:
-Task(description="Create <cmd-2-name>", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="You are the slash-commands-builder agent. Create a complete slash command.
+**For Two Commands:**
 
-Command name: <cmd-2-name>
-Description: <cmd-2-desc>
-Plugin: <plugin-name>
+Run them sequentially:
 
-Load template: plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
+Task(description="Create command 1", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_1 - $DESC_1 [same prompt structure as single command above]")
 
-Create command file at: plugins/<plugin-name>/commands/<cmd-2-name>.md
+(Wait for completion)
 
-Follow framework structure:
-- Frontmatter: description, argument-hint, allowed-tools
-- Goal → Actions → Phase pattern
-- Keep under 150 lines
-- Use $ARGUMENTS not numbered args
-- Validate with validation script
+Task(description="Create command 2", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_2 - $DESC_2 [same prompt structure as single command above]")
 
-Deliverable: Complete validated command file")
+**For Multiple Commands (3+):**
 
-For command 3:
-Task(description="Create <cmd-3-name>", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="You are the slash-commands-builder agent. Create a complete slash command.
+Launch multiple slash-commands-builder agents IN PARALLEL (all at once) using multiple Task() calls in ONE response:
 
-Command name: <cmd-3-name>
-Description: <cmd-3-desc>
-Plugin: <plugin-name>
+Task(description="Create command 1", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_1 - $DESC_1 [same prompt structure as single command above]")
 
-Load template: plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
+Task(description="Create command 2", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_2 - $DESC_2 [same prompt structure as single command above]")
 
-Create command file at: plugins/<plugin-name>/commands/<cmd-3-name>.md
+Task(description="Create command 3", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_3 - $DESC_3 [same prompt structure as single command above]")
 
-Follow framework structure:
-- Frontmatter: description, argument-hint, allowed-tools
-- Goal → Actions → Phase pattern
-- Keep under 150 lines
-- Use $ARGUMENTS not numbered args
-- Validate with validation script
+[Continue for all N commands requested]
 
-Deliverable: Complete validated command file")
+Each Task() call happens in parallel. Parse $ARGUMENTS to determine how many Task() calls to make.
 
-Continue for all commands (cmd-4, cmd-5, etc.)
+Wait for ALL agents to complete before proceeding to Phase 5.
 
-Wait for ALL agents to complete before proceeding.
-
-Update TodoWrite as each completes.
-
-Phase 4: Validate All Commands
+Phase 5: Validation
 
 For each created command:
 
-!{bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh plugins/<plugin-name>/commands/<command-name>.md}
+!{bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh plugins/$PLUGIN_NAME/commands/$CMD_NAME.md}
 
 If validation fails, read errors and fix issues.
 
-Phase 5: Summary
+Phase 6: Summary
 
 Display results:
 
 **Commands Created:** <count>
-**Plugin:** <plugin-name>
-**Location:** plugins/<plugin-name>/commands/
+**Plugin:** $PLUGIN_NAME
+**Location:** plugins/$PLUGIN_NAME/commands/
 
 **Files:**
-- <command-1-name>.md - <description>
-- <command-2-name>.md - <description>
+- $CMD_1.md - $DESC_1
+- $CMD_2.md - $DESC_2
 - etc.
 
 **Validation:** All passed ✅
 
 **Next Steps:**
-- Test commands: /<plugin-name>:<command-name>
+- Test commands: /$PLUGIN_NAME:$CMD_NAME
 - Add to build workflow
 - Commit to git
