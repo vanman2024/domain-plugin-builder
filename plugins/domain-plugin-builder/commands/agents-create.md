@@ -19,11 +19,19 @@ Phase 1: Parse Arguments & Count Agents
 Goal: Extract agent specifications and determine execution mode
 
 Actions:
-- Parse $ARGUMENTS to count how many agents are being requested
-- Extract each agent specification (name, description, tools)
-- Determine execution mode:
-  - 1-2 agents: Sequential (one at a time)
-  - 3+ agents: Parallel (all at once using Task tool)
+
+Use bash to parse $ARGUMENTS and count how many agents are being requested:
+
+!{bash echo "$ARGUMENTS" | grep -oE '<[^>]+>' | wc -l}
+
+Store the count. Then extract each agent specification:
+- If count = 1: Single agent mode - extract <agent-name>, "<description>", and "<tools>"
+- If count = 2: Two agents mode - extract both <agent-N> "<desc-N>" "<tools-N>" sets
+- If count >= 3: Multiple agents mode - extract all <agent-N> "<desc-N>" "<tools-N>" sets
+
+Determine execution mode:
+- 1-2 agents: Sequential (one at a time)
+- 3+ agents: Parallel (all at once using Task tool)
 
 Phase 2: Load Templates
 Goal: Study framework patterns
@@ -72,11 +80,13 @@ Create agent file at: plugins/$PLUGIN_NAME/agents/$AGENT_1_NAME.md
 
 Deliverable: Complete validated agent file")
 
-Task(description="Create agent 2", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure for agent 2]")
+Task(description="Create agent 2", subagent_type="domain-plugin-builder:agents-builder", prompt="Create agent: $AGENT_2_NAME - $AGENT_2_DESC [same prompt structure as agent 1 above]")
 
-Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure for agent 3]")
+Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-builder", prompt="Create agent: $AGENT_3_NAME - $AGENT_3_DESC [same prompt structure as agent 1 above]")
 
-[Continue for all N agents]
+[Continue for all N agents requested]
+
+Each Task() call happens in parallel. Parse $ARGUMENTS to determine how many Task() calls to make.
 
 Wait for ALL agents to complete before proceeding to Phase 4.
 

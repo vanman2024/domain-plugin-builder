@@ -29,9 +29,18 @@ This provides context on:
 - Hook configuration structure
 - Script patterns and best practices
 
-Phase 3: Count Hooks and Choose Execution Mode
+Phase 3: Parse Arguments & Determine Mode
 
-Count how many hooks were requested.
+Actions:
+
+Use bash to parse $ARGUMENTS and count how many hooks are being requested:
+
+!{bash echo "$ARGUMENTS" | grep -oE '<[^>]+>' | wc -l}
+
+Store the count. Then extract each hook specification:
+- If count = 1: Single hook mode - extract <hook-name>, <event-type>, and "<action>"
+- If count = 2: Two hooks mode - extract both sets
+- If count >= 3: Multiple hooks mode - extract all sets
 
 Execution modes:
 - 1 hook: Direct creation
@@ -73,36 +82,28 @@ TodoWrite with list of all hooks to create.
 
 Launch ALL hooks-builder agents IN PARALLEL (all at once):
 
-Task(description="Create <hook-1-name>", subagent_type="domain-plugin-builder:hooks-builder", prompt="You are the hooks-builder agent. Create a complete hook.
+Task(description="Create hook 1", subagent_type="domain-plugin-builder:hooks-builder", prompt="You are the hooks-builder agent. Create a complete hook.
 
-Hook name: <hook-1-name>
-Event type: <hook-1-event>
-Action: <hook-1-action>
-Plugin: <plugin-name>
+Hook name: $HOOK_1
+Event type: $EVENT_1
+Action: $ACTION_1
+Plugin: $PLUGIN_NAME
 
 Create:
-- Script: plugins/<plugin-name>/scripts/<hook-1-name>.sh
-- Config: Update plugins/<plugin-name>/hooks/hooks.json
-- Docs: Update plugins/<plugin-name>/docs/hooks.md
+- Script: plugins/$PLUGIN_NAME/scripts/$HOOK_1.sh
+- Config: Update plugins/$PLUGIN_NAME/hooks/hooks.json
+- Docs: Update plugins/$PLUGIN_NAME/docs/hooks.md
 - Use ${CLAUDE_PLUGIN_ROOT} for all paths
 
 Deliverable: Complete hook")
 
-Task(description="Create <hook-2-name>", subagent_type="domain-plugin-builder:hooks-builder", prompt="You are the hooks-builder agent. Create a complete hook.
+Task(description="Create hook 2", subagent_type="domain-plugin-builder:hooks-builder", prompt="Create hook: $HOOK_2 - Event: $EVENT_2 [same prompt structure as hook 1 above]")
 
-Hook name: <hook-2-name>
-Event type: <hook-2-event>
-Action: <hook-2-action>
-Plugin: <plugin-name>
+Task(description="Create hook 3", subagent_type="domain-plugin-builder:hooks-builder", prompt="Create hook: $HOOK_3 - Event: $EVENT_3 [same prompt structure as hook 1 above]")
 
-Create:
-- Script: plugins/<plugin-name>/scripts/<hook-2-name>.sh
-- Config: Update plugins/<plugin-name>/hooks/hooks.json
-- Docs: Update plugins/<plugin-name>/docs/hooks.md
+[Continue for all N hooks requested]
 
-Deliverable: Complete hook")
-
-Continue for all hooks (hook-3, hook-4, etc.)
+Each Task() call happens in parallel. Parse $ARGUMENTS to determine how many Task() calls to make.
 
 Wait for ALL agents to complete before proceeding.
 
