@@ -40,6 +40,60 @@ git clone https://github.com/vanman2024/domain-plugin-builder.git
 /domain-plugin-builder:skills-create my-skill "Description"
 ```
 
+## 🌍 Portable Architecture
+
+**The domain-plugin-builder works from ANY project directory!**
+
+### Global Resources
+
+All framework docs and scripts use absolute paths starting with `~/`:
+
+```
+~/.claude/
+├── docs/
+│   └── frameworks/
+│       ├── claude/               # Architectural concepts (skills vs agents vs commands)
+│       │   ├── component-decision-framework.md
+│       │   └── agent-skills-architecture.md
+│       └── plugins/              # Plugin structure reference
+│           ├── claude-code-plugin-structure.md
+│           ├── plugin-marketplaces.md
+│           └── tech-stack-marketplaces.md
+└── plugins/marketplaces/domain-plugin-builder/
+    └── plugins/domain-plugin-builder/
+        ├── commands/             # Slash commands
+        ├── agents/               # Specialized agents
+        └── skills/
+            └── build-assistant/
+                ├── scripts/      # Validation & helper scripts
+                └── templates/    # Component templates
+```
+
+### Why This Matters
+
+✅ **Build plugins in ANY project:**
+- Recruitment app → `/recruitment-app/` ✓
+- Marketing site → `/marketing-site/` ✓
+- Internal tools → `/internal-tools/` ✓
+- ANY directory → Works!
+
+✅ **Slash commands reference docs portably:**
+```markdown
+@~/.claude/docs/frameworks/claude/component-decision-framework.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/...
+```
+
+✅ **Scripts work from anywhere:**
+```bash
+# Run from ANY directory:
+bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh
+```
+
+✅ **Portable across users and machines:**
+- Uses `~/` not `/home/username/`
+- Uses `$HOME` in scripts
+- No hardcoded paths
+
 ## 📦 What's Included
 
 ### Slash Commands
