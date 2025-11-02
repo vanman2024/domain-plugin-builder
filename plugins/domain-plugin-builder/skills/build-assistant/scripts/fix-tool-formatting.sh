@@ -5,7 +5,8 @@ set -euo pipefail
 # Converts ALL formats to horizontal comma-separated without quotes
 # Removes incorrect MCP wildcards and brackets
 
-MARKETPLACE_ROOT="/home/gotime2022/.claude/plugins/marketplaces/ai-dev-marketplace"
+# Portable: Use argument or current directory (works from any location)
+MARKETPLACE_ROOT="${1:-$(pwd)}"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "🔧 Fixing Tool Formatting"

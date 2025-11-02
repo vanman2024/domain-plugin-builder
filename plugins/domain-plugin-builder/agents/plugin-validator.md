@@ -55,8 +55,8 @@ Your validation should prioritize plugin functionality and framework compliance 
    - Consistent agent structure across all agents
 
 6. **SDK/Framework References**:
-   - For SDK plugins: References to `@plugins/domain-plugin-builder/docs/sdks/<sdk-name>-documentation.md` exist
-   - For Framework plugins: References to framework docs exist
+   - For SDK plugins: References to `@~/.claude/docs/sdks/<sdk-name>-documentation.md` exist (if SDK docs available)
+   - For Framework plugins: References to `@~/.claude/docs/frameworks/` exist
    - WebFetch URLs point to official documentation
    - Documentation loading uses `@` symbol correctly
 

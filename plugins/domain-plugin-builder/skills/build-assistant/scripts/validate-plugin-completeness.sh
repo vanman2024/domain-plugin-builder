@@ -3,7 +3,8 @@
 
 set -e
 
-PLUGIN_DIR="${1:-/home/gotime2022/.claude/plugins/marketplaces/ai-dev-marketplace/plugins/website-builder}"
+# Use current directory if no argument provided (portable - works from any location)
+PLUGIN_DIR="${1:-$(pwd)}"
 MIN_EXAMPLES=3
 MIN_SCRIPTS=3
 MIN_TEMPLATES_PER_DIR=2

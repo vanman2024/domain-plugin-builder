@@ -3,7 +3,8 @@
 # List all available agents across plugins and global directory
 # Searches: plugins/*/agents/*.md and ~/.claude/agents/*.md
 
-MARKETPLACE_DIR="/home/gotime2022/Projects/multiagent-marketplace"
+# Portable: Use current directory or argument (works from any location)
+MARKETPLACE_DIR="${1:-$(pwd)}"
 GLOBAL_AGENTS_DIR="$HOME/.claude/agents"
 
 echo "=== Available Agents ==="
