@@ -78,8 +78,11 @@ Deliverable: Complete validated agent file")
 
 **For Multiple Agents (2+):**
 
-Launch multiple agents-builder agents using multiple Task() calls in ONE message:
+**CRITICAL: Send ALL Task() calls in a SINGLE MESSAGE for parallel execution!**
 
+Example for 3 agents - send all at once:
+
+```
 Task(description="Create agent 1", subagent_type="domain-plugin-builder:agents-builder", prompt="You are the agents-builder agent. Create a complete agent following framework templates.
 
 Agent name: $AGENT_1_NAME
@@ -90,24 +93,23 @@ Load templates:
 - Read: plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md
 
 Create agent file at: plugins/$PLUGIN_NAME/agents/$AGENT_1_NAME.md
-- Frontmatter with name, description, model: inherit, color: yellow, tools
+- Frontmatter with name, description, model: inherit, color (determine from description), tools
 - Include progressive WebFetch for documentation
 - Keep under 300 lines
 - Validate with validation script
 
 Deliverable: Complete validated agent file")
 
-Task(description="Create agent 2", subagent_type="domain-plugin-builder:agents-builder", prompt="Create agent: $AGENT_2_NAME - $AGENT_2_DESC [same prompt structure as agent 1 above]")
+Task(description="Create agent 2", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure with $AGENT_2_NAME, $AGENT_2_DESC, $AGENT_2_TOOLS]")
 
-Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-builder", prompt="Create agent: $AGENT_3_NAME - $AGENT_3_DESC [same prompt structure as agent 1 above]")
+Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure with $AGENT_3_NAME, $AGENT_3_DESC, $AGENT_3_TOOLS]")
 
-[Continue for all N agents requested]
+[Continue for all N agents from $ARGUMENTS]
+```
 
-Each Task() call happens in parallel when there are 2+ agents. For single agent, just one Task() call.
+**DO NOT wait between Task() calls - send them ALL together in one response!**
 
-Parse $ARGUMENTS to determine how many Task() calls to make.
-
-Wait for ALL agents to complete before proceeding to Phase 4.
+The agents will run in parallel automatically. Only proceed to Phase 4 after all Task() calls complete.
 
 Phase 4: Git Commit and Push
 Goal: Save work immediately

@@ -81,21 +81,40 @@ Deliverable: Complete validated command file")
 
 **For Multiple Commands (2+):**
 
-Launch multiple slash-commands-builder agents using multiple Task() calls in ONE message:
+**CRITICAL: Send ALL Task() calls in a SINGLE MESSAGE for parallel execution!**
 
-Task(description="Create command 1", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_1 - $DESC_1 [same prompt structure as single command above]")
+Example for 3 commands - send all at once:
 
-Task(description="Create command 2", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_2 - $DESC_2 [same prompt structure as single command above]")
+```
+Task(description="Create command 1", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="You are the slash-commands-builder agent. Create a complete slash command.
 
-Task(description="Create command 3", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_3 - $DESC_3 [same prompt structure as single command above]")
+Command name: $CMD_1_NAME
+Description: $CMD_1_DESC
+Plugin: $PLUGIN_NAME
 
-[Continue for all N commands requested]
+Load template: plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
 
-Each Task() call happens in parallel when there are 2+ commands. For single command, just one Task() call.
+Create command file at: plugins/$PLUGIN_NAME/commands/$CMD_1_NAME.md
 
-Parse $ARGUMENTS to determine how many Task() calls to make.
+Follow framework structure:
+- Frontmatter with description, argument-hint, allowed-tools
+- Goal → Actions → Phase pattern
+- Keep under 150 lines
+- Use $ARGUMENTS for all argument references
+- Validate with validation script
 
-Wait for ALL agents to complete before proceeding to Phase 5.
+Deliverable: Complete validated command file")
+
+Task(description="Create command 2", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="[Same structure with $CMD_2_NAME, $CMD_2_DESC]")
+
+Task(description="Create command 3", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="[Same structure with $CMD_3_NAME, $CMD_3_DESC]")
+
+[Continue for all N commands from $ARGUMENTS]
+```
+
+**DO NOT wait between Task() calls - send them ALL together in one response!**
+
+The agents will run in parallel automatically. Only proceed to Phase 5 after all Task() calls complete.
 
 Phase 5: Validation
 
