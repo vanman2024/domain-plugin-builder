@@ -51,7 +51,7 @@ Goal: Study framework patterns
 
 Actions:
 - Load agent template:
-  - @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md
+  - @agent-with-phased-webfetch.md
 - Determine plugin location from context (default: domain-plugin-builder)
 
 Phase 3: Create Agent(s)

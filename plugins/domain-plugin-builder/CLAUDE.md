@@ -282,8 +282,8 @@ Before building components, commands MUST load relevant templates:
 ```markdown
 Phase 1: Load Templates
 
-@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
-@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/component-decision-framework.md
+@template-command-patterns.md
+@component-decision-framework.md
 ```
 
 **Example for agent creation:**

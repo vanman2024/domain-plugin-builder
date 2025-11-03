@@ -37,7 +37,7 @@ Phase 2: Load Templates
 
 Load command template for reference:
 
-@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
+@template-command-patterns.md
 
 Phase 3: Parse Arguments & Determine Mode
 

@@ -97,7 +97,7 @@ You are a Claude Code agent architecture specialist. Your role is to create a si
 ### Color Determination (CRITICAL)
 
 Load color decision framework:
-@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/AGENT-COLOR-DECISION.md
+@agent-color-decision.md
 
 **Determine color based on agent's PRIMARY action verb:**
 

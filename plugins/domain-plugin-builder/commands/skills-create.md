@@ -26,7 +26,7 @@ Goal: Load comprehensive component decision framework to understand WHEN to use 
 
 Actions:
 - Load the complete component decision framework:
-  @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/component-decision-framework.md
+  @component-decision-framework.md
 - This provides critical understanding of:
   - 🚨 START WITH COMMANDS FIRST (not skills!)
   - Commands are the primitive (closest to prompts)
