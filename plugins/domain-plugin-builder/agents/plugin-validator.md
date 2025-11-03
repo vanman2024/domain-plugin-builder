@@ -72,7 +72,7 @@ Your validation should prioritize plugin functionality and framework compliance 
 
 6. **SDK/Framework References**:
    - For SDK plugins: References to `@~/.claude/docs/sdks/<sdk-name>-documentation.md` exist (if SDK docs available)
-   - For Framework plugins: References to `@~/.claude/docs/frameworks/` exist
+   - For Framework plugins: References to `@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/` exist
    - WebFetch URLs point to official documentation
    - Documentation loading uses `@` symbol correctly
 
