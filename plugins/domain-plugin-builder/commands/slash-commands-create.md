@@ -1,5 +1,5 @@
 ---
-allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite
+allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite, Skill
 description: Create slash command(s) following standardized structure - supports parallel creation for 3+ commands
 argument-hint: <command-name> "<description>" [--plugin=name] | <cmd-1> "<desc-1>" <cmd-2> "<desc-2>" ... [--plugin=name]
 ---

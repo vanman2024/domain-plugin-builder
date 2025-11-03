@@ -1,5 +1,5 @@
 ---
-allowed-tools: Task, Read, Write, Bash
+allowed-tools: Task, Read, Write, Bash, Skill
 description: Create agent(s) using templates - supports parallel creation for 3+ agents
 argument-hint: <agent-name> "<description>" "<tools>" | <agent-1> "<desc-1>" "<tools-1>" <agent-2> "<desc-2>" "<tools-2>" ...
 ---
