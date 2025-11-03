@@ -52,32 +52,34 @@ Expected: domain-plugin-builder directory
 
 Phase 2: Create Plugin Scaffold
 
-Run /domain-plugin-builder:plugin-create $ARGUMENTS
-(Wait for completion)
+**Use SlashCommand tool to invoke the command:**
+
+SlashCommand(/domain-plugin-builder:plugin-create $ARGUMENTS)
 
 This creates:
 - Directory structure
 - plugin.json manifest
 - README.md
 
-Update TodoWrite: Mark "Create plugin scaffold" as completed
+Wait for the command to complete, then update TodoWrite: Mark "Create plugin scaffold" as completed
 
 Phase 3: Build Commands
 
 Ask user how many commands and what they should do.
 
-Collect ALL command specifications, then invoke slash-commands-create ONCE with all of them:
+Collect ALL command specifications, then use SlashCommand tool to invoke slash-commands-create ONCE with all of them:
 
-Run /domain-plugin-builder:slash-commands-create <cmd-1> "<desc-1>" <cmd-2> "<desc-2>" <cmd-3> "<desc-3>" ... <cmd-N> "<desc-N>"
+**Use SlashCommand tool:**
 
-**CRITICAL:** Pass ALL commands in a SINGLE invocation. Do NOT call the command multiple times.
+SlashCommand(/domain-plugin-builder:slash-commands-create <cmd-1> "<desc-1>" <cmd-2> "<desc-2>" <cmd-3> "<desc-3>" ... <cmd-N> "<desc-N>")
+
+**CRITICAL:** Pass ALL commands in a SINGLE SlashCommand invocation. Do NOT call multiple times.
 
 Examples:
-- 1 command: /domain-plugin-builder:slash-commands-create deploy "Deploy application to production"
-- 3 commands: /domain-plugin-builder:slash-commands-create init "Initialize project" build "Build the application" deploy "Deploy to production"
-- 5 commands: /domain-plugin-builder:slash-commands-create cmd1 "desc1" cmd2 "desc2" cmd3 "desc3" cmd4 "desc4" cmd5 "desc5"
+- 1 command: SlashCommand(/domain-plugin-builder:slash-commands-create deploy "Deploy application to production")
+- 3 commands: SlashCommand(/domain-plugin-builder:slash-commands-create init "Initialize project" build "Build the application" deploy "Deploy to production")
 
-(Wait for completion - the slash-commands-create will handle parallel execution internally)
+Wait for the command to complete (slash-commands-create handles parallel execution internally)
 
 Update TodoWrite: Mark "Build commands" as completed
 
@@ -85,17 +87,19 @@ Phase 4: Build Agents
 
 Ask user how many agents and what they should do.
 
-Collect ALL agent specifications, then invoke agents-create ONCE with all of them:
+Collect ALL agent specifications, then use SlashCommand tool to invoke agents-create ONCE with all of them:
 
-Run /domain-plugin-builder:agents-create <agent-1> "<desc-1>" "<tools-1>" <agent-2> "<desc-2>" "<tools-2>" ... <agent-N> "<desc-N>" "<tools-N>"
+**Use SlashCommand tool:**
 
-**CRITICAL:** Pass ALL agents in a SINGLE invocation. Do NOT call the command multiple times.
+SlashCommand(/domain-plugin-builder:agents-create <agent-1> "<desc-1>" "<tools-1>" <agent-2> "<desc-2>" "<tools-2>" ... <agent-N> "<desc-N>" "<tools-N>")
+
+**CRITICAL:** Pass ALL agents in a SINGLE SlashCommand invocation. Do NOT call multiple times.
 
 Examples:
-- 1 agent: /domain-plugin-builder:agents-create validator "Validate plugin structure" "Bash, Read, Grep, Glob"
-- 3 agents: /domain-plugin-builder:agents-create scanner "Scan code" "Read, Grep" tester "Run tests" "Bash, Read" deployer "Deploy app" "Bash, Read, Write"
+- 1 agent: SlashCommand(/domain-plugin-builder:agents-create validator "Validate plugin structure" "Bash, Read, Grep, Glob")
+- 3 agents: SlashCommand(/domain-plugin-builder:agents-create scanner "Scan code" "Read, Grep" tester "Run tests" "Bash, Read" deployer "Deploy app" "Bash, Read, Write")
 
-(Wait for completion - the agents-create will handle parallel execution internally)
+Wait for the command to complete (agents-create handles parallel execution internally)
 
 Update TodoWrite: Mark "Build agents" as completed
 
@@ -103,13 +107,15 @@ Phase 5: Build Skills
 
 Ask user how many skills needed.
 
-Collect ALL skill specifications, then invoke skills-create ONCE with all of them:
+Collect ALL skill specifications, then use SlashCommand tool to invoke skills-create ONCE with all of them:
 
-Run /domain-plugin-builder:skills-create <skill-1> "<desc-1>" <skill-2> "<desc-2>" ... <skill-N> "<desc-N>"
+**Use SlashCommand tool:**
 
-**CRITICAL:** Pass ALL skills in a SINGLE invocation. Do NOT call the command multiple times.
+SlashCommand(/domain-plugin-builder:skills-create <skill-1> "<desc-1>" <skill-2> "<desc-2>" ... <skill-N> "<desc-N>")
 
-(Wait for completion - the skills-create will handle parallel execution internally)
+**CRITICAL:** Pass ALL skills in a SINGLE SlashCommand invocation. Do NOT call multiple times.
+
+Wait for the command to complete (skills-create handles parallel execution internally)
 
 Update TodoWrite: Mark "Build skills" as completed
 
@@ -117,16 +123,18 @@ Phase 6: Build Hooks
 
 Ask user how many hooks needed (optional - can skip).
 
-Collect ALL hook specifications, then invoke hooks-create ONCE with all of them:
+Collect ALL hook specifications, then use SlashCommand tool to invoke hooks-create ONCE with all of them:
 
-Run /domain-plugin-builder:hooks-create <hook-1> <event-1> "<action-1>" <hook-2> <event-2> "<action-2>" ... <hook-N> <event-N> "<action-N>"
+**Use SlashCommand tool:**
 
-**CRITICAL:** Pass ALL hooks in a SINGLE invocation. Do NOT call the command multiple times.
+SlashCommand(/domain-plugin-builder:hooks-create <hook-1> <event-1> "<action-1>" <hook-2> <event-2> "<action-2>" ... <hook-N> <event-N> "<action-N>")
+
+**CRITICAL:** Pass ALL hooks in a SINGLE SlashCommand invocation. Do NOT call multiple times.
 
 Example:
-- 3 hooks: /domain-plugin-builder:hooks-create pre-validation PreToolUse "Validate inputs" post-logging PostToolUse "Log tool usage" session-init SessionStart "Initialize session"
+- 3 hooks: SlashCommand(/domain-plugin-builder:hooks-create pre-validation PreToolUse "Validate inputs" post-logging PostToolUse "Log tool usage" session-init SessionStart "Initialize session")
 
-(Wait for completion - the hooks-create will handle parallel execution internally)
+Wait for the command to complete (hooks-create handles parallel execution internally)
 
 Update TodoWrite: Mark "Build hooks" as completed
 
