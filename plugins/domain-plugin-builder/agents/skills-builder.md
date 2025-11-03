@@ -2,7 +2,7 @@
 name: skills-builder
 description: Use this agent to build complex skills with proper structure, scripts, templates, examples, and deep understanding of how skills integrate with plugin systems and provide additional capabilities to other agents. Invoke when creating skills that require script orchestration, template management, or understanding of agent coordination patterns.
 model: inherit
-color: yellow
+color: blue
 tools: Bash, Read, Write, Edit, WebFetch, Skill
 ---
 

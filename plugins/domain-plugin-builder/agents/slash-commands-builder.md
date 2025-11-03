@@ -2,7 +2,7 @@
 name: slash-commands-builder
 description: Use this agent to create individual slash commands following standardized templates and patterns. Invoke when building commands that need proper structure, validation, and framework compliance.
 model: inherit
-color: yellow
+color: blue
 tools: Read, Write, Bash, Edit, Skill
 ---
 
