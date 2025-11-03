@@ -108,7 +108,18 @@ Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-b
 
 The agents will run in parallel automatically. Only proceed to Phase 4 after all Task() calls complete.
 
-Phase 4: Git Commit and Push
+Phase 4: Validation and Registration
+
+**Validate all created agents:**
+
+For each agent:
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md}
+
+If validation fails, read errors and fix issues.
+
+**Note:** Agents don't need settings.json registration (only commands do).
+
+Phase 5: Git Commit and Push
 Goal: Save work immediately
 
 Actions:

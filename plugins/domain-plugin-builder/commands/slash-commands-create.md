@@ -116,7 +116,22 @@ For each created command:
 
 If validation fails, read errors and fix issues.
 
-Phase 6: Summary
+Phase 6: Register in Settings
+
+**CRITICAL: Commands must be registered to be usable!**
+
+Run registration script to add all created commands to ~/.claude/settings.json:
+
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/register-commands-in-settings.sh $PLUGIN_NAME}
+
+This registers entries like:
+- SlashCommand(/$PLUGIN_NAME:$CMD_1)
+- SlashCommand(/$PLUGIN_NAME:$CMD_2)
+- etc.
+
+Verify registration by checking settings.json contains the new commands.
+
+Phase 7: Summary
 
 Display results:
 

@@ -111,7 +111,31 @@ Each Task() call happens in parallel. Parse $ARGUMENTS to determine how many Tas
 
 Wait for ALL agents to complete before proceeding to Phase 4.
 
-Phase 4: Git Commit and Push
+Phase 4: Validation
+
+**Validate all created skills:**
+
+For each skill:
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh plugins/$PLUGIN_NAME/skills/$SKILL_NAME}
+
+If validation fails, read errors and fix issues.
+
+Phase 5: Register Skills in Settings
+
+**CRITICAL: Skills must be registered to be usable!**
+
+Register all created skills in ~/.claude/settings.json:
+
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/register-skills-in-settings.sh $PLUGIN_NAME}
+
+This registers entries like:
+- Skill($PLUGIN_NAME:$SKILL_1)
+- Skill($PLUGIN_NAME:$SKILL_2)
+- etc.
+
+Verify skills are accessible with Skill tool.
+
+Phase 6: Git Commit and Push
 
 Actions:
 - Add all created skill directories to git:
@@ -129,15 +153,7 @@ EOF
 )"}
 - Push to GitHub: !{bash git push origin master}
 
-Phase 5: Register Skills in Settings
-
-Actions:
-- Register all created skills in ~/.claude/settings.json:
-  !{bash bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/register-skills-in-settings.sh PLUGIN_NAME}
-- Verify skills are accessible with Skill tool
-- Skills are now available for agents and commands to invoke with !{skill plugin:skill-name}
-
-Phase 6: Summary
+Phase 7: Summary
 
 Actions:
 - Display results from all agents (skill names, locations, validation status)
