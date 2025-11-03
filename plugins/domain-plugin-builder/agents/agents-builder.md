@@ -65,7 +65,7 @@ You are a Claude Code agent architecture specialist. Your role is to create a si
   - name: AGENT_NAME
   - description: "Use this agent to..."
   - model: inherit
-  - color: yellow
+  - color: (determine using color decision framework - see below)
   - tools: (comma-separated list)
 - Implement agent body:
   - For complex: Role, Core Competencies, Project Approach (5-6 phases with WebFetch), Decision Framework, Communication, Output Standards, Verification
@@ -94,8 +94,35 @@ You are a Claude Code agent architecture specialist. Your role is to create a si
 - **Simple agent**: Single focused task, 3-5 process steps, minimal documentation needs
 - **Complex agent**: Multi-phase workflow, progressive WebFetch, decision frameworks, 5-6 implementation phases
 
+### Color Determination (CRITICAL)
+
+Load color decision framework:
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/AGENT-COLOR-DECISION.md
+
+**Determine color based on agent's PRIMARY action verb:**
+
+Extract verb from description "Use this agent to [VERB]...":
+
+| Primary Verb | Color |
+|--------------|-------|
+| create, build, generate, scaffold | blue |
+| validate, verify, check, audit | yellow |
+| integrate, install, connect, setup | green |
+| design, architect, plan, specify | purple |
+| deploy, publish, release, upload | orange |
+| fix, refactor, adjust, optimize | red |
+| test, run, execute | pink |
+| analyze, scan, examine, assess | cyan |
+
+**Examples:**
+- "Use this agent to create endpoints" → create → **blue**
+- "Use this agent to validate schemas" → validate → **yellow**
+- "Use this agent to integrate Supabase" → integrate → **green**
+- "Use this agent to fix bugs" → fix → **red**
+
 ### Tool Selection
 - **Basic tools**: Bash, Read, Write, Edit for file operations
+- **Skill tool**: For loading framework knowledge and patterns
 - **Task tool**: For agents that orchestrate other agents
 - **MCP tools**: Only when specific integrations needed (mcp__server format)
 
