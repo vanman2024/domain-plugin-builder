@@ -114,7 +114,31 @@ Dan's complaint:
 
 **Skills should invoke commands, not replace them!**
 
-### The Pattern
+### How Skills Are Invoked (Two Ways)
+
+**1. Agents Auto-Discover Skills:**
+```markdown
+# Agent automatically loads skill for context
+!{skill worktree-manager}
+
+# Skill provides knowledge, scripts, templates
+# Agent uses that knowledge to accomplish task
+```
+
+**2. Slash Commands Load Skills:**
+```markdown
+# In /manage-worktrees command
+
+## Load Skills
+
+!{skill worktree-manager}
+
+# Command now has access to worktree knowledge
+```
+
+### How Skills Invoke Commands
+
+Once a skill is loaded, it can orchestrate slash commands:
 
 ```markdown
 # In SKILL.md for worktree-manager
@@ -136,6 +160,17 @@ SlashCommand(/list-worktrees)
 Use the SlashCommand tool:
 
 SlashCommand(/remove-worktree worktree-name)
+```
+
+**The Flow:**
+```
+Agent or Command
+  ↓ (invokes skill)
+!{skill worktree-manager}
+  ↓ (skill provides knowledge + orchestrates)
+SlashCommand(/create-worktree)
+  ↓ (command does actual work)
+Creates worktree
 ```
 
 **Skills orchestrate commands. Commands do the actual work.**
