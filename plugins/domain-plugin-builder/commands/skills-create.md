@@ -140,10 +140,19 @@ EOF
 )"}
 - Push to GitHub: !{bash git push origin master}
 
-Phase 5: Summary
+Phase 5: Register Skills in Settings
+
+Actions:
+- Register all created skills in ~/.claude/settings.json:
+  !{bash bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/register-skills-in-settings.sh PLUGIN_NAME}
+- Verify skills are accessible with Skill tool
+- Skills are now available for agents and commands to invoke with !{skill plugin:skill-name}
+
+Phase 6: Summary
 
 Actions:
 - Display results from all agents (skill names, locations, validation status)
 - Show git status (committed and pushed)
-- Show next steps for using the skills
+- Confirm skills registered in settings.json
+- Show how to invoke skills: !{skill plugin:skill-name}
 - If multiple skills created, list all successfully created skills
