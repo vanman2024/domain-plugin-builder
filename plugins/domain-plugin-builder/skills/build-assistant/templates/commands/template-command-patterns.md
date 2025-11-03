@@ -373,9 +373,9 @@ Use `!{bash command}` for inline execution:
 ```
 
 ### Script Execution
-Reference shared scripts:
+Reference shared scripts using ABSOLUTE paths:
 ```
-!{bash plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh}
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh}
 ```
 
 ### Agent Invocation
