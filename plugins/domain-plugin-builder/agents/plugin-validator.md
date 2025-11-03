@@ -193,10 +193,14 @@ For each agent in `agents/`:
 - Check component counts match (agents, commands, skills)
 
 **Check settings.json registration:**
-- Read `~/.claude/settings.local.json`
+- Read `~/.claude/settings.json`
 - Verify plugin slash commands are registered in permissions.allow array
 - Check for wildcard permission: `"SlashCommand(/<plugin-name>:*)"`
 - Verify individual command permissions if needed
+- **NEW:** Verify plugin skills are registered
+  - For each skill in plugins/<plugin-name>/skills/
+  - Check for entry: `"Skill(<plugin-name>:<skill-name>)"`
+  - Report missing skill registrations as CRITICAL ISSUE
 - Confirm plugin path is correctly registered
 
 ### Step 8: Verify Git Integration
@@ -256,7 +260,8 @@ Provide a comprehensive report:
 - Validation script failures
 - Security problems
 - Plugin not registered in marketplace.json
-- Plugin not registered in settings.json
+- Plugin commands not registered in settings.json
+- **NEW:** Plugin skills not registered in settings.json
 - Plugin files uncommitted to git
 - Invalid hooks.json structure
 - Hook scripts referenced but not found
