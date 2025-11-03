@@ -53,30 +53,27 @@ Actions:
 - Determine plugin location from context (default: domain-plugin-builder)
 
 Phase 3: Create Agent(s)
-Goal: Generate agent file(s) using Task() calls - works for 1 or multiple agents
+Goal: Generate agent file(s) efficiently
 
 Actions:
 
-**For Single Agent:**
+**Decision: 1-2 agents = build directly, 3+ agents = use Task() for parallel**
 
-Task(description="Create agent", subagent_type="domain-plugin-builder:agents-builder", prompt="You are the agents-builder agent. Create a complete agent following framework templates.
+**For 1-2 Agents:**
 
-Agent name: $AGENT_NAME
-Description: $DESCRIPTION
-Tools: $TOOLS
+Build directly without Task() calls:
 
-Load templates:
-- Read: plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md
+- Read template: @agent-with-phased-webfetch.md
+- Read color decision framework: @agent-color-decision.md
+- For each agent:
+  - Write plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md
+  - Include frontmatter with name, description, model: inherit, color (from decision framework), tools
+  - Include progressive WebFetch for documentation
+  - Keep under 300 lines
+  - Validate with validation script
+- No need for Task() overhead when building 1-2 agents
 
-Create agent file at: plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md
-- Frontmatter with name, description, model: inherit, color (determine from description), tools
-- Include progressive WebFetch for documentation
-- Keep under 300 lines
-- Validate with validation script
-
-Deliverable: Complete validated agent file")
-
-**For Multiple Agents (2+):**
+**For 3+ Agents:**
 
 **CRITICAL: Send ALL Task() calls in a SINGLE MESSAGE for parallel execution!**
 

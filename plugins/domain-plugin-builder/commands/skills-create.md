@@ -78,35 +78,24 @@ Tasks:
 Plugin: plugins/$PLUGIN_NAME
 Deliverable: List of recommended skills with descriptions")
 
-**For Single Skill:**
+**Decision: 1-2 skills = build directly, 3+ skills = use Task() for parallel**
 
-Task(description="Create skill", subagent_type="domain-plugin-builder:skills-builder", prompt="You are the skills-builder agent. Create a complete skill with functional scripts, templates, and examples.
+**For 1-2 Skills:**
 
-Skill name: $SKILL_NAME
-Description: $DESCRIPTION
+Build directly without Task() calls:
 
-Architectural context from component-decision-framework.md:
-@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/component-decision-framework.md
+- Read component decision framework: @component-decision-framework.md
+- Read skill template: @SKILL.md.template
+- For each skill:
+  - Create directory: plugins/$PLUGIN_NAME/skills/$SKILL_NAME/
+  - Write SKILL.md with comprehensive documentation
+  - Create scripts/ with functional scripts
+  - Create templates/ with template files
+  - Create examples/ with working examples
+  - Validate the skill structure
+- No need for Task() overhead when building 1-2 skills
 
-Tasks:
-1. Read detailed skills documentation via WebFetch:
-   - https://docs.claude.com/en/docs/agents-and-tools/agent-skills/quickstart
-   - https://docs.claude.com/en/docs/agents-and-tools/agent-skills/best-practices
-   - https://docs.claude.com/en/docs/claude-code/skills
-   - https://docs.claude.com/en/docs/claude-code/slash-commands#skills-vs-slash-commands
-   - https://github.com/anthropics/claude-cookbooks/tree/main/skills
-   - https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
-2. Load local templates from ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/skills/
-3. Create complete skill structure:
-   - SKILL.md with comprehensive documentation
-   - scripts/ with FUNCTIONAL scripts (NOT placeholders)
-   - templates/ with actual template files
-   - examples/ with working examples
-4. Validate the skill structure
-
-Deliverable: Complete functional skill ready to use")
-
-**For Multiple Skills:**
+**For 3+ Skills:**
 
 Launch multiple skills-builder agents IN PARALLEL (all at once) using multiple Task() calls in ONE response:
 

@@ -56,30 +56,22 @@ Phase 4: Create Commands
 
 Actions:
 
-**ALWAYS use Task() calls - whether creating 1 or 10 commands**
+**Decision: 1-2 commands = build directly, 3+ commands = use Task() for parallel**
 
-**For Single Command:**
+**For 1-2 Commands:**
 
-Task(description="Create command", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="You are the slash-commands-builder agent. Create a complete slash command.
+Build directly without Task() calls:
 
-Command name: $CMD_NAME
-Description: $DESCRIPTION
-Plugin: $PLUGIN_NAME
+- Read template: @template-command-patterns.md
+- For each command:
+  - Write plugins/$PLUGIN_NAME/commands/$CMD_NAME.md
+  - Include frontmatter with description, argument-hint, allowed-tools
+  - Use Goal → Actions → Phase pattern
+  - Keep under 150 lines
+  - Validate with validation script
+- No need for Task() overhead when building 1-2 commands
 
-Load template: plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
-
-Create command file at: plugins/$PLUGIN_NAME/commands/$CMD_NAME.md
-
-Follow framework structure:
-- Frontmatter with description, argument-hint, allowed-tools
-- Goal → Actions → Phase pattern
-- Keep under 150 lines
-- Use $ARGUMENTS for all argument references
-- Validate with validation script
-
-Deliverable: Complete validated command file")
-
-**For Multiple Commands (2+):**
+**For 3+ Commands:**
 
 **CRITICAL: Send ALL Task() calls in a SINGLE MESSAGE for parallel execution!**
 
