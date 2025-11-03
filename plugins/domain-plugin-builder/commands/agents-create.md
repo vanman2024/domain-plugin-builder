@@ -42,9 +42,7 @@ Store the count. Then extract each agent specification:
 - If count = 2: Two agents mode - extract both <agent-N> "<desc-N>" "<tools-N>" sets
 - If count >= 3: Multiple agents mode - extract all <agent-N> "<desc-N>" "<tools-N>" sets
 
-Determine execution mode:
-- 1-2 agents: Sequential (one at a time)
-- 3+ agents: Parallel (all at once using Task tool)
+All agents use Task tool - whether creating 1 or 10 agents.
 
 Phase 2: Load Templates
 Goal: Study framework patterns
@@ -55,26 +53,32 @@ Actions:
 - Determine plugin location from context (default: domain-plugin-builder)
 
 Phase 3: Create Agent(s)
-Goal: Generate agent file(s) using appropriate execution mode
+Goal: Generate agent file(s) using Task() calls - works for 1 or multiple agents
 
 Actions:
 
-**For Single Agent (1 agent):**
+**For Single Agent:**
 
-- Create: plugins/PLUGIN_NAME/agents/AGENT_NAME.md
-- **Frontmatter**: name, description ("Use this agent to..."), model: inherit, color: yellow, tools (optional)
-- **Body for complex**: Role, Core Competencies (3-5), Implementation Process (5-6 phases with WebFetch URLs), Decision Framework, Communication, Output Standards, Verification
-- **Body for simple**: Role, Process steps (3-5), Success criteria
-- **CRITICAL**: Include progressive WebFetch for docs
-- Validate: !{bash bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/PLUGIN_NAME/agents/AGENT_NAME.md}
+Task(description="Create agent", subagent_type="domain-plugin-builder:agents-builder", prompt="You are the agents-builder agent. Create a complete agent following framework templates.
 
-**For 2 Agents (Sequential):**
+Agent name: $AGENT_NAME
+Description: $DESCRIPTION
+Tools: $TOOLS
 
-Create first agent, validate it, then create second agent and validate it.
+Load templates:
+- Read: plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md
 
-**For 3+ Agents (Parallel):**
+Create agent file at: plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md
+- Frontmatter with name, description, model: inherit, color (determine from description), tools
+- Include progressive WebFetch for documentation
+- Keep under 300 lines
+- Validate with validation script
 
-Launch multiple agents-builder agents IN PARALLEL (all at once) using multiple Task() calls:
+Deliverable: Complete validated agent file")
+
+**For Multiple Agents (2+):**
+
+Launch multiple agents-builder agents using multiple Task() calls in ONE message:
 
 Task(description="Create agent 1", subagent_type="domain-plugin-builder:agents-builder", prompt="You are the agents-builder agent. Create a complete agent following framework templates.
 
@@ -99,7 +103,9 @@ Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-b
 
 [Continue for all N agents requested]
 
-Each Task() call happens in parallel. Parse $ARGUMENTS to determine how many Task() calls to make.
+Each Task() call happens in parallel when there are 2+ agents. For single agent, just one Task() call.
+
+Parse $ARGUMENTS to determine how many Task() calls to make.
 
 Wait for ALL agents to complete before proceeding to Phase 4.
 

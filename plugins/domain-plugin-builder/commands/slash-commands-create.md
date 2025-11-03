@@ -56,6 +56,8 @@ Phase 4: Create Commands
 
 Actions:
 
+**ALWAYS use Task() calls - whether creating 1 or 10 commands**
+
 **For Single Command:**
 
 Task(description="Create command", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="You are the slash-commands-builder agent. Create a complete slash command.
@@ -77,19 +79,9 @@ Follow framework structure:
 
 Deliverable: Complete validated command file")
 
-**For Two Commands:**
+**For Multiple Commands (2+):**
 
-Run them sequentially:
-
-Task(description="Create command 1", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_1 - $DESC_1 [same prompt structure as single command above]")
-
-(Wait for completion)
-
-Task(description="Create command 2", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_2 - $DESC_2 [same prompt structure as single command above]")
-
-**For Multiple Commands (3+):**
-
-Launch multiple slash-commands-builder agents IN PARALLEL (all at once) using multiple Task() calls in ONE response:
+Launch multiple slash-commands-builder agents using multiple Task() calls in ONE message:
 
 Task(description="Create command 1", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="Create command: $CMD_1 - $DESC_1 [same prompt structure as single command above]")
 
@@ -99,7 +91,9 @@ Task(description="Create command 3", subagent_type="domain-plugin-builder:slash-
 
 [Continue for all N commands requested]
 
-Each Task() call happens in parallel. Parse $ARGUMENTS to determine how many Task() calls to make.
+Each Task() call happens in parallel when there are 2+ commands. For single command, just one Task() call.
+
+Parse $ARGUMENTS to determine how many Task() calls to make.
 
 Wait for ALL agents to complete before proceeding to Phase 5.
 
