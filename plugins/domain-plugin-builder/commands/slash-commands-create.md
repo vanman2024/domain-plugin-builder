@@ -4,6 +4,19 @@ description: Create slash command(s) following standardized structure - supports
 argument-hint: <command-name> "<description>" [--plugin=name] | <cmd-1> "<desc-1>" <cmd-2> "<desc-2>" ... [--plugin=name]
 ---
 
+## Security Requirements
+
+**CRITICAL:** All generated files must follow security rules:
+
+@docs/security/SECURITY-RULES.md
+
+**Key requirements:**
+- Never hardcode API keys or secrets
+- Use placeholders: `your_service_key_here`
+- Protect `.env` files with `.gitignore`
+- Create `.env.example` with placeholders only
+- Document key acquisition for users
+
 **Arguments**: $ARGUMENTS
 
 Goal: Create properly structured slash command(s). For 3+ commands, creates them in parallel for faster execution.

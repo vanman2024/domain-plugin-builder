@@ -4,6 +4,19 @@ argument-hint: <plugin-name>
 allowed-tools: Task, Read, Bash, Glob
 ---
 
+## Security Requirements
+
+**CRITICAL:** All generated files must follow security rules:
+
+@docs/security/SECURITY-RULES.md
+
+**Key requirements:**
+- Never hardcode API keys or secrets
+- Use placeholders: `your_service_key_here`
+- Protect `.env` files with `.gitignore`
+- Create `.env.example` with placeholders only
+- Document key acquisition for users
+
 **Arguments**: $ARGUMENTS
 
 Goal: Validate that a Claude Code plugin is properly structured, follows framework conventions, and is ready for deployment.

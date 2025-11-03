@@ -4,6 +4,19 @@ description: Create agent(s) using templates - supports parallel creation for 3+
 argument-hint: <agent-name> "<description>" "<tools>" | <agent-1> "<desc-1>" "<tools-1>" <agent-2> "<desc-2>" "<tools-2>" ...
 ---
 
+## Security Requirements
+
+**CRITICAL:** All generated files must follow security rules:
+
+@docs/security/SECURITY-RULES.md
+
+**Key requirements:**
+- Never hardcode API keys or secrets
+- Use placeholders: `your_service_key_here`
+- Protect `.env` files with `.gitignore`
+- Create `.env.example` with placeholders only
+- Document key acquisition for users
+
 **Arguments**: $ARGUMENTS
 
 Goal: Create properly structured agent file(s) following framework templates. For 3+ agents, creates them in parallel for faster execution.
