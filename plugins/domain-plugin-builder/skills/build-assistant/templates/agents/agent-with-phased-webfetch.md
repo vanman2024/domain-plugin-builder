@@ -59,9 +59,19 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
   - "{{DISCOVERY_QUESTION_3}}"
 
 **Tools to use in this phase:**
-- Use `mcp__{{MCP_SERVER_1}}` to {{MCP_SERVER_1_ACTION}}
-- Invoke `!{skill {{PLUGIN_NAME}}:{{SKILL_1}}}` to {{SKILL_1_ACTION}}
-- Run `SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_1}})` to {{COMMAND_1_ACTION}}
+
+First, detect the project structure:
+```
+Skill({{PLUGIN_NAME}}:{{SKILL_1}})
+```
+
+Then validate the configuration:
+```
+SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_1}} {{ARGUMENTS}})
+```
+
+Use MCP servers for external integrations:
+- `mcp__{{MCP_SERVER_1}}` - {{MCP_SERVER_1_ACTION}}
 
 ### 2. Analysis & Feature-Specific Documentation
 - Assess current project structure
@@ -73,9 +83,19 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
 - Determine dependencies and versions needed
 
 **Tools to use in this phase:**
-- Use `mcp__{{MCP_SERVER_2}}` to {{MCP_SERVER_2_ACTION}}
-- Invoke `!{skill {{PLUGIN_NAME}}:{{SKILL_2}}}` to {{SKILL_2_ACTION}}
-- Run `SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_2}})` to {{COMMAND_2_ACTION}}
+
+Analyze the codebase:
+```
+Skill({{PLUGIN_NAME}}:{{SKILL_2}})
+```
+
+Run validation checks:
+```
+SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_2}} {{PROJECT_PATH}})
+```
+
+Access external services:
+- `mcp__{{MCP_SERVER_2}}` - {{MCP_SERVER_2_ACTION}}
 
 ### 3. Planning & Advanced Documentation
 - Design component/module structure based on fetched docs
@@ -87,8 +107,14 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
   - If {{ADVANCED_FEATURE_2}} needed: WebFetch {{ADVANCED_FEATURE_2_DOC_URL}}
 
 **Tools to use in this phase:**
-- Use `mcp__{{MCP_SERVER_1}}` for {{MCP_SERVER_1_PLANNING_ACTION}}
-- Invoke `!{skill {{PLUGIN_NAME}}:{{SKILL_1}}}` for {{SKILL_1_PLANNING_ACTION}}
+
+Load planning templates:
+```
+Skill({{PLUGIN_NAME}}:{{SKILL_1}})
+```
+
+Verify dependencies:
+- `mcp__{{MCP_SERVER_1}}` - {{MCP_SERVER_1_PLANNING_ACTION}}
 
 ### 4. Implementation & Reference Documentation
 - Install required packages
@@ -102,9 +128,19 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
 - Set up types/interfaces (TypeScript) or schemas (Python)
 
 **Tools to use in this phase:**
-- Use `mcp__{{MCP_SERVER_2}}` for {{MCP_SERVER_2_IMPLEMENTATION_ACTION}}
-- Invoke `!{skill {{PLUGIN_NAME}}:{{SKILL_2}}}` for {{SKILL_2_IMPLEMENTATION_ACTION}}
-- Run `SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_1}})` for {{COMMAND_1_IMPLEMENTATION_ACTION}}
+
+Generate implementation code:
+```
+Skill({{PLUGIN_NAME}}:{{SKILL_2}})
+```
+
+Deploy or configure:
+```
+SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_1}} {{DEPLOYMENT_TARGET}})
+```
+
+Manage external resources:
+- `mcp__{{MCP_SERVER_2}}` - {{MCP_SERVER_2_IMPLEMENTATION_ACTION}}
 
 ### 5. Verification
 - Run compilation/type checking (TypeScript: `npx tsc --noEmit`, Python: `mypy` or similar)
@@ -115,8 +151,14 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
 - Ensure code matches best practices from docs
 
 **Tools to use in this phase:**
-- Use `mcp__{{MCP_SERVER_1}}` for {{MCP_SERVER_1_VERIFICATION_ACTION}}
-- Run `SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_2}})` for {{COMMAND_2_VERIFICATION_ACTION}}
+
+Run comprehensive validation:
+```
+SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_2}} {{VALIDATION_TARGET}})
+```
+
+Check deployment health:
+- `mcp__{{MCP_SERVER_1}}` - {{MCP_SERVER_1_VERIFICATION_ACTION}}
 
 ## Decision-Making Framework
 
