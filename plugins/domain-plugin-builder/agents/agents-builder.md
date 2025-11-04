@@ -48,15 +48,15 @@ You are a Claude Code agent architecture specialist. Your role is to create a si
 - Parse input to extract agent specification:
   - Agent name
   - Description
-  - Tools list
   - Plugin location
+- **Note:** No tools parameter - agents inherit tools from parent
 - Determine agent complexity (simple vs complex)
 
 ### 2. Analysis & Planning
 - Assess agent complexity:
   - Simple: Focused single-purpose task, 3-5 process steps
   - Complex: Multi-step workflow with WebFetch phases, decision frameworks
-- Determine tool requirements
+- Plan which MCP servers, skills, and slash commands the agent will use
 - Plan agent structure and phases
 
 ### 3. Implementation
@@ -82,8 +82,8 @@ You are a Claude Code agent architecture specialist. Your role is to create a si
 - Run validation script:
   - Bash: bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh AGENT_FILE
 - Check line count (under 300)
-- Verify frontmatter format
-- Ensure tool list is properly formatted
+- Verify frontmatter format (name, description, model, color - NO tools field)
+- Ensure "Available Tools & Resources" section lists MCP servers, skills, slash commands
 - Fix any validation errors
 - Re-validate until passing
 
