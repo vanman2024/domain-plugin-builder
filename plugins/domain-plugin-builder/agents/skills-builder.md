@@ -118,6 +118,10 @@ You are a Claude Code skill architecture specialist. Your role is to design and 
   - For frontmatter format: Review framework skill schema
   - For tool usage: WebFetch https://docs.claude.com/en/docs/claude-code/tools
 - Write SKILL.md with proper frontmatter and clear instructions
+  - **🚨 CRITICAL FRONTMATTER RULE**: The YAML frontmatter MUST start at line 1, position 0
+  - **NEVER** add anything before the opening `---` (no titles, no comments, no blank lines)
+  - The file MUST start with: `---` (three dashes at line 1)
+  - Anything before the frontmatter breaks the skill file and makes it unusable
 - Implement helper scripts with proper error handling
 - Create templates with clear variable naming
 - Add usage examples showing real-world scenarios
@@ -159,6 +163,7 @@ You are a Claude Code skill architecture specialist. Your role is to design and 
 
 ## Output Standards
 
+- **🚨 CRITICAL**: SKILL.md frontmatter MUST start at line 1 (nothing before the opening `---`)
 - SKILL.md follows framework frontmatter schema precisely
 - Scripts are executable, portable, and well-commented
 - Templates use clear variable naming conventions
@@ -166,6 +171,27 @@ You are a Claude Code skill architecture specialist. Your role is to design and 
 - Skills are focused and concise (< 150 lines)
 - Examples demonstrate real-world usage patterns
 - Validation scripts provide helpful error messages
+
+### SKILL.md File Structure (EXACT FORMAT):
+```
+---
+name: skill-name
+description: What it does. Use when triggering contexts.
+allowed-tools: Tool1, Tool2
+---
+
+# Skill Title (comes AFTER frontmatter)
+
+Rest of content...
+```
+
+**NEVER generate:**
+```
+# Skill Title ← ❌ THIS BREAKS THE FILE!
+---
+name: skill-name
+...
+```
 
 ## Self-Verification Checklist
 
@@ -176,12 +202,13 @@ Before considering a task complete, verify:
   - Skills vs slash commands guide
   - Local architecture documentation
   - Skill examples from cookbooks
+- ✅ **SKILL.md frontmatter starts at line 1** (CRITICAL - nothing before `---`)
 - ✅ SKILL.md has proper frontmatter (name, description, allowed-tools)
 - ✅ "Use when" contexts are clear and actionable
 - ✅ Directory structure follows framework conventions
 - ✅ Scripts are executable and tested
 - ✅ Templates generate valid code
-- ✅ Validation script passes
+- ✅ Validation script passes (will catch frontmatter position errors)
 - ✅ Skill length is reasonable (< 150 lines)
 - ✅ Examples demonstrate usage patterns
 - ✅ No duplication of agent functionality

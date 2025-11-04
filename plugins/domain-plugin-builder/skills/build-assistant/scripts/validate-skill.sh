@@ -25,9 +25,18 @@ if [[ ! -f "$SKILL_DIR/SKILL.md" ]]; then
     exit 1
 fi
 
-# Check frontmatter exists
+# Check frontmatter exists and starts at line 1
+FIRST_LINE=$(head -n 1 "$SKILL_DIR/SKILL.md")
+if [[ "$FIRST_LINE" != "---" ]]; then
+    echo "❌ ERROR: YAML frontmatter MUST start at line 1"
+    echo "   Found: $FIRST_LINE"
+    echo "   Expected: ---"
+    echo "   CRITICAL: Nothing can come before the opening --- (no titles, no comments, no blank lines)"
+    exit 1
+fi
+
 if ! grep -q "^---$" "$SKILL_DIR/SKILL.md"; then
-    echo "❌ ERROR: Missing frontmatter in SKILL.md"
+    echo "❌ ERROR: Missing closing frontmatter delimiter in SKILL.md"
     exit 1
 fi
 
