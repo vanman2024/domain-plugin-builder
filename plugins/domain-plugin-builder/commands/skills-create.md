@@ -82,18 +82,25 @@ Deliverable: List of recommended skills with descriptions")
 
 **For 1-2 Skills:**
 
-Build directly without Task() calls:
+Build directly - execute these steps immediately:
 
-- Read component decision framework: @component-decision-framework.md
-- Read skill template: @SKILL.md.template
-- For each skill:
-  - Create directory: plugins/$PLUGIN_NAME/skills/$SKILL_NAME/
-  - Write SKILL.md with comprehensive documentation
-  - Create scripts/ with functional scripts
-  - Create templates/ with template files
-  - Create examples/ with working examples
-  - Validate the skill structure
-- No need for Task() overhead when building 1-2 skills
+1. Load decision framework:
+!{Read @component-decision-framework.md}
+
+2. Load skill template:
+!{Read @SKILL.md.template}
+
+3. For each skill:
+!{Bash mkdir -p plugins/$PLUGIN_NAME/skills/$SKILL_NAME/{scripts,templates,examples}}
+
+!{Write plugins/$PLUGIN_NAME/skills/$SKILL_NAME/SKILL.md}
+
+Create scripts, templates, and examples as needed.
+
+4. Validate:
+!{Bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh plugins/$PLUGIN_NAME/skills/$SKILL_NAME}
+
+No need for Task() overhead when building 1-2 skills
 
 **For 3+ Skills:**
 

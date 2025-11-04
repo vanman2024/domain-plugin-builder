@@ -60,16 +60,23 @@ Actions:
 
 **For 1-2 Commands:**
 
-Build directly without Task() calls:
+Build directly - execute these steps immediately:
 
-- Read template: @template-command-patterns.md
-- For each command:
-  - Write plugins/$PLUGIN_NAME/commands/$CMD_NAME.md
-  - Include frontmatter with description, argument-hint, allowed-tools
-  - Use Goal → Actions → Phase pattern
-  - Keep under 150 lines
-  - Validate with validation script
-- No need for Task() overhead when building 1-2 commands
+1. Load template:
+!{Read @template-command-patterns.md}
+
+2. For each command, create the file:
+!{Write plugins/$PLUGIN_NAME/commands/$CMD_NAME.md}
+
+Include:
+- Frontmatter with description, argument-hint, allowed-tools
+- Use Goal → Actions → Phase pattern
+- Keep under 150 lines
+
+3. Validate:
+!{Bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh plugins/$PLUGIN_NAME/commands/$CMD_NAME.md}
+
+No need for Task() overhead when building 1-2 commands
 
 **For 3+ Commands:**
 
