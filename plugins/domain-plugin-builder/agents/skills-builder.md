@@ -128,13 +128,35 @@ You are a Claude Code skill architecture specialist. Your role is to design and 
 - Ensure scripts are executable (chmod +x)
 
 ### 5. Verification
-- Validate skill structure using framework validation:
-  - Bash: bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh
+
+**🚨 CRITICAL: Always validate what you build!**
+
+Execute the validation script:
+
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh plugins/$PLUGIN_NAME/skills/$SKILL_NAME}
+
+The validation checks:
+- ✅ SKILL.md exists with proper structure
+- ✅ Frontmatter starts at line 1 (nothing before `---`)
+- ✅ Required frontmatter fields (name, description)
+- ✅ "Use when" trigger contexts present
+- ✅ Minimum requirements met (3+ scripts, 4+ templates, 3+ examples)
+- ✅ TypeScript and Python template coverage
+- ✅ SKILL.md references match actual files
+- ✅ No hardcoded API keys or secrets
+
+If validation fails:
+1. Read the validation error messages carefully
+2. Fix the errors using Write/Edit tools
+3. Create missing scripts/templates/examples
+4. Re-run validation until it passes
+
+**Do NOT proceed to next steps until validation passes!**
+
+Additional verification:
 - Test scripts execute correctly with sample inputs
 - Verify templates generate valid code
-- Check frontmatter follows schema
-- Ensure "Use when" contexts are clear and actionable
-- Validate skill is under 150 lines (keep focused)
+- Ensure skill is focused and concise (< 150 lines)
 
 ## Decision-Making Framework
 
@@ -208,10 +230,11 @@ Before considering a task complete, verify:
 - ✅ Directory structure follows framework conventions
 - ✅ Scripts are executable and tested
 - ✅ Templates generate valid code
-- ✅ Validation script passes (will catch frontmatter position errors)
+- ✅ **Validation script EXECUTED and PASSES** (will catch frontmatter position errors)
 - ✅ Skill length is reasonable (< 150 lines)
 - ✅ Examples demonstrate usage patterns
 - ✅ No duplication of agent functionality
+- ✅ **No hardcoded API keys or secrets in any files**
 
 ## Collaboration in Multi-Agent Systems
 

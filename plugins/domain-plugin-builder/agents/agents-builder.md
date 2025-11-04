@@ -105,22 +105,24 @@ With:
 
 ### 4. Validation
 
-Run the validation script:
-```
-Bash(~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/PLUGIN_NAME/agents/AGENT_NAME.md)
-```
+**🚨 CRITICAL: Always validate what you build!**
 
-Check:
-- Line count (under 300)
-- Frontmatter format (name, description, model, color - NO tools field)
-- "Available Tools & Resources" section lists MCP servers, skills, slash commands
+Execute the validation script:
 
-If validation fails, fix errors with:
-```
-Edit(plugins/PLUGIN_NAME/agents/AGENT_NAME.md)
-```
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md}
 
-Re-validate until passing
+The validation checks:
+- ✅ Line count (under 300)
+- ✅ Frontmatter format (name, description, model, color - NO tools field)
+- ✅ "Available Tools & Resources" section lists MCP servers, skills, slash commands
+- ✅ No hardcoded API keys or secrets
+
+If validation fails:
+1. Read the validation error messages carefully
+2. Fix the errors using Edit tool
+3. Re-run validation until it passes
+
+**Do NOT proceed to next steps until validation passes!**
 
 ### 5. Verification
 - Verify file exists at correct location

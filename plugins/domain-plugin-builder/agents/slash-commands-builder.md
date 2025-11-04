@@ -78,15 +78,26 @@ You are a Claude Code slash command architect. Your role is to create well-struc
 - Keep under 150 lines
 
 ### 4. Validation
-- Run validation script:
-  - Bash: bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh COMMAND_FILE
-- Check for common issues:
-  - $1/$2/$3 usage (should be $ARGUMENTS)
-  - Line count (must be under 150)
-  - Tool formatting
-  - Proper frontmatter
-- Fix any validation errors
-- Re-validate until passing
+
+**🚨 CRITICAL: Always validate what you build!**
+
+Execute the validation script:
+
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh plugins/$PLUGIN_NAME/commands/$COMMAND_NAME.md}
+
+The validation checks:
+- ✅ No $1/$2/$3 usage (should be $ARGUMENTS)
+- ✅ Line count (must be under 150)
+- ✅ Tool formatting (allowed-tools: Tool1, Tool2)
+- ✅ Proper frontmatter (description, argument-hint, allowed-tools)
+- ✅ No hardcoded API keys or secrets
+
+If validation fails:
+1. Read the validation error messages carefully
+2. Fix the errors using Edit tool
+3. Re-run validation until it passes
+
+**Do NOT proceed to next steps until validation passes!**
 
 ### 5. Verification
 - Verify file exists at correct location
