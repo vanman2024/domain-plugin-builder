@@ -58,6 +58,11 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
   - "{{DISCOVERY_QUESTION_2}}"
   - "{{DISCOVERY_QUESTION_3}}"
 
+**Tools to use in this phase:**
+- Use `mcp__{{MCP_SERVER_1}}` to {{MCP_SERVER_1_ACTION}}
+- Invoke `!{skill {{PLUGIN_NAME}}:{{SKILL_1}}}` to {{SKILL_1_ACTION}}
+- Run `SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_1}})` to {{COMMAND_1_ACTION}}
+
 ### 2. Analysis & Feature-Specific Documentation
 - Assess current project structure
 - Determine technology stack requirements
@@ -67,6 +72,11 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
   - If {{FEATURE_3}} requested: WebFetch {{FEATURE_3_DOC_URL}}
 - Determine dependencies and versions needed
 
+**Tools to use in this phase:**
+- Use `mcp__{{MCP_SERVER_2}}` to {{MCP_SERVER_2_ACTION}}
+- Invoke `!{skill {{PLUGIN_NAME}}:{{SKILL_2}}}` to {{SKILL_2_ACTION}}
+- Run `SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_2}})` to {{COMMAND_2_ACTION}}
+
 ### 3. Planning & Advanced Documentation
 - Design component/module structure based on fetched docs
 - Plan configuration schema (if needed)
@@ -75,6 +85,10 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
 - For advanced features, fetch additional docs:
   - If {{ADVANCED_FEATURE_1}} needed: WebFetch {{ADVANCED_FEATURE_1_DOC_URL}}
   - If {{ADVANCED_FEATURE_2}} needed: WebFetch {{ADVANCED_FEATURE_2_DOC_URL}}
+
+**Tools to use in this phase:**
+- Use `mcp__{{MCP_SERVER_1}}` for {{MCP_SERVER_1_PLANNING_ACTION}}
+- Invoke `!{skill {{PLUGIN_NAME}}:{{SKILL_1}}}` for {{SKILL_1_PLANNING_ACTION}}
 
 ### 4. Implementation & Reference Documentation
 - Install required packages
@@ -87,6 +101,11 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
 - Add error handling and validation
 - Set up types/interfaces (TypeScript) or schemas (Python)
 
+**Tools to use in this phase:**
+- Use `mcp__{{MCP_SERVER_2}}` for {{MCP_SERVER_2_IMPLEMENTATION_ACTION}}
+- Invoke `!{skill {{PLUGIN_NAME}}:{{SKILL_2}}}` for {{SKILL_2_IMPLEMENTATION_ACTION}}
+- Run `SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_1}})` for {{COMMAND_1_IMPLEMENTATION_ACTION}}
+
 ### 5. Verification
 - Run compilation/type checking (TypeScript: `npx tsc --noEmit`, Python: `mypy` or similar)
 - Test functionality with sample inputs
@@ -94,6 +113,10 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
 - Check error handling paths
 - Validate against documentation patterns
 - Ensure code matches best practices from docs
+
+**Tools to use in this phase:**
+- Use `mcp__{{MCP_SERVER_1}}` for {{MCP_SERVER_1_VERIFICATION_ACTION}}
+- Run `SlashCommand(/{{PLUGIN_NAME}}:{{COMMAND_2}})` for {{COMMAND_2_VERIFICATION_ACTION}}
 
 ## Decision-Making Framework
 
