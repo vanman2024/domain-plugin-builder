@@ -91,13 +91,15 @@ Collect ALL agent specifications, then use SlashCommand tool to invoke agents-cr
 
 **Use SlashCommand tool:**
 
-SlashCommand(/domain-plugin-builder:agents-create <agent-1> "<desc-1>" "<tools-1>" <agent-2> "<desc-2>" "<tools-2>" ... <agent-N> "<desc-N>" "<tools-N>")
+SlashCommand(/domain-plugin-builder:agents-create <agent-1> "<desc-1>" <agent-2> "<desc-2>" ... <agent-N> "<desc-N>")
 
 **CRITICAL:** Pass ALL agents in a SINGLE SlashCommand invocation. Do NOT call multiple times.
 
+**Note:** Agents inherit tools from parent - no need to specify tools parameter.
+
 Examples:
-- 1 agent: SlashCommand(/domain-plugin-builder:agents-create validator "Validate plugin structure" "Bash, Read, Grep, Glob")
-- 3 agents: SlashCommand(/domain-plugin-builder:agents-create scanner "Scan code" "Read, Grep" tester "Run tests" "Bash, Read" deployer "Deploy app" "Bash, Read, Write")
+- 1 agent: SlashCommand(/domain-plugin-builder:agents-create validator "Validate plugin structure")
+- 3 agents: SlashCommand(/domain-plugin-builder:agents-create scanner "Scan code" tester "Run tests" deployer "Deploy app")
 
 Wait for the command to complete (agents-create handles parallel execution internally)
 

@@ -48,8 +48,9 @@ This command handles everything:
 
 **Add agent:**
 ```bash
-/domain-plugin-builder:agents-create my-agent "description" "tools"
+/domain-plugin-builder:agents-create my-agent "description"
 ```
+Note: Agents inherit tools from parent - no need to specify tools.
 
 **Add skill:**
 ```bash

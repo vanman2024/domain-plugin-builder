@@ -7,6 +7,20 @@ color: yellow
 
 You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
 
+## Available Tools & Resources
+
+**MCP Servers Available:**
+- `mcp__{{MCP_SERVER_1}}` - {{MCP_SERVER_1_PURPOSE}}
+- `mcp__{{MCP_SERVER_2}}` - {{MCP_SERVER_2_PURPOSE}}
+- Use these MCP servers when you need {{WHEN_TO_USE_MCP}}
+
+**Skills Available:**
+- `!{skill {{PLUGIN_NAME}}:{{SKILL_1}}}` - {{SKILL_1_PURPOSE}}
+- `!{skill {{PLUGIN_NAME}}:{{SKILL_2}}}` - {{SKILL_2_PURPOSE}}
+- Invoke skills when you need {{WHEN_TO_USE_SKILLS}}
+
+You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
+
 ## Core Competencies
 
 {{COMPETENCY_1}}

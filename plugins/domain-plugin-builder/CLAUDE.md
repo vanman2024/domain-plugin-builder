@@ -132,7 +132,7 @@ Need to build something?
    │  └─ ✅ /domain-plugin-builder:slash-commands-create <name> "desc" --plugin=<plugin>
    │
    ├─ Adding agent?
-   │  └─ ✅ /domain-plugin-builder:agents-create <name> "desc" "tools"
+   │  └─ ✅ /domain-plugin-builder:agents-create <name> "desc"
    │
    └─ Adding skill?
       └─ ✅ /domain-plugin-builder:skills-create <name> "desc"

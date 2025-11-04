@@ -1,7 +1,7 @@
 ---
 allowed-tools: Task, Read, Write, Bash, Skill
 description: Create agent(s) using templates - supports parallel creation for 3+ agents
-argument-hint: <agent-name> "<description>" "<tools>" | <agent-1> "<desc-1>" "<tools-1>" <agent-2> "<desc-2>" "<tools-2>" ...
+argument-hint: <agent-name> "<description>" | <agent-1> "<desc-1>" <agent-2> "<desc-2>" ...
 ---
 
 ## Security Requirements
@@ -38,11 +38,13 @@ Use bash to parse $ARGUMENTS and count how many agents are being requested:
 !{bash echo "$ARGUMENTS" | grep -oE '<[^>]+>' | wc -l}
 
 Store the count. Then extract each agent specification:
-- If count = 1: Single agent mode - extract <agent-name>, "<description>", and "<tools>"
-- If count = 2: Two agents mode - extract both <agent-N> "<desc-N>" "<tools-N>" sets
-- If count >= 3: Multiple agents mode - extract all <agent-N> "<desc-N>" "<tools-N>" sets
+- If count = 1: Single agent mode - extract <agent-name> and "<description>"
+- If count = 2: Two agents mode - extract both <agent-N> "<desc-N>" sets
+- If count >= 3: Multiple agents mode - extract all <agent-N> "<desc-N>" sets
 
 All agents use Task tool - whether creating 1 or 10 agents.
+
+**Note:** Agents inherit tools from parent - no need to specify tools field.
 
 Phase 2: Load Templates
 Goal: Study framework patterns
@@ -67,7 +69,9 @@ Build directly without Task() calls:
 - Read color decision framework: @agent-color-decision.md
 - For each agent:
   - Write plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md
-  - Include frontmatter with name, description, model: inherit, color (from decision framework), tools
+  - Include frontmatter with name, description, model: inherit, color (from decision framework)
+  - **NO tools field** - agents inherit tools from parent
+  - Include "Available Tools & Resources" section specifying MCP servers and skills
   - Include progressive WebFetch for documentation
   - Keep under 300 lines
   - Validate with validation script
@@ -84,22 +88,23 @@ Task(description="Create agent 1", subagent_type="domain-plugin-builder:agents-b
 
 Agent name: $AGENT_1_NAME
 Description: $AGENT_1_DESC
-Tools: $AGENT_1_TOOLS
 
 Load templates:
 - Read: plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md
 
 Create agent file at: plugins/$PLUGIN_NAME/agents/$AGENT_1_NAME.md
-- Frontmatter with name, description, model: inherit, color (determine from description), tools
+- Frontmatter with name, description, model: inherit, color (determine from description)
+- **NO tools field** - agents inherit tools from parent
+- Include 'Available Tools & Resources' section listing specific MCP servers and skills to use
 - Include progressive WebFetch for documentation
 - Keep under 300 lines
 - Validate with validation script
 
 Deliverable: Complete validated agent file")
 
-Task(description="Create agent 2", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure with $AGENT_2_NAME, $AGENT_2_DESC, $AGENT_2_TOOLS]")
+Task(description="Create agent 2", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure with $AGENT_2_NAME, $AGENT_2_DESC]")
 
-Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure with $AGENT_3_NAME, $AGENT_3_DESC, $AGENT_3_TOOLS]")
+Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure with $AGENT_3_NAME, $AGENT_3_DESC]")
 
 [Continue for all N agents from $ARGUMENTS]
 ```

@@ -66,10 +66,14 @@ You are a Claude Code agent architecture specialist. Your role is to create a si
   - description: "Use this agent to..."
   - model: inherit
   - color: (determine using color decision framework - see below)
-  - tools: (comma-separated list)
+  - **NO tools field** - agents inherit tools from parent, do not specify tools
 - Implement agent body:
   - For complex: Role, Core Competencies, Project Approach (5-6 phases with WebFetch), Decision Framework, Communication, Output Standards, Verification
   - For simple: Role, Process steps (3-5), Success criteria
+- **Specify actual MCP servers and skills to use:**
+  - List specific MCP server names (e.g., mcp__github, mcp__supabase, mcp__context7)
+  - List specific skills to invoke (e.g., !{skill plugin:skill-name})
+  - Tell agent which tools/resources are available and when to use them
 - Keep under 300 lines
 - Include progressive WebFetch for documentation
 
