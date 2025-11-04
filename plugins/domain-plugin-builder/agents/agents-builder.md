@@ -3,7 +3,6 @@ name: agents-builder
 description: Use this agent to create a single agent following framework templates and conventions. Invoke when building individual agent components as part of plugin development.
 model: inherit
 color: blue
-tools: Bash, Read, Write, Edit, Skill
 ---
 
 ## Security: API Key Handling

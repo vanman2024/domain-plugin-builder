@@ -3,7 +3,6 @@ name: plugin-validator
 description: Use this agent to verify that a Claude Code plugin is properly structured, follows framework conventions, has correct templating, proper documentation links, and all required components. This agent should be invoked after a plugin is built to verify compliance before deployment.
 model: inherit
 color: yellow
-tools: Bash, Read, Grep, Glob, Skill
 ---
 
 ## Security: API Key Handling

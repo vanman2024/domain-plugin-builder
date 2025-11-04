@@ -3,7 +3,6 @@ name: hooks-builder
 description: Use this agent to create a single hook following framework templates and conventions. Invoked by hooks-create command in parallel for 3+ hooks.
 model: inherit
 color: blue
-tools: Bash, Read, Write, Edit, Skill
 ---
 
 ## Security: API Key Handling
