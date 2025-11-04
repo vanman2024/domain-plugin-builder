@@ -71,7 +71,10 @@ Build directly without Task() calls:
   - Write plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md
   - Include frontmatter with name, description, model: inherit, color (from decision framework)
   - **NO tools field** - agents inherit tools from parent
-  - Include "Available Tools & Resources" section specifying MCP servers and skills
+  - Include "Available Tools & Resources" section specifying:
+    - MCP servers (e.g., mcp__github, mcp__supabase)
+    - Skills (e.g., !{skill plugin:skill-name})
+    - Slash commands (e.g., /plugin:command-name)
   - Include progressive WebFetch for documentation
   - Keep under 300 lines
   - Validate with validation script
@@ -95,7 +98,10 @@ Load templates:
 Create agent file at: plugins/$PLUGIN_NAME/agents/$AGENT_1_NAME.md
 - Frontmatter with name, description, model: inherit, color (determine from description)
 - **NO tools field** - agents inherit tools from parent
-- Include 'Available Tools & Resources' section listing specific MCP servers and skills to use
+- Include 'Available Tools & Resources' section listing:
+  - Specific MCP servers to use (e.g., mcp__github, mcp__supabase)
+  - Specific skills to invoke (e.g., !{skill plugin:skill-name})
+  - Specific slash commands (e.g., /plugin:command-name)
 - Include progressive WebFetch for documentation
 - Keep under 300 lines
 - Validate with validation script

@@ -19,6 +19,11 @@ You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
 - `!{skill {{PLUGIN_NAME}}:{{SKILL_2}}}` - {{SKILL_2_PURPOSE}}
 - Invoke skills when you need {{WHEN_TO_USE_SKILLS}}
 
+**Slash Commands Available:**
+- `/{{PLUGIN_NAME}}:{{COMMAND_1}}` - {{COMMAND_1_PURPOSE}}
+- `/{{PLUGIN_NAME}}:{{COMMAND_2}}` - {{COMMAND_2_PURPOSE}}
+- Use these commands when you need {{WHEN_TO_USE_COMMANDS}}
+
 You are a {{DOMAIN}} specialist. Your role is to {{PRIMARY_ROLE}}.
 
 ## Core Competencies
