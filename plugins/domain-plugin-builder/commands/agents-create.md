@@ -50,9 +50,11 @@ Phase 2: Load Templates
 Goal: Study framework patterns
 
 Actions:
-- Load agent template:
-  - @agent-with-phased-webfetch.md
-- Determine plugin location from context (default: domain-plugin-builder)
+
+Load agent template immediately:
+!{Read @agent-with-phased-webfetch.md}
+
+Determine plugin location from context (default: domain-plugin-builder)
 
 Phase 3: Create Agent(s)
 Goal: Generate agent file(s) efficiently
@@ -63,22 +65,31 @@ Actions:
 
 **For 1-2 Agents:**
 
-Build directly without Task() calls:
+Build directly - execute these steps immediately:
 
-- Read template: @agent-with-phased-webfetch.md
-- Read color decision framework: @agent-color-decision.md
-- For each agent:
-  - Write plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md
-  - Include frontmatter with name, description, model: inherit, color (from decision framework)
-  - **NO tools field** - agents inherit tools from parent
-  - Include "Available Tools & Resources" section specifying:
-    - MCP servers (e.g., mcp__github, mcp__supabase)
-    - Skills (e.g., !{skill plugin:skill-name})
-    - Slash commands (e.g., /plugin:command-name)
-  - Include progressive WebFetch for documentation
-  - Keep under 300 lines
-  - Validate with validation script
-- No need for Task() overhead when building 1-2 agents
+1. Load template:
+!{Read @agent-with-phased-webfetch.md}
+
+2. Load color decision framework:
+!{Read @agent-color-decision.md}
+
+3. For each agent, create the file:
+!{Write plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md}
+
+Include:
+- Frontmatter with name, description, model: inherit, color (from decision framework)
+- **NO tools field** - agents inherit tools from parent
+- "Available Tools & Resources" section specifying:
+  - MCP servers (e.g., mcp__github, mcp__supabase)
+  - Skills (e.g., Skill(plugin:skill-name))
+  - Slash commands (e.g., SlashCommand(/plugin:command-name))
+- Progressive WebFetch for documentation
+- Keep under 300 lines
+
+4. Validate:
+!{Bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md}
+
+No need for Task() overhead when building 1-2 agents
 
 **For 3+ Agents:**
 
