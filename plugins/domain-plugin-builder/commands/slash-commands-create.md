@@ -62,18 +62,25 @@ Actions:
 
 Build directly - execute these steps immediately:
 
-1. Load template:
+1. **List existing agents (to use correct names in Task() calls):**
+!{ls plugins/$PLUGIN_NAME/agents/*.md 2>/dev/null}
+
+2. Load template:
 !{Read @template-command-patterns.md}
 
-2. For each command, create the file:
+3. For each command, create the file:
 !{Write plugins/$PLUGIN_NAME/commands/$CMD_NAME.md}
 
 Include:
 - Frontmatter with description, argument-hint, allowed-tools
 - Use Goal → Actions → Phase pattern
 - Keep under 150 lines
+- **CRITICAL:** If command invokes agents via Task(), use ACTUAL agent names from step 1!
+  - Format: subagent_type="$PLUGIN_NAME:agent-name"
+  - Example: If agents/security-scanner.md exists, use subagent_type="my-plugin:security-scanner"
+  - NEVER use placeholder names - use REAL agent file names!
 
-3. Validate:
+4. Validate:
 !{Bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh plugins/$PLUGIN_NAME/commands/$CMD_NAME.md}
 
 No need for Task() overhead when building 1-2 commands
@@ -91,6 +98,15 @@ Command name: $CMD_1_NAME
 Description: $CMD_1_DESC
 Plugin: $PLUGIN_NAME
 
+**CRITICAL: Use ACTUAL Agent Names**
+BEFORE creating the command, list existing agents:
+!{ls plugins/$PLUGIN_NAME/agents/*.md 2>/dev/null}
+
+If the command needs to invoke an agent via Task(), use the ACTUAL agent names from the list above!
+- Format: subagent_type=\"$PLUGIN_NAME:agent-name\"
+- Example: If agents/security-scanner.md exists, use subagent_type=\"$PLUGIN_NAME:security-scanner\"
+- NEVER use placeholder names like \"agent1\" or \"scanner\" - use the REAL agent file names!
+
 Load template: plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
 
 Create command file at: plugins/$PLUGIN_NAME/commands/$CMD_1_NAME.md
@@ -100,9 +116,10 @@ Follow framework structure:
 - Goal → Actions → Phase pattern
 - Keep under 150 lines
 - Use $ARGUMENTS for all argument references
+- Use ACTUAL agent names in Task() calls (subagent_type field)
 - Validate with validation script
 
-Deliverable: Complete validated command file")
+Deliverable: Complete validated command file with correct agent references")
 
 Task(description="Create command 2", subagent_type="domain-plugin-builder:slash-commands-builder", prompt="[Same structure with $CMD_2_NAME, $CMD_2_DESC]")
 
