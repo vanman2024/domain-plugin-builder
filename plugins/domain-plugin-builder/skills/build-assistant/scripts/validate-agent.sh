@@ -24,10 +24,27 @@ if ! grep -q "^---$" "$AGENT_FILE"; then
 fi
 
 # Check required frontmatter fields
-REQUIRED_FIELDS=("name:" "description:" "tools:" "model:")
+REQUIRED_FIELDS=("name:" "description:" "model:")
 for field in "${REQUIRED_FIELDS[@]}"; do
     if ! grep -q "^$field" "$AGENT_FILE"; then
         echo "❌ ERROR: Missing required field: $field"
+        exit 1
+    fi
+done
+
+# Warn if tools field is present (agents should inherit tools)
+if grep -q "^tools:" "$AGENT_FILE"; then
+    echo "⚠️  WARNING: tools field found - agents should inherit tools from parent, not specify them"
+fi
+
+# Check for incorrect MCP server naming (common mistake: mcp__supabase instead of mcp__plugin_supabase_supabase)
+INVALID_MCP_NAMES=("mcp__supabase" "mcp__shadcn" "mcp__nextjs" "mcp__vercel-ai")
+for invalid_name in "${INVALID_MCP_NAMES[@]}"; do
+    if grep -q "\`$invalid_name\`" "$AGENT_FILE" 2>/dev/null; then
+        echo "❌ ERROR: Found $invalid_name - plugin-specific MCP servers must use full name:"
+        echo "   - Use: mcp__plugin_supabase_supabase (not mcp__supabase)"
+        echo "   - Use: mcp__plugin_*_shadcn (not mcp__shadcn)"
+        echo "   Generic MCP servers are fine: mcp__github, mcp__filesystem, mcp__docker, mcp__fetch, etc."
         exit 1
     fi
 done

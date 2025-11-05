@@ -24,31 +24,35 @@
 
 ---
 
-### 🟡 Yellow - Validators/Checkers
-**Purpose:** Validate, verify, check, audit
+### 🟡 Yellow - RAG Operations
+**Purpose:** RAG pipeline operations, document processing, embeddings, retrieval
 
 **Examples:**
-- `plugin-validator` - Validates plugin structure
-- `security-auditor` - Checks for vulnerabilities
-- `schema-validator` - Validates database schemas
-- `compliance-checker` - Audits code compliance
-- `deployment-validator` - Verifies deployment readiness
+- `document-processor` - Processes documents for RAG
+- `embedding-specialist` - Generates embeddings
+- `retrieval-optimizer` - Optimizes retrieval strategies
+- `vector-db-engineer` - Manages vector databases
+- `rag-architect` - Designs RAG systems
+- `web-scraper-agent` - Scrapes content for RAG
+- `llamaindex-specialist` - Implements LlamaIndex RAG
+- `langchain-specialist` - Implements LangChain RAG
 
-**Use yellow when:** Agent checks/validates/verifies correctness
+**Use yellow when:** Agent works with RAG pipelines, document ingestion, embeddings, or retrieval
 
 ---
 
-### 🟢 Green - Integrators/Installers
-**Purpose:** Integrate services, install dependencies, connect systems
+### 🟢 Green - Database Operations
+**Purpose:** Database operations, schema management, migrations, queries
 
 **Examples:**
-- `supabase-integrator` - Integrates Supabase
-- `vercel-ai-integrator` - Integrates Vercel AI SDK
-- `mem0-integrator` - Integrates Mem0
-- `package-installer` - Installs dependencies
-- `mcp-integrator` - Integrates MCP servers
+- `supabase-architect` - Designs database schemas
+- `supabase-migration-applier` - Applies migrations
+- `database-executor` - Executes SQL queries
+- `schema-validator` - Validates database schemas
+- `database-optimizer` - Optimizes database queries
+- `database-integrator` - Integrates database systems
 
-**Use green when:** Agent integrates external services or installs components
+**Use green when:** Agent works with databases, schemas, migrations, or SQL operations
 
 ---
 
@@ -127,8 +131,8 @@
 | Color  | Agent Type           | Action Verbs                               |
 |--------|----------------------|-------------------------------------------|
 | Blue   | Builders/Generators  | create, generate, build, scaffold        |
-| Yellow | Validators/Checkers  | validate, verify, check, audit            |
-| Green  | Integrators/Install  | integrate, install, connect, setup        |
+| Yellow | RAG Operations       | embed, retrieve, process, chunk, search   |
+| Green  | Database Operations  | migrate, execute, query, schema, database |
 | Purple | Architects/Designers | design, architect, plan, specify          |
 | Orange | Deployers/Publishers | deploy, publish, release, upload          |
 | Red    | Fixers/Adjusters     | fix, refactor, adjust, optimize           |
@@ -157,13 +161,16 @@ plugin-validator.md:
 ### supabase plugin
 ```markdown
 supabase-architect.md:
-  color: purple      # Designs database schemas
+  color: green       # Designs database schemas (DATABASE)
 
-supabase-integrator.md:
-  color: green       # Integrates Supabase
+supabase-migration-applier.md:
+  color: green       # Applies migrations (DATABASE)
+
+supabase-database-executor.md:
+  color: green       # Executes SQL (DATABASE)
 
 supabase-security-auditor.md:
-  color: yellow      # Validates RLS policies
+  color: cyan        # Audits security (ANALYZER)
 
 supabase-tester.md:
   color: pink        # Tests database operations

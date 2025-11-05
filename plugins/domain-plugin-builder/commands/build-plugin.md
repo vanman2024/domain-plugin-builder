@@ -34,8 +34,8 @@ Create todo list:
 
 TodoWrite with tasks:
 - Create plugin scaffold
-- Build commands
-- Build agents
+- Build agents (FIRST - so commands can reference them!)
+- Build commands (AFTER agents - can reference agent names correctly)
 - Build skills
 - Build hooks
 - Run validation
@@ -63,27 +63,7 @@ This creates:
 
 Wait for the command to complete, then update TodoWrite: Mark "Create plugin scaffold" as completed
 
-Phase 3: Build Commands
-
-Ask user how many commands and what they should do.
-
-Collect ALL command specifications, then use SlashCommand tool to invoke slash-commands-create ONCE with all of them:
-
-**Use SlashCommand tool:**
-
-SlashCommand(/domain-plugin-builder:slash-commands-create <cmd-1> "<desc-1>" <cmd-2> "<desc-2>" <cmd-3> "<desc-3>" ... <cmd-N> "<desc-N>")
-
-**CRITICAL:** Pass ALL commands in a SINGLE SlashCommand invocation. Do NOT call multiple times.
-
-Examples:
-- 1 command: SlashCommand(/domain-plugin-builder:slash-commands-create deploy "Deploy application to production")
-- 3 commands: SlashCommand(/domain-plugin-builder:slash-commands-create init "Initialize project" build "Build the application" deploy "Deploy to production")
-
-Wait for the command to complete (slash-commands-create handles parallel execution internally)
-
-Update TodoWrite: Mark "Build commands" as completed
-
-Phase 4: Build Agents
+Phase 3: Build Agents
 
 Ask user how many agents and what they should do.
 
@@ -104,6 +84,28 @@ Examples:
 Wait for the command to complete (agents-create handles parallel execution internally)
 
 Update TodoWrite: Mark "Build agents" as completed
+
+Phase 4: Build Commands
+
+**IMPORTANT:** Agents are now created, so commands can reference them correctly!
+
+Ask user how many commands and what they should do.
+
+Collect ALL command specifications, then use SlashCommand tool to invoke slash-commands-create ONCE with all of them:
+
+**Use SlashCommand tool:**
+
+SlashCommand(/domain-plugin-builder:slash-commands-create <cmd-1> "<desc-1>" <cmd-2> "<desc-2>" <cmd-3> "<desc-3>" ... <cmd-N> "<desc-N>")
+
+**CRITICAL:** Pass ALL commands in a SINGLE SlashCommand invocation. Do NOT call multiple times.
+
+Examples:
+- 1 command: SlashCommand(/domain-plugin-builder:slash-commands-create deploy "Deploy application to production")
+- 3 commands: SlashCommand(/domain-plugin-builder:slash-commands-create init "Initialize project" build "Build the application" deploy "Deploy to production")
+
+Wait for the command to complete (slash-commands-create handles parallel execution internally)
+
+Update TodoWrite: Mark "Build commands" as completed
 
 Phase 5: Build Skills
 
