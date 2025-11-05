@@ -125,11 +125,47 @@ Update TodoWrite: Mark "Build skills" as completed
 
 Phase 6: Build Hooks
 
-Ask user how many hooks needed (optional - can skip).
+**IMPORTANT: Most plugins DON'T need hooks! Only ask if the plugin needs system-level automation.**
 
-Collect ALL hook specifications, then use SlashCommand tool to invoke hooks-create ONCE with all of them:
+**Skip hooks if the plugin provides:**
+- Features (commands, agents, skills for user tasks)
+- Development tools
+- Integrations
+- Workflow orchestration
 
-**Use SlashCommand tool:**
+**Include hooks ONLY if the plugin needs:**
+- **Auto-formatting**: Run formatters automatically after edits (PostToolUse)
+- **Security/Compliance**: Block sensitive file modifications (PreToolUse)
+- **Logging/Auditing**: Track all tool executions for compliance (PostToolUse)
+- **Custom Notifications**: Modify notification behavior (Notification hook)
+- **Session Management**: Initialize/cleanup on session start/end (SessionStart/SessionEnd)
+
+**Decision:**
+Ask user: "Does this plugin need system-level automation (auto-formatting, security blocking, logging, notifications)?"
+
+**If NO (most plugins):**
+- Create empty hooks directory and hooks.json:
+  !{bash mkdir -p plugins/$ARGUMENTS/hooks}
+  !{Write plugins/$ARGUMENTS/hooks/hooks.json}
+  Content:
+  ```json
+  {
+    "hooks": {
+      "PreToolUse": [],
+      "PostToolUse": [],
+      "UserPromptSubmit": [],
+      "SessionStart": [],
+      "SessionEnd": [],
+      "PreCompact": []
+    }
+  }
+  ```
+- Update TodoWrite: Mark "Build hooks" as completed (skipped - not needed)
+
+**If YES (rare):**
+Ask what automations needed, then collect hook specifications.
+
+Use SlashCommand tool to invoke hooks-create ONCE with all of them:
 
 SlashCommand(/domain-plugin-builder:hooks-create <hook-1> <event-1> "<action-1>" <hook-2> <event-2> "<action-2>" ... <hook-N> <event-N> "<action-N>")
 
