@@ -21,7 +21,21 @@ allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite
 
 Goal: Create properly structured hooks. For 3+ hooks, creates them in parallel for faster execution.
 
-Phase 1: Parse Arguments and Determine Plugin
+Phase 1: Load Architectural Framework
+
+Actions:
+- Load component decision guidance:
+  @docs/frameworks/claude/reference/component-decision-framework.md
+- Load composition patterns:
+  @docs/frameworks/claude/reference/dans-composition-pattern.md
+- These provide critical understanding of:
+  - Hooks are for event-driven automation
+  - When to use hooks vs commands
+  - Hook boundaries and responsibilities
+  - How hooks integrate with plugin ecosystem
+  - Anti-patterns to avoid
+
+Phase 2: Parse Arguments and Determine Plugin
 
 Parse $ARGUMENTS to extract:
 - Hook names and event types
@@ -31,9 +45,9 @@ If plugin not specified:
 
 !{bash basename $(pwd)}
 
-Store plugin name for Phase 2.
+Store plugin name for Phase 3.
 
-Phase 2: Load Hooks Documentation
+Phase 3: Load Hooks Documentation
 
 WebFetch: https://docs.claude.com/en/docs/claude-code/hooks-guide
 
@@ -42,7 +56,7 @@ This provides context on:
 - Hook configuration structure
 - Script patterns and best practices
 
-Phase 3: Parse Arguments & Determine Mode
+Phase 4: Parse Arguments & Determine Mode
 
 Actions:
 
@@ -60,7 +74,7 @@ Execution modes:
 - 2 hooks: Sequential creation
 - 3+ hooks: Parallel creation (invoke multiple hooks-builder agents)
 
-Phase 4: Create Hooks
+Phase 5: Create Hooks
 
 **Mode 1: Single Hook (1 hook)**
 
@@ -122,7 +136,7 @@ Wait for ALL agents to complete before proceeding.
 
 Update TodoWrite as each completes.
 
-Phase 5: Summary
+Phase 6: Summary
 
 Display results:
 

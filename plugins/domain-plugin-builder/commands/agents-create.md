@@ -28,7 +28,21 @@ Core Principles:
 - Validate line count and structure
 - Use parallel execution for 3+ agents
 
-Phase 1: Parse Arguments & Count Agents
+Phase 1: Load Architectural Framework
+
+Actions:
+- Load component decision guidance:
+  @docs/frameworks/claude/reference/component-decision-framework.md
+- Load composition patterns:
+  @docs/frameworks/claude/reference/dans-composition-pattern.md
+- These provide critical understanding of:
+  - Agents are for complex multi-step workflows with decision-making
+  - When to use agents vs commands vs skills
+  - Agent boundaries and responsibilities
+  - How agents use skills and commands
+  - Anti-patterns to avoid
+
+Phase 2: Parse Arguments & Count Agents
 Goal: Extract agent specifications and determine execution mode
 
 Actions:
@@ -46,7 +60,7 @@ All agents use Task tool - whether creating 1 or 10 agents.
 
 **Note:** Agents inherit tools from parent - no need to specify tools field.
 
-Phase 2: Load Templates
+Phase 3: Load Templates
 Goal: Study framework patterns
 
 Actions:
@@ -56,7 +70,7 @@ Load agent template immediately:
 
 Determine plugin location from context (default: domain-plugin-builder)
 
-Phase 3: Create Agent(s)
+Phase 4: Create Agent(s)
 Goal: Generate agent file(s) efficiently
 
 Actions:
@@ -128,9 +142,9 @@ Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-b
 
 **DO NOT wait between Task() calls - send them ALL together in one response!**
 
-The agents will run in parallel automatically. Only proceed to Phase 4 after all Task() calls complete.
+The agents will run in parallel automatically. Only proceed to Phase 5 after all Task() calls complete.
 
-Phase 4: Validation and Registration
+Phase 5: Validation and Registration
 
 **Validate all created agents:**
 
@@ -141,7 +155,7 @@ If validation fails, read errors and fix issues.
 
 **Note:** Agents don't need settings.json registration (only commands do).
 
-Phase 5: Git Commit and Push
+Phase 6: Git Commit and Push
 Goal: Save work immediately
 
 Actions:
@@ -159,7 +173,7 @@ EOF
 )"}
 - Push to GitHub: !{bash git push origin master}
 
-Phase 5: Summary
+Phase 7: Summary
 Goal: Report results
 
 Actions:

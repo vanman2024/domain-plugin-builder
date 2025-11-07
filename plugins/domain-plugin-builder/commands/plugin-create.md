@@ -23,19 +23,28 @@ Goal: Create the basic directory structure and plugin.json manifest for a new Cl
 
 This is a simple command focused on creating the scaffold. Use /domain-plugin-builder:build-plugin for complete orchestration.
 
-Phase 1: Verify Location
+Phase 1: Load Architectural Framework
+
+Actions:
+- Load component decision guidance:
+  @docs/frameworks/claude/reference/component-decision-framework.md
+- Load composition patterns:
+  @docs/frameworks/claude/reference/dans-composition-pattern.md
+- These inform the plugin structure and component organization
+
+Phase 2: Verify Location
 
 !{bash pwd}
 
 Expected: domain-plugin-builder directory. If not correct, inform user.
 
-Phase 2: Gather Basic Info
+Phase 3: Gather Basic Info
 
 Use AskUserQuestion to get:
 - Plugin description (one sentence)
 - Plugin type (SDK, Framework, Custom)
 
-Phase 3: Create Directory Structure
+Phase 4: Create Directory Structure
 
 !{bash mkdir -p plugins/$ARGUMENTS/.claude-plugin}
 !{bash mkdir -p plugins/$ARGUMENTS/commands}
@@ -45,7 +54,7 @@ Phase 3: Create Directory Structure
 !{bash mkdir -p plugins/$ARGUMENTS/scripts}
 !{bash mkdir -p plugins/$ARGUMENTS/docs}
 
-Phase 4: Create plugin.json Manifest
+Phase 5: Create plugin.json Manifest
 
 Write plugins/$ARGUMENTS/.claude-plugin/plugin.json:
 
@@ -63,7 +72,7 @@ Write plugins/$ARGUMENTS/.claude-plugin/plugin.json:
 }
 ```
 
-Phase 5: Create Placeholder hooks.json
+Phase 6: Create Placeholder hooks.json
 
 Write plugins/$ARGUMENTS/hooks/hooks.json:
 
@@ -80,7 +89,7 @@ Write plugins/$ARGUMENTS/hooks/hooks.json:
 
 This is a placeholder. Use /domain-plugin-builder:hooks-create to add hooks.
 
-Phase 6: Create .gitignore
+Phase 7: Create .gitignore
 
 Write plugins/$ARGUMENTS/.gitignore:
 
@@ -146,7 +155,7 @@ yarn-error.log
 .mcp_cache/
 ```
 
-Phase 7: Create .mcp.json
+Phase 8: Create .mcp.json
 
 Write plugins/$ARGUMENTS/.mcp.json:
 
@@ -158,7 +167,7 @@ Write plugins/$ARGUMENTS/.mcp.json:
 
 This is a placeholder for MCP server configurations.
 
-Phase 8: Create LICENSE
+Phase 9: Create LICENSE
 
 Write plugins/$ARGUMENTS/LICENSE:
 
@@ -186,7 +195,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-Phase 9: Create CHANGELOG.md
+Phase 10: Create CHANGELOG.md
 
 Write plugins/$ARGUMENTS/CHANGELOG.md:
 

@@ -28,7 +28,16 @@ Core Principles:
 - Ensure marketplace/settings integration
 - Commit and push to GitHub
 
-Phase 1: Initialize Todo List and Verify Location
+Phase 1: Load Architectural Framework
+
+Actions:
+- Load component decision guidance:
+  @docs/frameworks/claude/reference/component-decision-framework.md
+- Load composition patterns:
+  @docs/frameworks/claude/reference/dans-composition-pattern.md
+- These guide all component creation decisions throughout the build process
+
+Phase 2: Initialize Todo List and Verify Location
 
 Create todo list:
 
@@ -50,7 +59,7 @@ Verify location:
 
 Expected: domain-plugin-builder directory
 
-Phase 2: Create Plugin Scaffold
+Phase 3: Create Plugin Scaffold
 
 **Use SlashCommand tool to invoke the command:**
 
@@ -63,7 +72,7 @@ This creates:
 
 Wait for the command to complete, then update TodoWrite: Mark "Create plugin scaffold" as completed
 
-Phase 3: Build Agents
+Phase 4: Build Agents
 
 Ask user how many agents and what they should do.
 
@@ -85,7 +94,7 @@ Wait for the command to complete (agents-create handles parallel execution inter
 
 Update TodoWrite: Mark "Build agents" as completed
 
-Phase 4: Build Commands
+Phase 5: Build Commands
 
 **IMPORTANT:** Agents are now created, so commands can reference them correctly!
 
@@ -107,7 +116,7 @@ Wait for the command to complete (slash-commands-create handles parallel executi
 
 Update TodoWrite: Mark "Build commands" as completed
 
-Phase 5: Build Skills
+Phase 6: Build Skills
 
 Ask user how many skills needed.
 
@@ -123,7 +132,7 @@ Wait for the command to complete (skills-create handles parallel execution inter
 
 Update TodoWrite: Mark "Build skills" as completed
 
-Phase 6: Build Hooks
+Phase 7: Build Hooks
 
 **IMPORTANT: Most plugins DON'T need hooks! Only ask if the plugin needs system-level automation.**
 
@@ -178,7 +187,7 @@ Wait for the command to complete (hooks-create handles parallel execution intern
 
 Update TodoWrite: Mark "Build hooks" as completed
 
-Phase 7: Update Marketplace Configuration
+Phase 8: Update Marketplace Configuration
 
 Run marketplace sync script:
 
@@ -188,7 +197,7 @@ This registers the plugin in marketplace.json
 
 Update TodoWrite: Mark "Update marketplace.json" as completed
 
-Phase 8: Register in Settings
+Phase 9: Register in Settings
 
 Read current settings and add plugin commands:
 
@@ -205,7 +214,7 @@ Use Edit tool to insert after last plugin entry.
 
 Update TodoWrite: Mark "Update settings.json" as completed
 
-Phase 9: Run Comprehensive Validation
+Phase 10: Run Comprehensive Validation
 
 Run /domain-plugin-builder:validate $ARGUMENTS
 (Wait for validation to complete)
@@ -225,7 +234,7 @@ If validation fails:
 
 Update TodoWrite: Mark "Run validation" as completed
 
-Phase 10: Git Commit and Push
+Phase 11: Git Commit and Push
 
 Stage all plugin files:
 
@@ -250,7 +259,7 @@ Push to GitHub:
 
 Update TodoWrite: Mark "Git commit and push" as completed
 
-Phase 11: Display Summary
+Phase 12: Display Summary
 
 Count components:
 

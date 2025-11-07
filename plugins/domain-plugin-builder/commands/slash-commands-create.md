@@ -21,7 +21,21 @@ argument-hint: <command-name> "<description>" [--plugin=name] | <cmd-1> "<desc-1
 
 Goal: Create properly structured slash command(s). For 3+ commands, creates them in parallel for faster execution.
 
-Phase 1: Parse Arguments and Determine Plugin
+Phase 1: Load Architectural Framework
+
+Actions:
+- Load component decision guidance:
+  @docs/frameworks/claude/reference/component-decision-framework.md
+- Load composition patterns:
+  @docs/frameworks/claude/reference/dans-composition-pattern.md
+- These provide critical understanding of:
+  - Commands are the primitive (start here!)
+  - When to use commands vs skills vs agents vs hooks
+  - Skills compose commands (not vice versa)
+  - Composition hierarchies and patterns
+  - Anti-patterns to avoid
+
+Phase 2: Parse Arguments and Determine Plugin
 
 Parse $ARGUMENTS to extract:
 - Command names and descriptions
@@ -31,15 +45,15 @@ If plugin not specified:
 
 !{bash basename $(pwd)}
 
-Store plugin name for Phase 2.
+Store plugin name for Phase 3.
 
-Phase 2: Load Templates
+Phase 3: Load Templates
 
 Load command template for reference:
 
 @template-command-patterns.md
 
-Phase 3: Parse Arguments & Determine Mode
+Phase 4: Parse Arguments & Determine Mode
 
 Actions:
 
@@ -52,7 +66,7 @@ Store the count. Then extract each command specification:
 - If count = 2: Two commands mode - extract both <cmd-N> "<desc-N>" pairs
 - If count >= 3: Multiple commands mode - extract all <cmd-N> "<desc-N>" pairs
 
-Phase 4: Create Commands
+Phase 5: Create Commands
 
 Actions:
 
@@ -130,9 +144,9 @@ Task(description="Create command 3", subagent_type="domain-plugin-builder:slash-
 
 **DO NOT wait between Task() calls - send them ALL together in one response!**
 
-The agents will run in parallel automatically. Only proceed to Phase 5 after all Task() calls complete.
+The agents will run in parallel automatically. Only proceed to Phase 6 after all Task() calls complete.
 
-Phase 5: Validation
+Phase 6: Validation
 
 For each created command:
 
@@ -140,7 +154,7 @@ For each created command:
 
 If validation fails, read errors and fix issues.
 
-Phase 6: Register in Settings
+Phase 7: Register in Settings
 
 **CRITICAL: Commands must be registered to be usable!**
 
@@ -155,7 +169,7 @@ This registers entries like:
 
 Verify registration by checking settings.json contains the new commands.
 
-Phase 7: Summary
+Phase 8: Summary
 
 Display results:
 
