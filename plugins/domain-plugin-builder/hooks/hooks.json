@@ -1,16 +1,10 @@
 {
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/auto-sync-hook.sh",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
+    "PreToolUse": [],
+    "PostToolUse": [],
+    "UserPromptSubmit": [],
+    "SessionStart": [],
+    "SessionEnd": [],
+    "PreCompact": []
   }
 }
