@@ -148,17 +148,16 @@ def sync_command(api, name, plugin_name, marketplace_name, file_path):
 
     # Prepare command data
     command_data = {
-        "Name": name,
         "Command Name": f"/{plugin_name}:{name}",
         "Description": frontmatter.get('description', ''),
         "Argument Hint": frontmatter.get('argument-hint', ''),
         "Plugin": [plugin_record_id],
-        "Directory Path": f"plugins/{plugin_name}/commands/{name}.md",
+        "File Path": f"plugins/{plugin_name}/commands/{name}.md",
     }
 
     # Check if command exists
     commands_table = api.table(BASE_ID, "Commands")
-    formula = f"AND({{Name}}='{name}', {{Plugin}}='{plugin_record_id}')"
+    formula = f"{{Command Name}}='/{plugin_name}:{name}'"
     existing = commands_table.all(formula=formula)
 
     if existing:
