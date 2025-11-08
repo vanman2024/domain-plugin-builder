@@ -1,7 +1,7 @@
 ---
 description: Build complete plugin with all components and validation
 argument-hint: <plugin-name>
-allowed-tools: SlashCommand, Task, Read, Write, Edit, Bash, Glob, AskUserQuestion, TodoWrite
+allowed-tools: SlashCommand, Task, Read, Write, Edit, Bash, Glob, TodoWrite
 ---
 
 ## Security Requirements
@@ -160,12 +160,7 @@ Ask user: "Does this plugin need system-level automation (auto-formatting, secur
   ```json
   {
     "hooks": {
-      "PreToolUse": [],
-      "PostToolUse": [],
-      "UserPromptSubmit": [],
-      "SessionStart": [],
-      "SessionEnd": [],
-      "PreCompact": []
+      "PreToolUse": [], "PostToolUse": [], "UserPromptSubmit": [], "SessionStart": [], "SessionEnd": [], "PreCompact": []
     }
   }
   ```

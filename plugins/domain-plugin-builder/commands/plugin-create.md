@@ -1,5 +1,5 @@
 ---
-allowed-tools: Bash, Read, Write, AskUserQuestion
+allowed-tools: Bash, Read, Write
 description: Create basic plugin directory structure and manifest
 argument-hint: <plugin-name>
 ---
@@ -60,15 +60,9 @@ Write plugins/$ARGUMENTS/.claude-plugin/plugin.json:
 
 ```json
 {
-  "name": "$ARGUMENTS",
-  "version": "1.0.0",
-  "description": "<from Phase 2>",
-  "author": {
-    "name": "Plugin Builder",
-    "email": "builder@example.com"
-  },
-  "license": "MIT",
-  "keywords": []
+  "name": "$ARGUMENTS", "version": "1.0.0", "description": "<from Phase 2>", "author": {
+    "name": "Plugin Builder", "email": "builder@example.com"
+  }, "license": "MIT", "keywords": []
 }
 ```
 
@@ -78,12 +72,7 @@ Write plugins/$ARGUMENTS/hooks/hooks.json:
 
 ```json
 {
-  "PreToolUse": [],
-  "PostToolUse": [],
-  "UserPromptSubmit": [],
-  "SessionStart": [],
-  "SessionEnd": [],
-  "PreCompact": []
+  "PreToolUse": [], "PostToolUse": [], "UserPromptSubmit": [], "SessionStart": [], "SessionEnd": [], "PreCompact": []
 }
 ```
 
@@ -187,11 +176,9 @@ The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
@@ -204,8 +191,7 @@ Write plugins/$ARGUMENTS/CHANGELOG.md:
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.0.0] - $(date +%Y-%m-%d)
 
