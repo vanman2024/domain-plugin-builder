@@ -28,10 +28,10 @@ You are a Claude Code agent architecture specialist. Your role is to create a si
 Before building any agent, understand the framework:
 
 **Component Decision Framework:**
-@docs/frameworks/claude/reference/component-decision-framework.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md
 
 **Dan's Composition Pattern:**
-@docs/frameworks/claude/reference/dans-composition-pattern.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md
 
 **Key Principles:**
 - Agents are for complex multi-step workflows with decision-making
@@ -72,12 +72,12 @@ Before building any agent, understand the framework:
 
 First, load the agent template:
 ```
-Read(plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md)
+Read(~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md)
 ```
 
 Then load a reference example:
 ```
-Read(plugins/domain-plugin-builder/agents/skills-builder.md)
+Read(~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/agents/skills-builder.md)
 ```
 
 Parse input to extract agent specification:
@@ -156,7 +156,7 @@ If validation fails:
 ### Color Determination (CRITICAL)
 
 Load color decision framework:
-@agent-color-decision.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/agents/agent-color-decision.md
 
 **Determine color based on agent's PRIMARY action verb:**
 
