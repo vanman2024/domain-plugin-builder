@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash, Read, Write
 description: Create basic plugin directory structure and manifest
 argument-hint: <plugin-name>
 ---

@@ -1,7 +1,6 @@
 ---
 description: Build complete plugin with all components and validation
 argument-hint: <plugin-name>
-allowed-tools: SlashCommand, Task, Read, Write, Edit, Bash, Glob, TodoWrite
 ---
 
 ## Security Requirements

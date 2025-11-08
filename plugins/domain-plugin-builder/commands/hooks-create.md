@@ -1,7 +1,6 @@
 ---
 description: Create hook(s) following standardized structure - supports parallel creation for 3+ hooks
 argument-hint: <hook-name> <event-type> "<action>" [--plugin=name] | <hook-1> <event-1> ... [--plugin=name]
-allowed-tools: Task, Read, Write, Edit, Bash, Grep, Glob, TodoWrite
 ---
 
 ## Security Requirements

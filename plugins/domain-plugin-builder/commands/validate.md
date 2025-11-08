@@ -1,7 +1,6 @@
 ---
 description: Validate plugin structure and compliance using plugin-validator agent
 argument-hint: <plugin-name>
-allowed-tools: Task, Read, Bash, Glob
 ---
 
 ## Security Requirements

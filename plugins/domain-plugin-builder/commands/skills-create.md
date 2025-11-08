@@ -1,7 +1,6 @@
 ---
 description: Create new skill(s) using skills-builder agent - analyzes plugin structure or accepts direct specifications (supports parallel creation)
 argument-hint: [--analyze <plugin-name>] | [<skill-name> "<description>"] | [<skill-1> "<desc-1>" <skill-2> "<desc-2>" ...]
-allowed-tools: Task, Read, Bash, Skill, Write
 ---
 
 ## Security Requirements
