@@ -173,7 +173,14 @@ EOF
 )"}
 - Push to GitHub: !{bash git push origin master}
 
-Phase 7: Summary
+Phase 7: Sync to Airtable
+Goal: Sync created agent(s) to Airtable immediately
+
+Actions:
+- For each created agent, sync to Airtable:
+  !{bash python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=agent --name=$AGENT_NAME --plugin=$PLUGIN_NAME --marketplace=$MARKETPLACE_NAME}
+
+Phase 8: Summary
 Goal: Report results
 
 Actions:

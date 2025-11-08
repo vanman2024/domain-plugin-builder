@@ -154,7 +154,32 @@ For each created command:
 
 If validation fails, read errors and fix issues.
 
-Phase 7: Register in Settings
+Phase 7: Sync to Airtable
+
+**CRITICAL: Sync each command to Airtable as source of truth!**
+
+Actions:
+
+Determine marketplace name from current directory:
+
+!{bash pwd | grep -oE '(dev-lifecycle-marketplace|ai-dev-marketplace|mcp-servers-marketplace|domain-plugin-builder)' | head -1}
+
+For each created command, sync to Airtable:
+
+!{bash python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=command --name=$CMD_NAME --plugin=$PLUGIN_NAME --marketplace=$MARKETPLACE_NAME}
+
+This:
+- Extracts frontmatter (description, argument-hint)
+- Finds or creates Command record in Airtable
+- Links to Plugin record
+- Updates Directory Path field
+
+**Environment Requirement:**
+- Requires AIRTABLE_TOKEN environment variable
+- If not set, displays error message with instructions
+- Sync will fail gracefully without blocking command creation
+
+Phase 8: Register in Settings
 
 **CRITICAL: Commands must be registered to be usable!**
 
@@ -169,7 +194,7 @@ This registers entries like:
 
 Verify registration by checking settings.json contains the new commands.
 
-Phase 8: Summary
+Phase 9: Summary
 
 Display results:
 
