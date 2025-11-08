@@ -214,9 +214,42 @@ def sync_skill(api, name, plugin_name, marketplace_name, dir_path):
 
     return True
 
+def sync_hook(api, name, event_type, plugin_name, marketplace_name, script_path):
+    """Sync hook to Airtable"""
+    print(f"📋 Syncing hook: {name} ({event_type})")
+
+    # Get plugin record ID
+    plugin_record_id = get_plugin_record_id(api, plugin_name, marketplace_name)
+    if not plugin_record_id:
+        return False
+
+    # Prepare hook data with minimal required fields
+    hook_data = {
+        "Hook Name": name,
+        "Event Type": event_type,
+        "Plugin": [plugin_record_id],
+    }
+
+    # Check if hook exists
+    hooks_table = api.table(BASE_ID, "Hooks")
+    formula = f"AND({{Hook Name}}='{name}', {{Plugin}}='{plugin_record_id}')"
+    existing = hooks_table.all(formula=formula)
+
+    if existing:
+        # Update existing
+        record_id = existing[0]['id']
+        hooks_table.update(record_id, hook_data)
+        print(f"✅ Updated hook: {name} (ID: {record_id})")
+    else:
+        # Create new
+        record = hooks_table.create(hook_data)
+        print(f"✅ Created hook: {name} (ID: {record['id']})")
+
+    return True
+
 def main():
     parser = argparse.ArgumentParser(description='Sync a component to Airtable')
-    parser.add_argument('--type', required=True, choices=['agent', 'command', 'skill'],
+    parser.add_argument('--type', required=True, choices=['agent', 'command', 'skill', 'hook'],
                         help='Component type')
     parser.add_argument('--name', required=True,
                         help='Component name')
@@ -224,6 +257,10 @@ def main():
                         help='Plugin name (e.g., nextjs-frontend)')
     parser.add_argument('--marketplace', required=True,
                         help='Marketplace name (e.g., ai-dev-marketplace)')
+    parser.add_argument('--event-type',
+                        help='Hook event type (required for hooks)')
+    parser.add_argument('--script-path',
+                        help='Hook script path (required for hooks)')
 
     args = parser.parse_args()
 
@@ -239,6 +276,15 @@ def main():
         print(f"   Valid marketplaces: {list(MARKETPLACE_PATHS.keys())}")
         return 1
 
+    # Validate hook-specific arguments
+    if args.type == 'hook':
+        if not args.event_type:
+            print("❌ ERROR: --event-type required for hooks")
+            return 1
+        if not args.script_path:
+            print("❌ ERROR: --script-path required for hooks")
+            return 1
+
     # Construct file path
     marketplace_root = MARKETPLACE_PATHS[args.marketplace]
 
@@ -248,6 +294,8 @@ def main():
         file_path = f"{marketplace_root}/plugins/{args.plugin}/commands/{args.name}.md"
     elif args.type == 'skill':
         file_path = f"{marketplace_root}/plugins/{args.plugin}/skills/{args.name}/"
+    elif args.type == 'hook':
+        file_path = args.script_path  # Use provided script path
     else:
         print(f"❌ ERROR: Unknown component type: {args.type}")
         return 1
@@ -257,10 +305,14 @@ def main():
         if not os.path.exists(file_path):
             print(f"❌ ERROR: File not found: {file_path}")
             return 1
-    else:  # skill
+    elif args.type == 'skill':
         skill_md = os.path.join(file_path, "SKILL.md")
         if not os.path.exists(skill_md):
             print(f"❌ ERROR: SKILL.md not found: {skill_md}")
+            return 1
+    elif args.type == 'hook':
+        if not os.path.exists(file_path):
+            print(f"❌ ERROR: Hook script not found: {file_path}")
             return 1
 
     # Initialize Airtable API
@@ -284,6 +336,8 @@ def main():
         success = sync_command(api, args.name, args.plugin, args.marketplace, file_path)
     elif args.type == 'skill':
         success = sync_skill(api, args.name, args.plugin, args.marketplace, file_path)
+    elif args.type == 'hook':
+        success = sync_hook(api, args.name, args.event_type, args.plugin, args.marketplace, file_path)
 
     if success:
         print()

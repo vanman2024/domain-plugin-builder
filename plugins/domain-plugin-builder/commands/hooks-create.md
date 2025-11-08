@@ -136,6 +136,14 @@ Wait for ALL agents to complete before proceeding.
 
 Update TodoWrite as each completes.
 
+Phase 5.5: Sync to Airtable
+
+For each hook created, sync to Airtable immediately:
+
+!{bash python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=hook --name=<hook-name> --plugin=<plugin-name> --marketplace=<marketplace-name> --event-type=<event-type> --script-path=<full-path-to-script>}
+
+**Note:** If multiple hooks created, sync each one sequentially.
+
 Phase 6: Summary
 
 Display results:
@@ -145,8 +153,8 @@ Display results:
 **Location:** plugins/<plugin-name>/hooks/
 
 **Hooks:**
-- <hook-1-name> (Event: <event-1>) - <action-1>
-- <hook-2-name> (Event: <event-2>) - <action-2>
+- <hook-1-name> (Event: <event-1>) - <action-1> ✅ Synced to Airtable
+- <hook-2-name> (Event: <event-2>) - <action-2> ✅ Synced to Airtable
 - etc.
 
 **Next Steps:**

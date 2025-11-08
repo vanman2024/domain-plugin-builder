@@ -65,13 +65,22 @@ echo ""
 if [ $INVALID -gt 0 ]; then
     echo "❌ VALIDATION FAILED"
     echo ""
-    echo "Missing agents:"
+    echo "Commands reference non-existent agents:"
     for agent in "${MISSING_AGENTS[@]}"; do
-        echo "  - $agent.md"
+        echo "  - $agent (referenced in commands but agents/$agent.md doesn't exist)"
     done
     echo ""
-    echo "💡 Create missing agents with:"
-    echo "   /domain-plugin-builder:agents-create <agent-name> \"<description>\" \"<tools>\""
+    echo "🔧 FIX THIS BY:"
+    echo "   1. Check which commands reference these agents:"
+    echo "      grep -r 'subagent_type=\".*:$agent\"' $PLUGIN_PATH/commands/"
+    echo ""
+    echo "   2. Update commands to use ACTUAL agent names from agents/ directory:"
+    echo "      ls $PLUGIN_PATH/agents/"
+    echo ""
+    echo "   3. Fix the subagent_type in commands to match real agent filenames"
+    echo ""
+    echo "❌ DO NOT create new agents to match wrong command references!"
+    echo "✅ FIX the commands to use correct existing agent names!"
     exit 1
 else
     echo "✅ ALL AGENT REFERENCES VALID"
