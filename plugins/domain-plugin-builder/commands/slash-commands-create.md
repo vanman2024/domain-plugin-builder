@@ -209,7 +209,45 @@ This registers entries like:
 
 Verify registration by checking settings.json contains the new commands.
 
-Phase 9: Summary
+Phase 9: Self-Validation Checklist
+
+**CRITICAL: Verify ALL work was completed before finishing!**
+
+Check each item and report status:
+
+1. **Files Created:**
+   !{bash ls -1 plugins/$PLUGIN_NAME/commands/*.md | wc -l}
+   Expected: <count from Phase 4>
+
+2. **Files Exist:**
+   For each command, verify file exists:
+   !{bash test -f plugins/$PLUGIN_NAME/commands/$CMD_NAME.md && echo "✅ $CMD_NAME.md exists" || echo "❌ $CMD_NAME.md MISSING"}
+
+3. **Validation Passed:**
+   Re-run validation on each command:
+   !{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh plugins/$PLUGIN_NAME/commands/$CMD_NAME.md}
+   Must show "✅ All checks passed"
+
+4. **Settings Registration:**
+   Verify commands are in settings:
+   !{bash grep "/$PLUGIN_NAME:$CMD_NAME" ~/.claude/settings.json && echo "✅ Registered" || echo "❌ NOT REGISTERED"}
+
+5. **Airtable Sync:**
+   Check sync was attempted (even if failed due to missing token)
+
+6. **Todo List Complete:**
+   Mark all todos as completed:
+   !{TodoWrite [all todos with status: "completed"]}
+
+**If ANY check fails:**
+- Stop immediately
+- Report what's missing
+- Fix the issue before proceeding
+- Re-run this validation phase
+
+**Only proceed to Phase 10 if ALL checks pass!**
+
+Phase 10: Summary
 
 Display results:
 
@@ -218,11 +256,13 @@ Display results:
 **Location:** plugins/$PLUGIN_NAME/commands/
 
 **Files:**
-- $CMD_1.md - $DESC_1
-- $CMD_2.md - $DESC_2
+- $CMD_1.md - $DESC_1 ✅
+- $CMD_2.md - $DESC_2 ✅
 - etc.
 
 **Validation:** All passed ✅
+**Registration:** Complete ✅
+**Airtable Sync:** Attempted ✅
 
 **Next Steps:**
 - Test commands: /$PLUGIN_NAME:$CMD_NAME

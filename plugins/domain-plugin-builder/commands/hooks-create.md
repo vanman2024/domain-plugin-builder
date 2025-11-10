@@ -28,9 +28,9 @@ Phase 0: Create Todo List
   {"content": "Load hooks documentation", "status": "pending", "activeForm": "Loading hooks documentation"},
   {"content": "Parse arguments and determine mode", "status": "pending", "activeForm": "Parsing arguments and determining mode"},
   {"content": "Create hook files", "status": "pending", "activeForm": "Creating hook files"},
-  {"content": "Validate all hooks", "status": "pending", "activeForm": "Validating all hooks"},
+  {"content": "Commit and push to git", "status": "pending", "activeForm": "Committing and pushing to git"},
   {"content": "Sync to Airtable", "status": "pending", "activeForm": "Syncing to Airtable"},
-  {"content": "Register hooks", "status": "pending", "activeForm": "Registering hooks"},
+  {"content": "Run self-validation checks", "status": "pending", "activeForm": "Running self-validation checks"},
   {"content": "Display summary", "status": "pending", "activeForm": "Displaying summary"}
 ]}
 
@@ -151,28 +151,109 @@ Wait for ALL agents to complete before proceeding.
 
 Update TodoWrite as each completes.
 
-Phase 5.5: Sync to Airtable
+Phase 5.5: Git Commit and Push
+Goal: Save work immediately
 
-For each hook created, sync to Airtable immediately:
+Actions:
+- Add all hook files to git:
+  !{bash git add plugins/$PLUGIN_NAME/hooks/ plugins/$PLUGIN_NAME/scripts/ plugins/$PLUGIN_NAME/docs/hooks.md}
+- Commit with message:
+  !{bash git commit -m "$(cat <<'EOF'
+feat: Add hook(s) - HOOK_NAMES
 
-!{bash python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=hook --name=<hook-name> --plugin=<plugin-name> --marketplace=<marketplace-name> --event-type=<event-type> --script-path=<full-path-to-script>}
+Complete hook structure with scripts, config, and documentation.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"}
+- Push to GitHub: !{bash git push origin master}
+
+Phase 5.6: Sync to Airtable
+Goal: Sync created hook(s) to Airtable immediately
+
+Actions:
+- Determine marketplace name from current directory:
+  !{bash pwd | grep -oE '(dev-lifecycle-marketplace|ai-dev-marketplace|mcp-servers-marketplace|domain-plugin-builder)' | head -1}
+- For each created hook, sync to Airtable:
+  !{bash python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=hook --name=<hook-name> --plugin=<plugin-name> --marketplace=<marketplace-name> --event-type=<event-type> --script-path=<full-path-to-script>}
+
+**Environment Requirement:**
+- Requires AIRTABLE_TOKEN environment variable
+- If not set, displays error message with instructions
+- Sync will fail gracefully without blocking hook creation
 
 **Note:** If multiple hooks created, sync each one sequentially.
 
-Phase 6: Summary
+Phase 6: Self-Validation Checklist
 
-Display results:
+**CRITICAL: Verify ALL work was completed before finishing!**
+
+Check each item and report status:
+
+1. **Files Created:**
+   Count hook scripts:
+   !{bash ls -1 plugins/$PLUGIN_NAME/scripts/*.sh 2>/dev/null | wc -l}
+   Expected: <count from Phase 4>
+
+2. **Files Exist:**
+   For each hook, verify files exist:
+   !{bash test -f plugins/$PLUGIN_NAME/scripts/$HOOK_NAME.sh && echo "✅ $HOOK_NAME.sh exists" || echo "❌ $HOOK_NAME.sh MISSING"}
+   !{bash test -f plugins/$PLUGIN_NAME/hooks/hooks.json && echo "✅ hooks.json exists" || echo "❌ hooks.json MISSING"}
+   !{bash test -f plugins/$PLUGIN_NAME/docs/hooks.md && echo "✅ hooks.md exists" || echo "❌ hooks.md MISSING"}
+
+3. **Script Executable:**
+   Verify scripts are executable:
+   !{bash test -x plugins/$PLUGIN_NAME/scripts/$HOOK_NAME.sh && echo "✅ $HOOK_NAME.sh executable" || echo "❌ $HOOK_NAME.sh NOT EXECUTABLE"}
+
+4. **Hook Configuration:**
+   Verify hook is registered in hooks.json:
+   !{bash grep "$HOOK_NAME" plugins/$PLUGIN_NAME/hooks/hooks.json && echo "✅ Hook configured" || echo "❌ Hook NOT CONFIGURED"}
+
+5. **Git Committed:**
+   Verify files are committed:
+   !{bash git log -1 --name-only | grep -E "(hooks/|scripts/)" && echo "✅ Committed" || echo "❌ NOT COMMITTED"}
+
+6. **Git Pushed:**
+   Verify push succeeded:
+   !{bash git status | grep "up to date" && echo "✅ Pushed" || echo "❌ NOT PUSHED"}
+
+7. **Airtable Sync:**
+   Check sync was attempted for each hook
+
+8. **Todo List Complete:**
+   Mark all todos as completed:
+   !{TodoWrite [all todos with status: "completed"]}
+
+**If ANY check fails:**
+- Stop immediately
+- Report what's missing
+- Fix the issue before proceeding
+- Re-run this validation phase
+
+**Only proceed to Phase 7 if ALL checks pass!**
+
+Phase 7: Summary
+Goal: Report results
+
+Actions:
+- Display results:
 
 **Hooks Created:** <count>
 **Plugin:** <plugin-name>
 **Location:** plugins/<plugin-name>/hooks/
 
 **Hooks:**
-- <hook-1-name> (Event: <event-1>) - <action-1> ✅ Synced to Airtable
-- <hook-2-name> (Event: <event-2>) - <action-2> ✅ Synced to Airtable
+- <hook-1-name> (Event: <event-1>) - <action-1> ✅
+- <hook-2-name> (Event: <event-2>) - <action-2> ✅
 - etc.
+
+**Validation:** All passed ✅
+**Git Status:** Committed and pushed ✅
+**Airtable Sync:** Attempted ✅
 
 **Next Steps:**
 - Test hooks by triggering events
 - Review scripts for correctness
-- Commit to git
+- Monitor hook execution in logs

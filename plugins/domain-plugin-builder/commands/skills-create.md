@@ -28,6 +28,9 @@ Phase 0: Create Todo List
   {"content": "Launch skills-builder agent", "status": "pending", "activeForm": "Launching skills-builder agent"},
   {"content": "Validate created skills", "status": "pending", "activeForm": "Validating created skills"},
   {"content": "Sync to Airtable", "status": "pending", "activeForm": "Syncing to Airtable"},
+  {"content": "Register skills in settings", "status": "pending", "activeForm": "Registering skills in settings"},
+  {"content": "Commit and push to git", "status": "pending", "activeForm": "Committing and pushing to git"},
+  {"content": "Run self-validation checklist", "status": "pending", "activeForm": "Running self-validation checklist"},
   {"content": "Display summary", "status": "pending", "activeForm": "Displaying summary"}
 ]}
 
@@ -198,11 +201,61 @@ EOF
 )"}
 - Push to GitHub: !{bash git push origin master}
 
-Phase 8: Summary
+Phase 8: Self-Validation Checklist
+
+**CRITICAL: Verify ALL work was completed before finishing!**
+
+Check each item and report status:
+
+1. **Directories Created:**
+   !{bash ls -1d plugins/$PLUGIN_NAME/skills/*/ 2>/dev/null | wc -l}
+   Expected: <count from Phase 2>
+
+2. **Skill Directories Exist:**
+   For each skill, verify directory exists:
+   !{bash test -d plugins/$PLUGIN_NAME/skills/$SKILL_NAME && echo "✅ $SKILL_NAME/ exists" || echo "❌ $SKILL_NAME/ MISSING"}
+
+3. **SKILL.md Files Exist:**
+   For each skill, verify SKILL.md exists:
+   !{bash test -f plugins/$PLUGIN_NAME/skills/$SKILL_NAME/SKILL.md && echo "✅ $SKILL_NAME/SKILL.md exists" || echo "❌ $SKILL_NAME/SKILL.md MISSING"}
+
+4. **Validation Passed:**
+   Re-run validation on each skill:
+   !{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh plugins/$PLUGIN_NAME/skills/$SKILL_NAME}
+   Must show "✅ All checks passed"
+
+5. **Settings Registration:**
+   Verify skills are in settings:
+   !{bash grep "Skill($PLUGIN_NAME:$SKILL_NAME)" ~/.claude/settings.json && echo "✅ Registered" || echo "❌ NOT REGISTERED"}
+
+6. **Git Committed:**
+   Verify files are committed:
+   !{bash git log -1 --name-only | grep "skills/" && echo "✅ Committed" || echo "❌ NOT COMMITTED"}
+
+7. **Git Pushed:**
+   Verify push succeeded:
+   !{bash git status | grep "up to date" && echo "✅ Pushed" || echo "❌ NOT PUSHED"}
+
+8. **Airtable Sync:**
+   Check sync was attempted for each skill
+
+9. **Todo List Complete:**
+   Mark all todos as completed:
+   !{TodoWrite [all todos with status: "completed"]}
+
+**If ANY check fails:**
+- Stop immediately
+- Report what's missing
+- Fix the issue before proceeding
+- Re-run this validation phase
+
+**Only proceed to Phase 9 if ALL checks pass!**
+
+Phase 9: Summary
 
 Actions:
 - Display results from all agents (skill names, locations, validation status)
-- Show git status (committed and pushed)
-- Confirm skills registered in settings.json
+- Show git status (committed and pushed) ✅
+- Confirm skills registered in settings.json ✅
 - Show how to invoke skills: !{skill plugin:skill-name}
 - If multiple skills created, list all successfully created skills

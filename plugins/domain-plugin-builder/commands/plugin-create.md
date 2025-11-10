@@ -221,17 +221,89 @@ Phase 10: Create README.md
 
 Write plugins/$ARGUMENTS/README.md with basic plugin info.
 
-Phase 11: Summary
+Phase 11: Self-Validation Checklist
+
+**CRITICAL: Verify ALL work was completed before finishing!**
+
+Check each item and report status:
+
+1. **Plugin Directory Created:**
+   !{bash test -d plugins/$ARGUMENTS && echo "✅ Directory exists" || echo "❌ Directory MISSING"}
+
+2. **Directory Structure Complete:**
+   !{bash test -d plugins/$ARGUMENTS/.claude-plugin && echo "✅ .claude-plugin/" || echo "❌ MISSING"}
+   !{bash test -d plugins/$ARGUMENTS/commands && echo "✅ commands/" || echo "❌ MISSING"}
+   !{bash test -d plugins/$ARGUMENTS/agents && echo "✅ agents/" || echo "❌ MISSING"}
+   !{bash test -d plugins/$ARGUMENTS/skills && echo "✅ skills/" || echo "❌ MISSING"}
+   !{bash test -d plugins/$ARGUMENTS/hooks && echo "✅ hooks/" || echo "❌ MISSING"}
+   !{bash test -d plugins/$ARGUMENTS/scripts && echo "✅ scripts/" || echo "❌ MISSING"}
+   !{bash test -d plugins/$ARGUMENTS/docs && echo "✅ docs/" || echo "❌ MISSING"}
+
+3. **Plugin Manifest Exists:**
+   !{bash test -f plugins/$ARGUMENTS/.claude-plugin/plugin.json && echo "✅ plugin.json exists" || echo "❌ plugin.json MISSING"}
+
+4. **Plugin Manifest Valid:**
+   !{bash python3 -m json.tool plugins/$ARGUMENTS/.claude-plugin/plugin.json > /dev/null 2>&1 && echo "✅ Valid JSON" || echo "❌ INVALID JSON"}
+
+5. **MCP Config Exists:**
+   !{bash test -f plugins/$ARGUMENTS/.mcp.json && echo "✅ .mcp.json exists" || echo "❌ .mcp.json MISSING"}
+
+6. **MCP Config Valid:**
+   !{bash python3 -m json.tool plugins/$ARGUMENTS/.mcp.json > /dev/null 2>&1 && echo "✅ Valid JSON" || echo "❌ INVALID JSON"}
+
+7. **Marketplace Registration:**
+   !{bash grep -q "$ARGUMENTS" .claude-plugin/marketplace.json 2>/dev/null && echo "✅ Registered in marketplace.json" || echo "⚠️ Not registered (OK if handled by build-plugin)"}
+
+8. **Git Status:**
+   !{bash git status plugins/$ARGUMENTS}
+   Check if files are tracked or committed
+
+9. **Git Commit:**
+   !{bash git log -1 --name-only | grep "plugins/$ARGUMENTS" && echo "✅ Committed" || echo "⚠️ Not committed (OK if handled by build-plugin)"}
+
+10. **Git Push:**
+    !{bash git status | grep "up to date" && echo "✅ Pushed" || echo "⚠️ Not pushed (OK if handled by build-plugin)"}
+
+11. **Todo List Complete:**
+    Mark all todos as completed:
+    !{TodoWrite [
+      {"content": "Load architectural framework", "status": "completed", "activeForm": "Loading architectural framework"},
+      {"content": "Verify location", "status": "completed", "activeForm": "Verifying location"},
+      {"content": "Gather basic info", "status": "completed", "activeForm": "Gathering basic info"},
+      {"content": "Create directory structure", "status": "completed", "activeForm": "Creating directory structure"},
+      {"content": "Create plugin manifest", "status": "completed", "activeForm": "Creating plugin manifest"},
+      {"content": "Create MCP config", "status": "completed", "activeForm": "Creating MCP config"},
+      {"content": "Update marketplace registration", "status": "completed", "activeForm": "Updating marketplace registration"},
+      {"content": "Register commands in settings", "status": "completed", "activeForm": "Registering commands in settings"},
+      {"content": "Git commit and push", "status": "completed", "activeForm": "Committing and pushing to git"},
+      {"content": "Display summary", "status": "completed", "activeForm": "Displaying summary"}
+    ]}
+
+**If ANY critical check fails (items 1-6):**
+- Stop immediately
+- Report what's missing
+- Fix the issue before proceeding
+- Re-run this validation phase
+
+**If git checks fail (items 8-10):**
+- These may be OK if plugin-create is called from build-plugin
+- build-plugin handles git workflow after all components added
+
+**Only proceed to Phase 12 if ALL critical checks pass!**
+
+Phase 12: Summary
 
 Display:
-- Plugin created: $ARGUMENTS
+- Plugin created: $ARGUMENTS ✅
 - Location: plugins/$ARGUMENTS
 - Files created:
-  - .claude-plugin/plugin.json
-  - hooks/hooks.json
-  - .gitignore
-  - .mcp.json
-  - LICENSE
-  - CHANGELOG.md
-  - README.md
+  - .claude-plugin/plugin.json ✅
+  - hooks/hooks.json ✅
+  - .gitignore ✅
+  - .mcp.json ✅
+  - LICENSE ✅
+  - CHANGELOG.md ✅
+  - README.md ✅
+- Directory structure: Complete ✅
+- Validation: Passed ✅
 - Next steps: Use /domain-plugin-builder:build-plugin $ARGUMENTS to add components

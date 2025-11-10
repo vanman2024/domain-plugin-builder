@@ -194,11 +194,54 @@ Actions:
 - For each created agent, sync to Airtable:
   !{bash python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=agent --name=$AGENT_NAME --plugin=$PLUGIN_NAME --marketplace=$MARKETPLACE_NAME}
 
-Phase 8: Summary
+Phase 8: Self-Validation Checklist
+
+**CRITICAL: Verify ALL work was completed before finishing!**
+
+Check each item and report status:
+
+1. **Files Created:**
+   !{bash ls -1 plugins/$PLUGIN_NAME/agents/*.md | wc -l}
+   Expected: <count from Phase 2>
+
+2. **Files Exist:**
+   For each agent, verify file exists:
+   !{bash test -f plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md && echo "✅ $AGENT_NAME.md exists" || echo "❌ $AGENT_NAME.md MISSING"}
+
+3. **Validation Passed:**
+   Re-run validation on each agent:
+   !{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md}
+   Must show "✅ All checks passed"
+
+4. **Git Committed:**
+   Verify files are committed:
+   !{bash git log -1 --name-only | grep "agents/" && echo "✅ Committed" || echo "❌ NOT COMMITTED"}
+
+5. **Git Pushed:**
+   Verify push succeeded:
+   !{bash git status | grep "up to date" && echo "✅ Pushed" || echo "❌ NOT PUSHED"}
+
+6. **Airtable Sync:**
+   Check sync was attempted for each agent
+
+7. **Todo List Complete:**
+   Mark all todos as completed:
+   !{TodoWrite [all todos with status: "completed"]}
+
+**If ANY check fails:**
+- Stop immediately
+- Report what's missing
+- Fix the issue before proceeding
+- Re-run this validation phase
+
+**Only proceed to Phase 9 if ALL checks pass!**
+
+Phase 9: Summary
 Goal: Report results
 
 Actions:
 - Display results for all agents (names, locations, line counts, validation status)
-- Show git status (committed and pushed)
+- Show git status (committed and pushed) ✅
+- Show Airtable sync status ✅
 - Show next steps for using the agents
 - If multiple agents created, list all successfully created agents
