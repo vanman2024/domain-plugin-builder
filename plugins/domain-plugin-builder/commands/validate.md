@@ -20,6 +20,13 @@ argument-hint: <plugin-name>
 
 Goal: Validate that a Claude Code plugin is properly structured, follows framework conventions, and is ready for deployment.
 
+**CRITICAL EXECUTION INSTRUCTIONS:**
+- DO NOT wait for phases to run automatically
+- DO NOT just explain what the phases do
+- EXECUTE each phase immediately using the actual tools (Bash, TodoWrite, Task)
+- The `!{tool command}` syntax shows you WHAT to execute - use the real tool to DO IT
+- Complete all phases in order before finishing
+
 Core Principles:
 - Invoke plugin-validator agent for comprehensive validation
 - Agent runs all validation scripts internally

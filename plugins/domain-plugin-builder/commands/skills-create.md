@@ -20,6 +20,13 @@ argument-hint: [--analyze <plugin-name>] | [<skill-name> "<description>"] | [<sk
 
 Goal: Create properly structured skill(s) by launching the skills-builder agent
 
+**CRITICAL EXECUTION INSTRUCTIONS:**
+- DO NOT wait for phases to run automatically
+- DO NOT just explain what the phases do
+- EXECUTE each phase immediately using the actual tools (Bash, Read, Write, Edit, TodoWrite, Task)
+- The `!{tool command}` syntax shows you WHAT to execute - use the real tool to DO IT
+- Complete all phases in order before finishing
+
 Phase 0: Create Todo List
 
 !{TodoWrite [

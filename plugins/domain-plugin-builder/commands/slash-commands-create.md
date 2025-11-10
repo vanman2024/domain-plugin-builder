@@ -20,6 +20,13 @@ argument-hint: <command-name> "<description>" [--plugin=name] | <cmd-1> "<desc-1
 
 Goal: Create properly structured slash command(s). For 3+ commands, creates them in parallel for faster execution.
 
+**CRITICAL EXECUTION INSTRUCTIONS:**
+- DO NOT wait for phases to run automatically
+- DO NOT just explain what the phases do
+- EXECUTE each phase immediately using the actual tools (Bash, Read, Write, Edit, TodoWrite)
+- The `!{tool command}` syntax shows you WHAT to execute - use the real tool to DO IT
+- Complete all phases in order before finishing
+
 Phase 0: Create Todo List
 
 !{TodoWrite [
@@ -40,9 +47,9 @@ Phase 1: Load Architectural Framework
 
 Actions:
 - Load component decision guidance:
-  @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md
+  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md}
 - Load composition patterns:
-  @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md
+  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md}
 - These provide critical understanding of:
   - Commands are the primitive (start here!)
   - When to use commands vs skills vs agents vs hooks
@@ -66,7 +73,7 @@ Phase 3: Load Templates
 
 Load command template for reference:
 
-@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
+!{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md}
 
 Phase 4: Parse Arguments & Determine Mode
 
@@ -95,7 +102,7 @@ Build directly - execute these steps immediately:
 !{ls plugins/$PLUGIN_NAME/agents/*.md 2>/dev/null}
 
 2. Load template:
-!{Read @template-command-patterns.md}
+!{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md}
 
 3. For each command, create the file:
 !{Write plugins/$PLUGIN_NAME/commands/$CMD_NAME.md}

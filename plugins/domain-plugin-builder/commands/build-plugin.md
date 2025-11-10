@@ -20,6 +20,13 @@ argument-hint: <plugin-name>
 
 Goal: Build a complete, production-ready Claude Code plugin by orchestrating all builder commands and running comprehensive validation.
 
+**CRITICAL EXECUTION INSTRUCTIONS:**
+- DO NOT wait for phases to run automatically
+- DO NOT just explain what the phases do
+- EXECUTE each phase immediately using the actual tools (Bash, Read, TodoWrite, SlashCommand, Task)
+- The `!{tool command}` syntax shows you WHAT to execute - use the real tool to DO IT
+- Complete all phases in order before finishing
+
 Core Principles:
 - Orchestrate all sub-commands sequentially
 - Track progress with TodoWrite

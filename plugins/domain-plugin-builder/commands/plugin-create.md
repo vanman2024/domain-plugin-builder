@@ -22,6 +22,13 @@ Goal: Create the basic directory structure and plugin.json manifest for a new Cl
 
 This is a simple command focused on creating the scaffold. Use /domain-plugin-builder:build-plugin for complete orchestration.
 
+**CRITICAL EXECUTION INSTRUCTIONS:**
+- DO NOT wait for phases to run automatically
+- DO NOT just explain what the phases do
+- EXECUTE each phase immediately using the actual tools (Bash, Read, Write, Edit, TodoWrite, AskUserQuestion)
+- The `!{tool command}` syntax shows you WHAT to execute - use the real tool to DO IT
+- Complete all phases in order before finishing
+
 Phase 0: Create Todo List
 
 !{TodoWrite [

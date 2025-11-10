@@ -20,6 +20,13 @@ argument-hint: <hook-name> <event-type> "<action>" [--plugin=name] | <hook-1> <e
 
 Goal: Create properly structured hooks. For 3+ hooks, creates them in parallel for faster execution.
 
+**CRITICAL EXECUTION INSTRUCTIONS:**
+- DO NOT wait for phases to run automatically
+- DO NOT just explain what the phases do
+- EXECUTE each phase immediately using the actual tools (Bash, Read, Write, Edit, TodoWrite, Task)
+- The `!{tool command}` syntax shows you WHAT to execute - use the real tool to DO IT
+- Complete all phases in order before finishing
+
 Phase 0: Create Todo List
 
 !{TodoWrite [

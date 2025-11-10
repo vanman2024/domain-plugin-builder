@@ -20,6 +20,13 @@ argument-hint: <agent-name> "<description>" | <agent-1> "<desc-1>" <agent-2> "<d
 
 Goal: Create properly structured agent file(s) following framework templates. For 3+ agents, creates them in parallel for faster execution.
 
+**CRITICAL EXECUTION INSTRUCTIONS:**
+- DO NOT wait for phases to run automatically
+- DO NOT just explain what the phases do
+- EXECUTE each phase immediately using the actual tools (Bash, Read, Write, Edit, TodoWrite, Task)
+- The `!{tool command}` syntax shows you WHAT to execute - use the real tool to DO IT
+- Complete all phases in order before finishing
+
 Core Principles:
 - Study templates before generating
 - Keep agents concise using WebFetch (not embedding docs)
@@ -46,9 +53,9 @@ Phase 1: Load Architectural Framework
 
 Actions:
 - Load component decision guidance:
-  @docs/frameworks/claude/reference/component-decision-framework.md
+  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md}
 - Load composition patterns:
-  @docs/frameworks/claude/reference/dans-composition-pattern.md
+  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md}
 - These provide critical understanding of:
   - Agents are for complex multi-step workflows with decision-making
   - When to use agents vs commands vs skills
