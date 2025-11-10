@@ -7,7 +7,7 @@ argument-hint: <plugin-name>
 
 **CRITICAL:** All generated files must follow security rules:
 
-@docs/security/SECURITY-RULES.md
+@~/.claude/plugins/marketplaces/dev-lifecycle-marketplace/docs/security/SECURITY-RULES.md
 
 **Key requirements:**
 - Never hardcode API keys or secrets
@@ -24,6 +24,16 @@ Core Principles:
 - Invoke plugin-validator agent for comprehensive validation
 - Agent runs all validation scripts internally
 - Report validation results clearly
+
+Phase 0: Create Todo List
+
+!{TodoWrite [
+  {"content": "Verify plugin exists", "status": "pending", "activeForm": "Verifying plugin exists"},
+  {"content": "Invoke plugin validator agent", "status": "pending", "activeForm": "Invoking plugin validator agent"},
+  {"content": "Display validation results", "status": "pending", "activeForm": "Displaying validation results"}
+]}
+
+Mark first task as in_progress before proceeding.
 
 Phase 1: Verify Plugin Exists
 

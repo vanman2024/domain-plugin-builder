@@ -7,7 +7,7 @@ argument-hint: <command-name> "<description>" [--plugin=name] | <cmd-1> "<desc-1
 
 **CRITICAL:** All generated files must follow security rules:
 
-@docs/security/SECURITY-RULES.md
+@~/.claude/plugins/marketplaces/dev-lifecycle-marketplace/docs/security/SECURITY-RULES.md
 
 **Key requirements:**
 - Never hardcode API keys or secrets
@@ -20,13 +20,29 @@ argument-hint: <command-name> "<description>" [--plugin=name] | <cmd-1> "<desc-1
 
 Goal: Create properly structured slash command(s). For 3+ commands, creates them in parallel for faster execution.
 
+Phase 0: Create Todo List
+
+!{TodoWrite [
+  {"content": "Load architectural framework", "status": "pending", "activeForm": "Loading architectural framework"},
+  {"content": "Parse arguments and determine plugin", "status": "pending", "activeForm": "Parsing arguments and determining plugin"},
+  {"content": "Load command templates", "status": "pending", "activeForm": "Loading command templates"},
+  {"content": "Parse arguments and determine mode", "status": "pending", "activeForm": "Parsing arguments and determining mode"},
+  {"content": "Create command files", "status": "pending", "activeForm": "Creating command files"},
+  {"content": "Validate all commands", "status": "pending", "activeForm": "Validating all commands"},
+  {"content": "Sync to Airtable", "status": "pending", "activeForm": "Syncing to Airtable"},
+  {"content": "Register in settings", "status": "pending", "activeForm": "Registering in settings"},
+  {"content": "Display summary", "status": "pending", "activeForm": "Displaying summary"}
+]}
+
+Mark first task as in_progress before proceeding.
+
 Phase 1: Load Architectural Framework
 
 Actions:
 - Load component decision guidance:
-  @docs/frameworks/claude/reference/component-decision-framework.md
+  @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md
 - Load composition patterns:
-  @docs/frameworks/claude/reference/dans-composition-pattern.md
+  @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md
 - These provide critical understanding of:
   - Commands are the primitive (start here!)
   - When to use commands vs skills vs agents vs hooks
@@ -50,7 +66,7 @@ Phase 3: Load Templates
 
 Load command template for reference:
 
-@template-command-patterns.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/commands/template-command-patterns.md
 
 Phase 4: Parse Arguments & Determine Mode
 

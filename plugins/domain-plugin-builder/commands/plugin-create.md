@@ -7,7 +7,7 @@ argument-hint: <plugin-name>
 
 **CRITICAL:** All generated files must follow security rules:
 
-@docs/security/SECURITY-RULES.md
+@~/.claude/plugins/marketplaces/dev-lifecycle-marketplace/docs/security/SECURITY-RULES.md
 
 **Key requirements:**
 - Never hardcode API keys or secrets
@@ -21,6 +21,23 @@ argument-hint: <plugin-name>
 Goal: Create the basic directory structure and plugin.json manifest for a new Claude Code plugin.
 
 This is a simple command focused on creating the scaffold. Use /domain-plugin-builder:build-plugin for complete orchestration.
+
+Phase 0: Create Todo List
+
+!{TodoWrite [
+  {"content": "Load architectural framework", "status": "pending", "activeForm": "Loading architectural framework"},
+  {"content": "Verify location", "status": "pending", "activeForm": "Verifying location"},
+  {"content": "Gather basic info", "status": "pending", "activeForm": "Gathering basic info"},
+  {"content": "Create directory structure", "status": "pending", "activeForm": "Creating directory structure"},
+  {"content": "Create plugin manifest", "status": "pending", "activeForm": "Creating plugin manifest"},
+  {"content": "Create MCP config", "status": "pending", "activeForm": "Creating MCP config"},
+  {"content": "Update marketplace registration", "status": "pending", "activeForm": "Updating marketplace registration"},
+  {"content": "Register commands in settings", "status": "pending", "activeForm": "Registering commands in settings"},
+  {"content": "Git commit and push", "status": "pending", "activeForm": "Committing and pushing to git"},
+  {"content": "Display summary", "status": "pending", "activeForm": "Displaying summary"}
+]}
+
+Mark first task as in_progress before proceeding.
 
 Phase 1: Load Architectural Framework
 

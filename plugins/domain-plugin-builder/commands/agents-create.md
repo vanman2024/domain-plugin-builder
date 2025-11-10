@@ -7,7 +7,7 @@ argument-hint: <agent-name> "<description>" | <agent-1> "<desc-1>" <agent-2> "<d
 
 **CRITICAL:** All generated files must follow security rules:
 
-@docs/security/SECURITY-RULES.md
+@~/.claude/plugins/marketplaces/dev-lifecycle-marketplace/docs/security/SECURITY-RULES.md
 
 **Key requirements:**
 - Never hardcode API keys or secrets
@@ -26,6 +26,21 @@ Core Principles:
 - Match complexity to task (simple vs complex)
 - Validate line count and structure
 - Use parallel execution for 3+ agents
+
+Phase 0: Create Todo List
+
+!{TodoWrite [
+  {"content": "Load architectural framework", "status": "pending", "activeForm": "Loading architectural framework"},
+  {"content": "Parse arguments and count agents", "status": "pending", "activeForm": "Parsing arguments and counting agents"},
+  {"content": "Determine execution mode", "status": "pending", "activeForm": "Determining execution mode"},
+  {"content": "Load agent templates", "status": "pending", "activeForm": "Loading agent templates"},
+  {"content": "Create agent files", "status": "pending", "activeForm": "Creating agent files"},
+  {"content": "Validate all agents", "status": "pending", "activeForm": "Validating all agents"},
+  {"content": "Sync to Airtable", "status": "pending", "activeForm": "Syncing to Airtable"},
+  {"content": "Display summary", "status": "pending", "activeForm": "Displaying summary"}
+]}
+
+Mark first task as in_progress before proceeding.
 
 Phase 1: Load Architectural Framework
 

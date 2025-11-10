@@ -7,7 +7,7 @@ argument-hint: <plugin-name>
 
 **CRITICAL:** All generated files must follow security rules:
 
-@docs/security/SECURITY-RULES.md
+@~/.claude/plugins/marketplaces/dev-lifecycle-marketplace/docs/security/SECURITY-RULES.md
 
 **Key requirements:**
 - Never hardcode API keys or secrets

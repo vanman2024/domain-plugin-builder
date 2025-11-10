@@ -7,7 +7,7 @@ argument-hint: <hook-name> <event-type> "<action>" [--plugin=name] | <hook-1> <e
 
 **CRITICAL:** All generated files must follow security rules:
 
-@docs/security/SECURITY-RULES.md
+@~/.claude/plugins/marketplaces/dev-lifecycle-marketplace/docs/security/SECURITY-RULES.md
 
 **Key requirements:**
 - Never hardcode API keys or secrets
@@ -19,6 +19,22 @@ argument-hint: <hook-name> <event-type> "<action>" [--plugin=name] | <hook-1> <e
 **Arguments**: $ARGUMENTS
 
 Goal: Create properly structured hooks. For 3+ hooks, creates them in parallel for faster execution.
+
+Phase 0: Create Todo List
+
+!{TodoWrite [
+  {"content": "Load architectural framework", "status": "pending", "activeForm": "Loading architectural framework"},
+  {"content": "Parse arguments and determine plugin", "status": "pending", "activeForm": "Parsing arguments and determining plugin"},
+  {"content": "Load hooks documentation", "status": "pending", "activeForm": "Loading hooks documentation"},
+  {"content": "Parse arguments and determine mode", "status": "pending", "activeForm": "Parsing arguments and determining mode"},
+  {"content": "Create hook files", "status": "pending", "activeForm": "Creating hook files"},
+  {"content": "Validate all hooks", "status": "pending", "activeForm": "Validating all hooks"},
+  {"content": "Sync to Airtable", "status": "pending", "activeForm": "Syncing to Airtable"},
+  {"content": "Register hooks", "status": "pending", "activeForm": "Registering hooks"},
+  {"content": "Display summary", "status": "pending", "activeForm": "Displaying summary"}
+]}
+
+Mark first task as in_progress before proceeding.
 
 Phase 1: Load Architectural Framework
 

@@ -7,7 +7,7 @@ argument-hint: [--analyze <plugin-name>] | [<skill-name> "<description>"] | [<sk
 
 **CRITICAL:** All generated files must follow security rules:
 
-@docs/security/SECURITY-RULES.md
+@~/.claude/plugins/marketplaces/dev-lifecycle-marketplace/docs/security/SECURITY-RULES.md
 
 **Key requirements:**
 - Never hardcode API keys or secrets
@@ -19,6 +19,19 @@ argument-hint: [--analyze <plugin-name>] | [<skill-name> "<description>"] | [<sk
 **Arguments**: $ARGUMENTS
 
 Goal: Create properly structured skill(s) by launching the skills-builder agent
+
+Phase 0: Create Todo List
+
+!{TodoWrite [
+  {"content": "Load architecture decision framework", "status": "pending", "activeForm": "Loading architecture decision framework"},
+  {"content": "Parse arguments and determine mode", "status": "pending", "activeForm": "Parsing arguments and determining mode"},
+  {"content": "Launch skills-builder agent", "status": "pending", "activeForm": "Launching skills-builder agent"},
+  {"content": "Validate created skills", "status": "pending", "activeForm": "Validating created skills"},
+  {"content": "Sync to Airtable", "status": "pending", "activeForm": "Syncing to Airtable"},
+  {"content": "Display summary", "status": "pending", "activeForm": "Displaying summary"}
+]}
+
+Mark first task as in_progress before proceeding.
 
 Phase 1: Discovery & Architecture Decision Framework
 Goal: Load comprehensive component decision framework to understand WHEN to use skills vs commands vs agents vs hooks vs MCP
