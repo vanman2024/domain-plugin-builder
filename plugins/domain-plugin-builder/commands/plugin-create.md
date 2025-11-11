@@ -134,5 +134,10 @@ Display:
 - Directory structure: Complete ✅
 - Validation: Passed ✅
 - Next steps:
-  - Marketplace mode: Use /domain-plugin-builder:build-plugin $PLUGIN_NAME to add components
-  - Standalone mode: Add components directly to current directory
+  - Build components in this order:
+    1. Agents first: /domain-plugin-builder:agents-create <agent-name> "description"
+    2. Commands second: /domain-plugin-builder:slash-commands-create <cmd-name> "description"
+    3. Skills third: /domain-plugin-builder:skills-create <skill-name> "description"
+    4. Hooks last: /domain-plugin-builder:hooks-create <hook-name> <event> "action"
+  - Why agents first? Commands often invoke agents, so agents must exist first
+  - Validate when done: /domain-plugin-builder:validate $PLUGIN_NAME
