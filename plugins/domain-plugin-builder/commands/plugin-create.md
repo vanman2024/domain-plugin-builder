@@ -158,29 +158,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OU
 SOFTWARE.
 ```
 
-Phase 10: Create CHANGELOG.md
-
-Write $BASE_PATH/CHANGELOG.md:
-
-```markdown
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [1.0.0] - $(date +%Y-%m-%d)
-
-### Added
-- Initial plugin scaffold
-- Plugin directory structure
-- Plugin manifest (plugin.json)
-```
-
-Phase 10: Create README.md
-
-Write $BASE_PATH/README.md with basic plugin info.
-
 Phase 11: Self-Validation
 
 Run validation script to verify all work completed:
