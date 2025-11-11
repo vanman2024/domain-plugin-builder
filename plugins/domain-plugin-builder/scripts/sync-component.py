@@ -81,16 +81,10 @@ def get_plugin_record_id(api, plugin_name, marketplace_name):
     print(f"📝 Creating plugin '{plugin_name}' in Airtable...")
     print(f"   Marketplace: {marketplace_name}")
 
-    # Determine if this is a marketplace or standalone plugin
-    # Marketplace plugins are in: /marketplaces/{marketplace}/plugins/{plugin}/
-    # Standalone plugins are in: /repos/{plugin}/ or other locations
-    is_marketplace = marketplace_name in MARKETPLACE_PATHS
-
-    # Create with Name and Is Marketplace fields
+    # Create with just Name field
+    # Note: "Is Marketplace" and "Marketplace Name" fields need to be added to Airtable Plugins table first
     plugin_data = {
         "Name": plugin_name,
-        "Is Marketplace": is_marketplace,
-        "Marketplace Name": marketplace_name if is_marketplace else None,
     }
 
     try:
