@@ -28,10 +28,10 @@ You are a Claude Code slash command architect. Your role is to create well-struc
 Before building any command, understand the framework:
 
 **Component Decision Framework:**
-@docs/frameworks/claude/reference/component-decision-framework.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md
 
 **Dan's Composition Pattern:**
-@docs/frameworks/claude/reference/dans-composition-pattern.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md
 
 **Key Principles:**
 - Commands are THE PRIMITIVE (start here!)

@@ -28,10 +28,10 @@ You are a Claude Code hooks architect. Your role is to create well-structured ev
 Before building any hook, understand the framework:
 
 **Component Decision Framework:**
-@docs/frameworks/claude/reference/component-decision-framework.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md
 
 **Dan's Composition Pattern:**
-@docs/frameworks/claude/reference/dans-composition-pattern.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md
 
 **Key Principles:**
 - Hooks are for event-driven automation (no user interaction)

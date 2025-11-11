@@ -1,6 +1,6 @@
 ---
 description: Create new skill(s) using skills-builder agent - analyzes plugin structure or accepts direct specifications (supports parallel creation)
-argument-hint: [--analyze <plugin-name>] | [<skill-name> "<description>"] | [<skill-1> "<desc-1>" <skill-2> "<desc-2>" ...]
+argument-hint: [--analyze <plugin-name>] | [<skill-name> "<description>"] | [<skill-1> "<desc-1>" <skill-2> "<desc-2>" ...] [--marketplace]
 ---
 
 ## Security Requirements
@@ -65,6 +65,25 @@ Phase 2: Parse Arguments & Determine Mode
 
 Actions:
 
+Parse $ARGUMENTS to extract:
+- Skill names and descriptions
+- Plugin name (from --plugin=name or detect from pwd)
+- Marketplace mode (check for --marketplace flag)
+
+If plugin not specified:
+
+!{bash basename $(pwd)}
+
+Determine base path based on --marketplace flag:
+
+!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "plugins/$(basename $(pwd))" || echo "."}
+
+Store as $BASE_PATH:
+- If --marketplace present: BASE_PATH="plugins/$PLUGIN_NAME"
+- If --marketplace absent: BASE_PATH="." (standalone plugin mode)
+
+All subsequent file operations use $BASE_PATH instead of hardcoded "plugins/$PLUGIN_NAME"
+
 Use bash to parse $ARGUMENTS and count how many skills are being requested:
 
 !{bash echo "$ARGUMENTS" | grep -oE '<[^>]+>' | wc -l}
@@ -80,7 +99,7 @@ Actions:
 
 **For --analyze mode:**
 
-Task(description="Analyze plugin for needed skills", subagent_type="domain-plugin-builder:skills-builder", prompt="You are the skills-builder agent. Analyze the plugin structure at plugins/$PLUGIN_NAME to determine what skills are needed.
+Task(description="Analyze plugin for needed skills", subagent_type="domain-plugin-builder:skills-builder", prompt="You are the skills-builder agent. Analyze the plugin structure at $BASE_PATH to determine what skills are needed.
 
 Architectural context from component-decision-framework.md:
 @~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/component-decision-framework.md
@@ -97,7 +116,7 @@ Tasks:
 3. Identify what reusable capabilities are needed
 4. Report recommended skills to create
 
-Plugin: plugins/$PLUGIN_NAME
+Plugin: $BASE_PATH
 Deliverable: List of recommended skills with descriptions")
 
 **Decision: 1-2 skills = build directly, 3+ skills = use Task() for parallel**
@@ -113,14 +132,14 @@ Build directly - execute these steps immediately:
 !{Read @SKILL.md.template}
 
 3. For each skill:
-!{Bash mkdir -p plugins/$PLUGIN_NAME/skills/$SKILL_NAME/{scripts,templates,examples}}
+!{Bash mkdir -p $BASE_PATH/skills/$SKILL_NAME/{scripts,templates,examples}}
 
-!{Write plugins/$PLUGIN_NAME/skills/$SKILL_NAME/SKILL.md}
+!{Write $BASE_PATH/skills/$SKILL_NAME/SKILL.md}
 
 Create scripts, templates, and examples as needed.
 
 4. Validate:
-!{Bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh plugins/$PLUGIN_NAME/skills/$SKILL_NAME}
+!{Bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh $BASE_PATH/skills/$SKILL_NAME}
 
 No need for Task() overhead when building 1-2 skills
 
@@ -145,7 +164,7 @@ Phase 4: Validation
 **Validate all created skills:**
 
 For each skill:
-!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh plugins/$PLUGIN_NAME/skills/$SKILL_NAME}
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh $BASE_PATH/skills/$SKILL_NAME}
 
 If validation fails, read errors and fix issues.
 
@@ -215,20 +234,20 @@ Phase 8: Self-Validation Checklist
 Check each item and report status:
 
 1. **Directories Created:**
-   !{bash ls -1d plugins/$PLUGIN_NAME/skills/*/ 2>/dev/null | wc -l}
+   !{bash ls -1d $BASE_PATH/skills/*/ 2>/dev/null | wc -l}
    Expected: <count from Phase 2>
 
 2. **Skill Directories Exist:**
    For each skill, verify directory exists:
-   !{bash test -d plugins/$PLUGIN_NAME/skills/$SKILL_NAME && echo "✅ $SKILL_NAME/ exists" || echo "❌ $SKILL_NAME/ MISSING"}
+   !{bash test -d $BASE_PATH/skills/$SKILL_NAME && echo "✅ $SKILL_NAME/ exists" || echo "❌ $SKILL_NAME/ MISSING"}
 
 3. **SKILL.md Files Exist:**
    For each skill, verify SKILL.md exists:
-   !{bash test -f plugins/$PLUGIN_NAME/skills/$SKILL_NAME/SKILL.md && echo "✅ $SKILL_NAME/SKILL.md exists" || echo "❌ $SKILL_NAME/SKILL.md MISSING"}
+   !{bash test -f $BASE_PATH/skills/$SKILL_NAME/SKILL.md && echo "✅ $SKILL_NAME/SKILL.md exists" || echo "❌ $SKILL_NAME/SKILL.md MISSING"}
 
 4. **Validation Passed:**
    Re-run validation on each skill:
-   !{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh plugins/$PLUGIN_NAME/skills/$SKILL_NAME}
+   !{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh $BASE_PATH/skills/$SKILL_NAME}
    Must show "✅ All checks passed"
 
 5. **Settings Registration:**
@@ -260,9 +279,24 @@ Check each item and report status:
 
 Phase 9: Summary
 
-Actions:
-- Display results from all agents (skill names, locations, validation status)
-- Show git status (committed and pushed) ✅
-- Confirm skills registered in settings.json ✅
-- Show how to invoke skills: !{skill plugin:skill-name}
-- If multiple skills created, list all successfully created skills
+Display results:
+
+**Skills Created:** <count>
+**Plugin:** $PLUGIN_NAME
+**Mode:** $BASE_PATH (marketplace mode if "plugins/", standalone if ".")
+**Location:** $BASE_PATH/skills/
+
+**Files:**
+- $SKILL_1/ - $DESC_1 ✅
+- $SKILL_2/ - $DESC_2 ✅
+- etc.
+
+**Validation:** All passed ✅
+**Registration:** Complete ✅
+**Airtable Sync:** Attempted ✅
+**Git:** Committed and pushed ✅
+
+**Next Steps:**
+- Invoke skills: Skill($PLUGIN_NAME:$SKILL_NAME)
+- Test skill functionality
+- Update documentation

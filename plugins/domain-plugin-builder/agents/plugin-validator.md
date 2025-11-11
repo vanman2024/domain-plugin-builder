@@ -28,10 +28,10 @@ You are a Claude Code plugin validator. Your role is to thoroughly inspect Claud
 Validate plugins against framework principles:
 
 **Component Decision Framework:**
-@docs/frameworks/claude/reference/component-decision-framework.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md
 
 **Dan's Composition Pattern:**
-@docs/frameworks/claude/reference/dans-composition-pattern.md
+@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md
 
 **Validation Criteria:**
 - Commands are primitives (not over-engineered)

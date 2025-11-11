@@ -1,6 +1,6 @@
 ---
 description: Create basic plugin directory structure and manifest
-argument-hint: <plugin-name>
+argument-hint: <plugin-name> [--marketplace]
 ---
 
 ## Security Requirements
@@ -55,11 +55,27 @@ Actions:
   @docs/frameworks/claude/reference/dans-composition-pattern.md
 - These inform the plugin structure and component organization
 
-Phase 2: Verify Location
+Phase 2: Verify Location and Parse Arguments
+
+Parse $ARGUMENTS to extract plugin name and check for --marketplace flag:
+
+!{bash echo "$ARGUMENTS" | sed 's/--marketplace//g' | xargs}
+
+Store plugin name.
+
+Determine base path based on --marketplace flag:
+
+!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "plugins/$(echo "$ARGUMENTS" | sed 's/--marketplace//g' | xargs)" || echo "."}
+
+Store as $BASE_PATH:
+- If --marketplace present: BASE_PATH="plugins/$PLUGIN_NAME"
+- If --marketplace absent: BASE_PATH="." (standalone plugin mode)
+
+All subsequent file operations use $BASE_PATH instead of hardcoded "plugins/$PLUGIN_NAME"
 
 !{bash pwd}
 
-Expected: domain-plugin-builder directory. If not correct, inform user.
+Expected: domain-plugin-builder directory (for marketplace mode) or project root (for standalone mode).
 
 Phase 3: Gather Basic Info
 
@@ -69,17 +85,17 @@ Use AskUserQuestion to get:
 
 Phase 4: Create Directory Structure
 
-!{bash mkdir -p plugins/$ARGUMENTS/.claude-plugin}
-!{bash mkdir -p plugins/$ARGUMENTS/commands}
-!{bash mkdir -p plugins/$ARGUMENTS/agents}
-!{bash mkdir -p plugins/$ARGUMENTS/skills}
-!{bash mkdir -p plugins/$ARGUMENTS/hooks}
-!{bash mkdir -p plugins/$ARGUMENTS/scripts}
-!{bash mkdir -p plugins/$ARGUMENTS/docs}
+!{bash mkdir -p $BASE_PATH/.claude-plugin}
+!{bash mkdir -p $BASE_PATH/commands}
+!{bash mkdir -p $BASE_PATH/agents}
+!{bash mkdir -p $BASE_PATH/skills}
+!{bash mkdir -p $BASE_PATH/hooks}
+!{bash mkdir -p $BASE_PATH/scripts}
+!{bash mkdir -p $BASE_PATH/docs}
 
 Phase 5: Create plugin.json Manifest
 
-Write plugins/$ARGUMENTS/.claude-plugin/plugin.json:
+Write $BASE_PATH/.claude-plugin/plugin.json:
 
 ```json
 {
@@ -91,7 +107,7 @@ Write plugins/$ARGUMENTS/.claude-plugin/plugin.json:
 
 Phase 6: Create Placeholder hooks.json
 
-Write plugins/$ARGUMENTS/hooks/hooks.json:
+Write $BASE_PATH/hooks/hooks.json:
 
 ```json
 {
@@ -103,7 +119,7 @@ This is a placeholder. Use /domain-plugin-builder:hooks-create to add hooks.
 
 Phase 7: Create .gitignore
 
-Write plugins/$ARGUMENTS/.gitignore:
+Write $BASE_PATH/.gitignore:
 
 ```
 # Python
@@ -169,7 +185,7 @@ yarn-error.log
 
 Phase 8: Create .mcp.json
 
-Write plugins/$ARGUMENTS/.mcp.json:
+Write $BASE_PATH/.mcp.json:
 
 ```json
 {
@@ -181,7 +197,7 @@ This is a placeholder for MCP server configurations.
 
 Phase 9: Create LICENSE
 
-Write plugins/$ARGUMENTS/LICENSE:
+Write $BASE_PATH/LICENSE:
 
 ```
 MIT License
@@ -207,7 +223,7 @@ SOFTWARE.
 
 Phase 10: Create CHANGELOG.md
 
-Write plugins/$ARGUMENTS/CHANGELOG.md:
+Write $BASE_PATH/CHANGELOG.md:
 
 ```markdown
 # Changelog
@@ -226,7 +242,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 Phase 10: Create README.md
 
-Write plugins/$ARGUMENTS/README.md with basic plugin info.
+Write $BASE_PATH/README.md with basic plugin info.
 
 Phase 11: Self-Validation Checklist
 
@@ -235,38 +251,38 @@ Phase 11: Self-Validation Checklist
 Check each item and report status:
 
 1. **Plugin Directory Created:**
-   !{bash test -d plugins/$ARGUMENTS && echo "✅ Directory exists" || echo "❌ Directory MISSING"}
+   !{bash test -d $BASE_PATH && echo "✅ Directory exists" || echo "❌ Directory MISSING"}
 
 2. **Directory Structure Complete:**
-   !{bash test -d plugins/$ARGUMENTS/.claude-plugin && echo "✅ .claude-plugin/" || echo "❌ MISSING"}
-   !{bash test -d plugins/$ARGUMENTS/commands && echo "✅ commands/" || echo "❌ MISSING"}
-   !{bash test -d plugins/$ARGUMENTS/agents && echo "✅ agents/" || echo "❌ MISSING"}
-   !{bash test -d plugins/$ARGUMENTS/skills && echo "✅ skills/" || echo "❌ MISSING"}
-   !{bash test -d plugins/$ARGUMENTS/hooks && echo "✅ hooks/" || echo "❌ MISSING"}
-   !{bash test -d plugins/$ARGUMENTS/scripts && echo "✅ scripts/" || echo "❌ MISSING"}
-   !{bash test -d plugins/$ARGUMENTS/docs && echo "✅ docs/" || echo "❌ MISSING"}
+   !{bash test -d $BASE_PATH/.claude-plugin && echo "✅ .claude-plugin/" || echo "❌ MISSING"}
+   !{bash test -d $BASE_PATH/commands && echo "✅ commands/" || echo "❌ MISSING"}
+   !{bash test -d $BASE_PATH/agents && echo "✅ agents/" || echo "❌ MISSING"}
+   !{bash test -d $BASE_PATH/skills && echo "✅ skills/" || echo "❌ MISSING"}
+   !{bash test -d $BASE_PATH/hooks && echo "✅ hooks/" || echo "❌ MISSING"}
+   !{bash test -d $BASE_PATH/scripts && echo "✅ scripts/" || echo "❌ MISSING"}
+   !{bash test -d $BASE_PATH/docs && echo "✅ docs/" || echo "❌ MISSING"}
 
 3. **Plugin Manifest Exists:**
-   !{bash test -f plugins/$ARGUMENTS/.claude-plugin/plugin.json && echo "✅ plugin.json exists" || echo "❌ plugin.json MISSING"}
+   !{bash test -f $BASE_PATH/.claude-plugin/plugin.json && echo "✅ plugin.json exists" || echo "❌ plugin.json MISSING"}
 
 4. **Plugin Manifest Valid:**
-   !{bash python3 -m json.tool plugins/$ARGUMENTS/.claude-plugin/plugin.json > /dev/null 2>&1 && echo "✅ Valid JSON" || echo "❌ INVALID JSON"}
+   !{bash python3 -m json.tool $BASE_PATH/.claude-plugin/plugin.json > /dev/null 2>&1 && echo "✅ Valid JSON" || echo "❌ INVALID JSON"}
 
 5. **MCP Config Exists:**
-   !{bash test -f plugins/$ARGUMENTS/.mcp.json && echo "✅ .mcp.json exists" || echo "❌ .mcp.json MISSING"}
+   !{bash test -f $BASE_PATH/.mcp.json && echo "✅ .mcp.json exists" || echo "❌ .mcp.json MISSING"}
 
 6. **MCP Config Valid:**
-   !{bash python3 -m json.tool plugins/$ARGUMENTS/.mcp.json > /dev/null 2>&1 && echo "✅ Valid JSON" || echo "❌ INVALID JSON"}
+   !{bash python3 -m json.tool $BASE_PATH/.mcp.json > /dev/null 2>&1 && echo "✅ Valid JSON" || echo "❌ INVALID JSON"}
 
 7. **Marketplace Registration:**
-   !{bash grep -q "$ARGUMENTS" .claude-plugin/marketplace.json 2>/dev/null && echo "✅ Registered in marketplace.json" || echo "⚠️ Not registered (OK if handled by build-plugin)"}
+   !{bash grep -q "$PLUGIN_NAME" .claude-plugin/marketplace.json 2>/dev/null && echo "✅ Registered in marketplace.json" || echo "⚠️ Not registered (OK if handled by build-plugin)"}
 
 8. **Git Status:**
-   !{bash git status plugins/$ARGUMENTS}
+   !{bash git status $BASE_PATH}
    Check if files are tracked or committed
 
 9. **Git Commit:**
-   !{bash git log -1 --name-only | grep "plugins/$ARGUMENTS" && echo "✅ Committed" || echo "⚠️ Not committed (OK if handled by build-plugin)"}
+   !{bash git log -1 --name-only | grep "$BASE_PATH" && echo "✅ Committed" || echo "⚠️ Not committed (OK if handled by build-plugin)"}
 
 10. **Git Push:**
     !{bash git status | grep "up to date" && echo "✅ Pushed" || echo "⚠️ Not pushed (OK if handled by build-plugin)"}
@@ -301,8 +317,9 @@ Check each item and report status:
 Phase 12: Summary
 
 Display:
-- Plugin created: $ARGUMENTS ✅
-- Location: plugins/$ARGUMENTS
+- Plugin created: $PLUGIN_NAME ✅
+- Mode: $BASE_PATH (marketplace mode if "plugins/", standalone if ".")
+- Location: $BASE_PATH
 - Files created:
   - .claude-plugin/plugin.json ✅
   - hooks/hooks.json ✅
@@ -313,4 +330,6 @@ Display:
   - README.md ✅
 - Directory structure: Complete ✅
 - Validation: Passed ✅
-- Next steps: Use /domain-plugin-builder:build-plugin $ARGUMENTS to add components
+- Next steps:
+  - Marketplace mode: Use /domain-plugin-builder:build-plugin $PLUGIN_NAME to add components
+  - Standalone mode: Add components directly to current directory

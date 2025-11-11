@@ -1,6 +1,6 @@
 ---
 description: Create agent(s) using templates - supports parallel creation for 3+ agents
-argument-hint: <agent-name> "<description>" | <agent-1> "<desc-1>" <agent-2> "<desc-2>" ...
+argument-hint: <agent-name> "<description>" [--marketplace] | <agent-1> "<desc-1>" <agent-2> "<desc-2>" ... [--marketplace]
 ---
 
 ## Security Requirements
@@ -63,10 +63,29 @@ Actions:
   - How agents use skills and commands
   - Anti-patterns to avoid
 
-Phase 2: Parse Arguments & Count Agents
-Goal: Extract agent specifications and determine execution mode
+Phase 2: Parse Arguments, Determine Mode & Count Agents
+Goal: Extract agent specifications, determine mode, and execution strategy
 
 Actions:
+
+Parse $ARGUMENTS to extract:
+- Agent names and descriptions
+- Plugin name (from context or pwd)
+- Marketplace mode (check for --marketplace flag)
+
+If plugin not specified:
+
+!{bash basename $(pwd)}
+
+Determine base path based on --marketplace flag:
+
+!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "plugins/$(basename $(pwd))" || echo "."}
+
+Store as $BASE_PATH:
+- If --marketplace present: BASE_PATH="plugins/$PLUGIN_NAME"
+- If --marketplace absent: BASE_PATH="." (standalone plugin mode)
+
+All subsequent file operations use $BASE_PATH instead of hardcoded "plugins/$PLUGIN_NAME"
 
 Use bash to parse $ARGUMENTS and count how many agents are being requested:
 
@@ -109,7 +128,7 @@ Build directly - execute these steps immediately:
 !{Read @agent-color-decision.md}
 
 3. For each agent, create the file:
-!{Write plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md}
+!{Write $BASE_PATH/agents/$AGENT_NAME.md}
 
 Include:
 - Frontmatter with name, description, model: inherit, color (from decision framework)
@@ -122,7 +141,7 @@ Include:
 - Keep under 300 lines
 
 4. Validate:
-!{Bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md}
+!{Bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh $BASE_PATH/agents/$AGENT_NAME.md}
 
 No need for Task() overhead when building 1-2 agents
 
@@ -141,7 +160,7 @@ Description: $AGENT_1_DESC
 Load templates:
 - Read: plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md
 
-Create agent file at: plugins/$PLUGIN_NAME/agents/$AGENT_1_NAME.md
+Create agent file at: $BASE_PATH/agents/$AGENT_1_NAME.md
 - Frontmatter with name, description, model: inherit, color (determine from description)
 - **NO tools field** - agents inherit tools from parent
 - Include 'Available Tools & Resources' section listing:
@@ -170,7 +189,7 @@ Phase 5: Validation and Registration
 **Validate all created agents:**
 
 For each agent:
-!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md}
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh $BASE_PATH/agents/$AGENT_NAME.md}
 
 If validation fails, read errors and fix issues.
 
@@ -208,16 +227,16 @@ Phase 8: Self-Validation Checklist
 Check each item and report status:
 
 1. **Files Created:**
-   !{bash ls -1 plugins/$PLUGIN_NAME/agents/*.md | wc -l}
+   !{bash ls -1 $BASE_PATH/agents/*.md | wc -l}
    Expected: <count from Phase 2>
 
 2. **Files Exist:**
    For each agent, verify file exists:
-   !{bash test -f plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md && echo "✅ $AGENT_NAME.md exists" || echo "❌ $AGENT_NAME.md MISSING"}
+   !{bash test -f $BASE_PATH/agents/$AGENT_NAME.md && echo "✅ $AGENT_NAME.md exists" || echo "❌ $AGENT_NAME.md MISSING"}
 
 3. **Validation Passed:**
    Re-run validation on each agent:
-   !{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh plugins/$PLUGIN_NAME/agents/$AGENT_NAME.md}
+   !{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh $BASE_PATH/agents/$AGENT_NAME.md}
    Must show "✅ All checks passed"
 
 4. **Git Committed:**
@@ -247,8 +266,24 @@ Phase 9: Summary
 Goal: Report results
 
 Actions:
-- Display results for all agents (names, locations, line counts, validation status)
-- Show git status (committed and pushed) ✅
-- Show Airtable sync status ✅
-- Show next steps for using the agents
-- If multiple agents created, list all successfully created agents
+
+Display results:
+
+**Agents Created:** <count>
+**Plugin:** $PLUGIN_NAME
+**Mode:** $BASE_PATH (marketplace mode if "plugins/", standalone if ".")
+**Location:** $BASE_PATH/agents/
+
+**Files:**
+- $AGENT_1.md - $DESC_1 ✅
+- $AGENT_2.md - $DESC_2 ✅
+- etc.
+
+**Validation:** All passed ✅
+**Git Status:** Committed and pushed ✅
+**Airtable Sync:** Attempted ✅
+
+**Next Steps:**
+- Invoke agents via Task tool: Task(subagent_type="$PLUGIN_NAME:$AGENT_NAME")
+- Use in commands and skills
+- Test agent capabilities

@@ -1,6 +1,6 @@
 ---
 description: Build complete plugin with all components and validation
-argument-hint: <plugin-name>
+argument-hint: <plugin-name> [--marketplace]
 ---
 
 ## Security Requirements
@@ -48,6 +48,7 @@ Phase 2: Initialize Todo List and Verify Location
 Create todo list:
 
 TodoWrite with tasks:
+- Parse arguments and determine mode
 - Create plugin scaffold
 - Build agents (FIRST - so commands can reference them!)
 - Build commands (AFTER agents - can reference agent names correctly)
@@ -65,9 +66,37 @@ Verify location:
 
 Expected: domain-plugin-builder directory
 
+Mark first task as in_progress before proceeding.
+
+Phase 2.5: Parse Arguments and Determine Mode
+
+Parse $ARGUMENTS to extract:
+- Plugin name
+- Marketplace mode (check for --marketplace flag)
+
+Extract plugin name from $ARGUMENTS (first argument before any flags).
+
+Determine base path based on --marketplace flag:
+
+!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "plugins/$(echo "$ARGUMENTS" | awk '{print $1}')" || echo "."}
+
+Store as $BASE_PATH:
+- If --marketplace present: BASE_PATH="plugins/$PLUGIN_NAME"
+- If --marketplace absent: BASE_PATH="." (standalone plugin mode)
+
+All subsequent file operations use $BASE_PATH instead of hardcoded "plugins/$PLUGIN_NAME"
+
+Update TodoWrite: Mark "Parse arguments and determine mode" as completed
+
 Phase 3: Create Plugin Scaffold
 
 **Use SlashCommand tool to invoke the command:**
+
+Determine if marketplace flag should be passed:
+
+!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "--marketplace" || echo ""}
+
+Store marketplace flag result and pass to plugin-create:
 
 SlashCommand(/domain-plugin-builder:plugin-create $ARGUMENTS)
 
@@ -86,7 +115,11 @@ Collect ALL agent specifications, then use SlashCommand tool to invoke agents-cr
 
 **Use SlashCommand tool:**
 
-SlashCommand(/domain-plugin-builder:agents-create <agent-1> "<desc-1>" <agent-2> "<desc-2>" ... <agent-N> "<desc-N>")
+Build the command with marketplace flag if present:
+
+!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "/domain-plugin-builder:agents-create <agent-1> \"<desc-1>\" <agent-2> \"<desc-2>\" ... <agent-N> \"<desc-N>\" --marketplace" || echo "/domain-plugin-builder:agents-create <agent-1> \"<desc-1>\" <agent-2> \"<desc-2>\" ... <agent-N> \"<desc-N>\""}
+
+SlashCommand with appropriate flags based on marketplace mode.
 
 **CRITICAL:** Pass ALL agents in a SINGLE SlashCommand invocation. Do NOT call multiple times.
 
@@ -110,7 +143,11 @@ Collect ALL command specifications, then use SlashCommand tool to invoke slash-c
 
 **Use SlashCommand tool:**
 
-SlashCommand(/domain-plugin-builder:slash-commands-create <cmd-1> "<desc-1>" <cmd-2> "<desc-2>" <cmd-3> "<desc-3>" ... <cmd-N> "<desc-N>")
+Build the command with marketplace flag if present:
+
+!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "/domain-plugin-builder:slash-commands-create <cmd-1> \"<desc-1>\" <cmd-2> \"<desc-2>\" <cmd-3> \"<desc-3>\" ... <cmd-N> \"<desc-N>\" --marketplace" || echo "/domain-plugin-builder:slash-commands-create <cmd-1> \"<desc-1>\" <cmd-2> \"<desc-2>\" <cmd-3> \"<desc-3>\" ... <cmd-N> \"<desc-N>\""}
+
+SlashCommand with appropriate flags based on marketplace mode.
 
 **CRITICAL:** Pass ALL commands in a SINGLE SlashCommand invocation. Do NOT call multiple times.
 
@@ -130,7 +167,11 @@ Collect ALL skill specifications, then use SlashCommand tool to invoke skills-cr
 
 **Use SlashCommand tool:**
 
-SlashCommand(/domain-plugin-builder:skills-create <skill-1> "<desc-1>" <skill-2> "<desc-2>" ... <skill-N> "<desc-N>")
+Build the command with marketplace flag if present:
+
+!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "/domain-plugin-builder:skills-create <skill-1> \"<desc-1>\" <skill-2> \"<desc-2>\" ... <skill-N> \"<desc-N>\" --marketplace" || echo "/domain-plugin-builder:skills-create <skill-1> \"<desc-1>\" <skill-2> \"<desc-2>\" ... <skill-N> \"<desc-N>\""}
+
+SlashCommand with appropriate flags based on marketplace mode.
 
 **CRITICAL:** Pass ALL skills in a SINGLE SlashCommand invocation. Do NOT call multiple times.
 
@@ -160,8 +201,8 @@ Ask user: "Does this plugin need system-level automation (auto-formatting, secur
 
 **If NO (most plugins):**
 - Create empty hooks directory and hooks.json:
-  !{bash mkdir -p plugins/$ARGUMENTS/hooks}
-  !{Write plugins/$ARGUMENTS/hooks/hooks.json}
+  !{bash mkdir -p $BASE_PATH/hooks}
+  !{Write $BASE_PATH/hooks/hooks.json}
   Content:
   ```json
   {
@@ -177,7 +218,11 @@ Ask what automations needed, then collect hook specifications.
 
 Use SlashCommand tool to invoke hooks-create ONCE with all of them:
 
-SlashCommand(/domain-plugin-builder:hooks-create <hook-1> <event-1> "<action-1>" <hook-2> <event-2> "<action-2>" ... <hook-N> <event-N> "<action-N>")
+Build the command with marketplace flag if present:
+
+!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "/domain-plugin-builder:hooks-create <hook-1> <event-1> \"<action-1>\" <hook-2> <event-2> \"<action-2>\" ... <hook-N> <event-N> \"<action-N>\" --marketplace" || echo "/domain-plugin-builder:hooks-create <hook-1> <event-1> \"<action-1>\" <hook-2> <event-2> \"<action-2>\" ... <hook-N> <event-N> \"<action-N>\""}
+
+SlashCommand with appropriate flags based on marketplace mode.
 
 **CRITICAL:** Pass ALL hooks in a SINGLE SlashCommand invocation. Do NOT call multiple times.
 
@@ -206,7 +251,7 @@ Read current settings and add plugin commands:
 
 List plugin commands:
 
-!{bash ls plugins/$ARGUMENTS/commands/*.md 2>/dev/null | sed 's|plugins/||; s|/commands/|:|; s|.md||'}
+!{bash ls $BASE_PATH/commands/*.md 2>/dev/null | sed 's|plugins/||; s|/commands/|:|; s|.md||'}
 
 Add to settings.local.json permissions.allow array:
 - "SlashCommand(/$ARGUMENTS:*)"
@@ -239,7 +284,7 @@ Phase 11: Git Commit and Push
 
 Stage all plugin files:
 
-!{bash git add plugins/$ARGUMENTS .claude/marketplace.json ~/.claude/settings.local.json}
+!{bash git add $BASE_PATH .claude/marketplace.json ~/.claude/settings.local.json}
 
 Commit:
 
@@ -264,14 +309,15 @@ Phase 12: Display Summary
 
 Count components:
 
-!{bash ls plugins/$ARGUMENTS/commands/ 2>/dev/null | wc -l}
-!{bash ls plugins/$ARGUMENTS/agents/ 2>/dev/null | wc -l}
-!{bash ls -d plugins/$ARGUMENTS/skills/*/ 2>/dev/null | wc -l}
+!{bash ls $BASE_PATH/commands/ 2>/dev/null | wc -l}
+!{bash ls $BASE_PATH/agents/ 2>/dev/null | wc -l}
+!{bash ls -d $BASE_PATH/skills/*/ 2>/dev/null | wc -l}
 
 Display:
 
-**Plugin Built:** $ARGUMENTS
-**Location:** plugins/$ARGUMENTS
+**Plugin Built:** $PLUGIN_NAME
+**Mode:** $BASE_PATH (marketplace mode if "plugins/", standalone if ".")
+**Location:** $BASE_PATH
 
 **Components:**
 - Commands: X

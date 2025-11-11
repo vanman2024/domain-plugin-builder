@@ -1,6 +1,6 @@
 ---
 description: Create hook(s) following standardized structure - supports parallel creation for 3+ hooks
-argument-hint: <hook-name> <event-type> "<action>" [--plugin=name] | <hook-1> <event-1> ... [--plugin=name]
+argument-hint: <hook-name> <event-type> "<action>" [--plugin=name] [--marketplace] | <hook-1> <event-1> ... [--plugin=name] [--marketplace]
 ---
 
 ## Security Requirements
@@ -57,17 +57,26 @@ Actions:
   - How hooks integrate with plugin ecosystem
   - Anti-patterns to avoid
 
-Phase 2: Parse Arguments and Determine Plugin
+Phase 2: Parse Arguments and Determine Plugin & Mode
 
 Parse $ARGUMENTS to extract:
 - Hook names and event types
 - Plugin name (from --plugin=name or detect from pwd)
+- Marketplace mode (check for --marketplace flag)
 
 If plugin not specified:
 
 !{bash basename $(pwd)}
 
-Store plugin name for Phase 3.
+Determine base path based on --marketplace flag:
+
+!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "plugins/$(basename $(pwd))" || echo "."}
+
+Store as $BASE_PATH:
+- If --marketplace present: BASE_PATH="plugins/$PLUGIN_NAME"
+- If --marketplace absent: BASE_PATH="." (standalone plugin mode)
+
+All subsequent file operations use $BASE_PATH instead of hardcoded "plugins/$PLUGIN_NAME"
 
 Phase 3: Load Hooks Documentation
 
@@ -108,9 +117,9 @@ Action: <action-from-args>
 Plugin: <plugin-name>
 
 Create hook configuration and script:
-- Executable script in plugins/<plugin-name>/scripts/
-- Hook entry in plugins/<plugin-name>/hooks/hooks.json
-- Documentation in plugins/<plugin-name>/docs/hooks.md
+- Executable script in $BASE_PATH/scripts/
+- Hook entry in $BASE_PATH/hooks/hooks.json
+- Documentation in $BASE_PATH/docs/hooks.md
 - Use ${CLAUDE_PLUGIN_ROOT} for paths
 - Validate hook structure
 
@@ -139,9 +148,9 @@ Action: $ACTION_1
 Plugin: $PLUGIN_NAME
 
 Create:
-- Script: plugins/$PLUGIN_NAME/scripts/$HOOK_1.sh
-- Config: Update plugins/$PLUGIN_NAME/hooks/hooks.json
-- Docs: Update plugins/$PLUGIN_NAME/docs/hooks.md
+- Script: $BASE_PATH/scripts/$HOOK_1.sh
+- Config: Update $BASE_PATH/hooks/hooks.json
+- Docs: Update $BASE_PATH/docs/hooks.md
 - Use ${CLAUDE_PLUGIN_ROOT} for all paths
 
 Deliverable: Complete hook")
@@ -163,7 +172,7 @@ Goal: Save work immediately
 
 Actions:
 - Add all hook files to git:
-  !{bash git add plugins/$PLUGIN_NAME/hooks/ plugins/$PLUGIN_NAME/scripts/ plugins/$PLUGIN_NAME/docs/hooks.md}
+  !{bash git add $BASE_PATH/hooks/ $BASE_PATH/scripts/ $BASE_PATH/docs/hooks.md}
 - Commit with message:
   !{bash git commit -m "$(cat <<'EOF'
 feat: Add hook(s) - HOOK_NAMES
@@ -201,22 +210,22 @@ Check each item and report status:
 
 1. **Files Created:**
    Count hook scripts:
-   !{bash ls -1 plugins/$PLUGIN_NAME/scripts/*.sh 2>/dev/null | wc -l}
+   !{bash ls -1 $BASE_PATH/scripts/*.sh 2>/dev/null | wc -l}
    Expected: <count from Phase 4>
 
 2. **Files Exist:**
    For each hook, verify files exist:
-   !{bash test -f plugins/$PLUGIN_NAME/scripts/$HOOK_NAME.sh && echo "✅ $HOOK_NAME.sh exists" || echo "❌ $HOOK_NAME.sh MISSING"}
-   !{bash test -f plugins/$PLUGIN_NAME/hooks/hooks.json && echo "✅ hooks.json exists" || echo "❌ hooks.json MISSING"}
-   !{bash test -f plugins/$PLUGIN_NAME/docs/hooks.md && echo "✅ hooks.md exists" || echo "❌ hooks.md MISSING"}
+   !{bash test -f $BASE_PATH/scripts/$HOOK_NAME.sh && echo "✅ $HOOK_NAME.sh exists" || echo "❌ $HOOK_NAME.sh MISSING"}
+   !{bash test -f $BASE_PATH/hooks/hooks.json && echo "✅ hooks.json exists" || echo "❌ hooks.json MISSING"}
+   !{bash test -f $BASE_PATH/docs/hooks.md && echo "✅ hooks.md exists" || echo "❌ hooks.md MISSING"}
 
 3. **Script Executable:**
    Verify scripts are executable:
-   !{bash test -x plugins/$PLUGIN_NAME/scripts/$HOOK_NAME.sh && echo "✅ $HOOK_NAME.sh executable" || echo "❌ $HOOK_NAME.sh NOT EXECUTABLE"}
+   !{bash test -x $BASE_PATH/scripts/$HOOK_NAME.sh && echo "✅ $HOOK_NAME.sh executable" || echo "❌ $HOOK_NAME.sh NOT EXECUTABLE"}
 
 4. **Hook Configuration:**
    Verify hook is registered in hooks.json:
-   !{bash grep "$HOOK_NAME" plugins/$PLUGIN_NAME/hooks/hooks.json && echo "✅ Hook configured" || echo "❌ Hook NOT CONFIGURED"}
+   !{bash grep "$HOOK_NAME" $BASE_PATH/hooks/hooks.json && echo "✅ Hook configured" || echo "❌ Hook NOT CONFIGURED"}
 
 5. **Git Committed:**
    Verify files are committed:
@@ -249,7 +258,8 @@ Actions:
 
 **Hooks Created:** <count>
 **Plugin:** <plugin-name>
-**Location:** plugins/<plugin-name>/hooks/
+**Mode:** $BASE_PATH (marketplace mode if "plugins/", standalone if ".")
+**Location:** $BASE_PATH/hooks/
 
 **Hooks:**
 - <hook-1-name> (Event: <event-1>) - <action-1> ✅
