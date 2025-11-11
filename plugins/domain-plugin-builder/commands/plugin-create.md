@@ -102,7 +102,25 @@ Use AskUserQuestion to get:
 
 Phase 4: Create Directory Structure
 
-Reference structure from docs and create directories:
+Load official plugin structure to understand what to create:
+
+!{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/plugins/claude-code-plugin-structure.md}
+
+**Reference lines 40-56 which show the complete plugin layout:**
+```
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json          # Required: plugin manifest
+├── commands/                 # Slash commands (optional)
+├── agents/                   # Agent definitions (optional)
+├── skills/                   # Agent Skills (optional)
+├── hooks/                    # Hook configurations (optional)
+├── .mcp.json                # MCP servers (optional)
+├── scripts/                 # Utility scripts (optional)
+└── README.md                # Plugin documentation
+```
+
+Create this exact structure at $BASE_PATH:
 
 !{bash mkdir -p $BASE_PATH/.claude-plugin $BASE_PATH/commands $BASE_PATH/agents $BASE_PATH/skills $BASE_PATH/hooks $BASE_PATH/scripts $BASE_PATH/docs}
 
