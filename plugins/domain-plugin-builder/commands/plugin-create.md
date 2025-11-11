@@ -31,20 +31,7 @@ This is a simple command focused on creating the scaffold. Use /domain-plugin-bu
 
 Phase 0: Create Todo List
 
-!{TodoWrite [
-  {"content": "Load architectural framework", "status": "pending", "activeForm": "Loading architectural framework"},
-  {"content": "Verify location", "status": "pending", "activeForm": "Verifying location"},
-  {"content": "Gather basic info", "status": "pending", "activeForm": "Gathering basic info"},
-  {"content": "Create directory structure", "status": "pending", "activeForm": "Creating directory structure"},
-  {"content": "Create plugin manifest", "status": "pending", "activeForm": "Creating plugin manifest"},
-  {"content": "Create MCP config", "status": "pending", "activeForm": "Creating MCP config"},
-  {"content": "Update marketplace registration", "status": "pending", "activeForm": "Updating marketplace registration"},
-  {"content": "Register commands in settings", "status": "pending", "activeForm": "Registering commands in settings"},
-  {"content": "Git commit and push", "status": "pending", "activeForm": "Committing and pushing to git"},
-  {"content": "Display summary", "status": "pending", "activeForm": "Displaying summary"}
-]}
-
-Mark first task as in_progress before proceeding.
+Create todo list for all phases below.
 
 Phase 1: Load Plugin Structure Documentation
 
@@ -194,75 +181,13 @@ Phase 10: Create README.md
 
 Write $BASE_PATH/README.md with basic plugin info.
 
-Phase 11: Self-Validation Checklist
+Phase 11: Self-Validation
 
-**CRITICAL: Verify ALL work was completed before finishing!**
+Run validation script to verify all work completed:
 
-Check each item and report status:
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-plugin.sh $BASE_PATH}
 
-1. **Plugin Directory Created:**
-   !{bash test -d $BASE_PATH && echo "✅ Directory exists" || echo "❌ Directory MISSING"}
-
-2. **Directory Structure Complete:**
-   !{bash test -d $BASE_PATH/.claude-plugin && echo "✅ .claude-plugin/" || echo "❌ MISSING"}
-   !{bash test -d $BASE_PATH/commands && echo "✅ commands/" || echo "❌ MISSING"}
-   !{bash test -d $BASE_PATH/agents && echo "✅ agents/" || echo "❌ MISSING"}
-   !{bash test -d $BASE_PATH/skills && echo "✅ skills/" || echo "❌ MISSING"}
-   !{bash test -d $BASE_PATH/hooks && echo "✅ hooks/" || echo "❌ MISSING"}
-   !{bash test -d $BASE_PATH/scripts && echo "✅ scripts/" || echo "❌ MISSING"}
-   !{bash test -d $BASE_PATH/docs && echo "✅ docs/" || echo "❌ MISSING"}
-
-3. **Plugin Manifest Exists:**
-   !{bash test -f $BASE_PATH/.claude-plugin/plugin.json && echo "✅ plugin.json exists" || echo "❌ plugin.json MISSING"}
-
-4. **Plugin Manifest Valid:**
-   !{bash python3 -m json.tool $BASE_PATH/.claude-plugin/plugin.json > /dev/null 2>&1 && echo "✅ Valid JSON" || echo "❌ INVALID JSON"}
-
-5. **MCP Config Exists:**
-   !{bash test -f $BASE_PATH/.mcp.json && echo "✅ .mcp.json exists" || echo "❌ .mcp.json MISSING"}
-
-6. **MCP Config Valid:**
-   !{bash python3 -m json.tool $BASE_PATH/.mcp.json > /dev/null 2>&1 && echo "✅ Valid JSON" || echo "❌ INVALID JSON"}
-
-7. **Marketplace Registration:**
-   !{bash grep -q "$PLUGIN_NAME" .claude-plugin/marketplace.json 2>/dev/null && echo "✅ Registered in marketplace.json" || echo "⚠️ Not registered (OK if handled by build-plugin)"}
-
-8. **Git Status:**
-   !{bash git status $BASE_PATH}
-   Check if files are tracked or committed
-
-9. **Git Commit:**
-   !{bash git log -1 --name-only | grep "$BASE_PATH" && echo "✅ Committed" || echo "⚠️ Not committed (OK if handled by build-plugin)"}
-
-10. **Git Push:**
-    !{bash git status | grep "up to date" && echo "✅ Pushed" || echo "⚠️ Not pushed (OK if handled by build-plugin)"}
-
-11. **Todo List Complete:**
-    Mark all todos as completed:
-    !{TodoWrite [
-      {"content": "Load architectural framework", "status": "completed", "activeForm": "Loading architectural framework"},
-      {"content": "Verify location", "status": "completed", "activeForm": "Verifying location"},
-      {"content": "Gather basic info", "status": "completed", "activeForm": "Gathering basic info"},
-      {"content": "Create directory structure", "status": "completed", "activeForm": "Creating directory structure"},
-      {"content": "Create plugin manifest", "status": "completed", "activeForm": "Creating plugin manifest"},
-      {"content": "Create MCP config", "status": "completed", "activeForm": "Creating MCP config"},
-      {"content": "Update marketplace registration", "status": "completed", "activeForm": "Updating marketplace registration"},
-      {"content": "Register commands in settings", "status": "completed", "activeForm": "Registering commands in settings"},
-      {"content": "Git commit and push", "status": "completed", "activeForm": "Committing and pushing to git"},
-      {"content": "Display summary", "status": "completed", "activeForm": "Displaying summary"}
-    ]}
-
-**If ANY critical check fails (items 1-6):**
-- Stop immediately
-- Report what's missing
-- Fix the issue before proceeding
-- Re-run this validation phase
-
-**If git checks fail (items 8-10):**
-- These may be OK if plugin-create is called from build-plugin
-- build-plugin handles git workflow after all components added
-
-**Only proceed to Phase 12 if ALL critical checks pass!**
+Mark all todos complete if validation passes.
 
 Phase 12: Summary
 
