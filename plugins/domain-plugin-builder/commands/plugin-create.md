@@ -122,99 +122,23 @@ Write $BASE_PATH/.claude-plugin/plugin.json:
 }
 ```
 
-Phase 6: Create Placeholder hooks.json
+Phase 6: Create Plugin Files from Templates
 
-Write $BASE_PATH/hooks/hooks.json:
+Load templates and create plugin files:
 
-```json
-{
-  "PreToolUse": [], "PostToolUse": [], "UserPromptSubmit": [], "SessionStart": [], "SessionEnd": [], "PreCompact": []
-}
-```
+!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/hooks.json.template $BASE_PATH/hooks/hooks.json}
 
-This is a placeholder. Use /domain-plugin-builder:hooks-create to add hooks.
+!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/.gitignore.template $BASE_PATH/.gitignore}
 
-Phase 7: Create .gitignore
+!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/mcp.json.template $BASE_PATH/.mcp.json}
 
-Write $BASE_PATH/.gitignore:
+!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/LICENSE.template $BASE_PATH/LICENSE}
 
-```
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+!{bash CURRENT_DATE=$(date +%Y-%m-%d) && sed "s/{{DATE}}/$CURRENT_DATE/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/CHANGELOG.md.template > $BASE_PATH/CHANGELOG.md}
 
-# Virtual Environment
-venv/
-ENV/
-env/
-.venv
+Phase 7: Create README.md
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Environment variables
-.env
-.env.local
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Node.js
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# MCP
-.mcp_cache/
-```
-
-Phase 8: Create .mcp.json
-
-Write $BASE_PATH/.mcp.json:
-
-```json
-{
-  "mcpServers": {}
-}
-```
-
-This is a placeholder for MCP server configurations.
-
-Phase 9: Create LICENSE
-
-Write $BASE_PATH/LICENSE:
+Write $BASE_PATH/README.md:
 
 ```
 MIT License
