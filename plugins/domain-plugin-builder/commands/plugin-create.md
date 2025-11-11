@@ -29,37 +29,11 @@ This is a simple command focused on creating the scaffold. Use /domain-plugin-bu
 - The `!{tool command}` syntax shows you WHAT to execute - use the real tool to DO IT
 - Complete all phases in order before finishing
 
-Phase 0: Create Todo List
+Phase 0: Create Todo List using TodoWrite tool
 
 Create todo list for all phases below.
 
-Phase 1: Load Plugin Structure Documentation
-
-Actions:
-- Load official Claude Code plugin structure:
-  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/plugins/claude-code-plugin-structure.md}
-
-  **CRITICAL SECTIONS TO FOLLOW:**
-  - "Plugin Structure" (lines 36-61) - Shows exact directory layout
-  - "Critical: Directories are at plugin root, not inside .claude-plugin/" (line 59)
-
-- Load marketplace structure differences:
-  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/plugins/plugin-marketplaces.md}
-
-  **KEY SECTION:**
-  - "Plugin Installation Scoping" (lines 26-73) - Understand global vs project scoped
-
-- Load component decision guidance:
-  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md}
-- Load composition patterns:
-  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md}
-
-**Understanding the Structure:**
-- Standalone mode (no --marketplace): Creates structure at current directory (.)
-- Marketplace mode (--marketplace): Creates structure at plugins/$PLUGIN_NAME/
-- BOTH modes use IDENTICAL directory structure as defined in official docs
-
-Phase 2: Verify Location and Parse Arguments
+Phase 1: Verify Location and Parse Arguments
 
 Parse $ARGUMENTS to extract plugin name and check for --marketplace flag:
 
@@ -81,13 +55,13 @@ All subsequent file operations use $BASE_PATH instead of hardcoded "plugins/$PLU
 
 Expected: domain-plugin-builder directory (for marketplace mode) or project root (for standalone mode).
 
-Phase 3: Gather Basic Info
+Phase 2: Gather Basic Info
 
 Use AskUserQuestion to get:
 - Plugin description (one sentence)
 - Plugin type (SDK, Framework, Custom)
 
-Phase 4: Create Directory Structure
+Phase 3: Create Directory Structure
 
 Load official plugin structure to understand what to create:
 
@@ -112,7 +86,7 @@ Create this exact structure at $BASE_PATH:
 
 !{bash mkdir -p $BASE_PATH/.claude-plugin $BASE_PATH/commands $BASE_PATH/agents $BASE_PATH/skills $BASE_PATH/hooks $BASE_PATH/scripts $BASE_PATH/docs}
 
-Phase 5: Create Plugin Files from Templates
+Phase 4: Create Plugin Files from Templates
 
 Set template variables:
 - PLUGIN_NAME=$ARGUMENTS
@@ -135,7 +109,7 @@ Copy and customize templates:
 
 !{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/LICENSE.template $BASE_PATH/LICENSE}
 
-Phase 6: Self-Validation
+Phase 5: Self-Validation
 
 Run validation script to verify all work completed:
 
@@ -143,7 +117,7 @@ Run validation script to verify all work completed:
 
 Mark all todos complete if validation passes.
 
-Phase 7: Summary
+Phase 6: Summary
 
 Display:
 - Plugin created: $PLUGIN_NAME ✅
