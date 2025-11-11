@@ -65,7 +65,6 @@ Read: templates/commands/command.md.template
 ---
 description: Analyze code complexity and generate report
 argument-hint: [target-directory]
-allowed-tools: Read(*), Bash(*)
 ---
 
 User input: $ARGUMENTS
