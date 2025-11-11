@@ -50,9 +50,9 @@ Actions:
   - "Plugin Installation Scoping" (lines 26-73) - Understand global vs project scoped
 
 - Load component decision guidance:
-  @docs/frameworks/claude/reference/component-decision-framework.md
+  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md}
 - Load composition patterns:
-  @docs/frameworks/claude/reference/dans-composition-pattern.md
+  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md}
 
 **Understanding the Structure:**
 - Standalone mode (no --marketplace): Creates structure at current directory (.)

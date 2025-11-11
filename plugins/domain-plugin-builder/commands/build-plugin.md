@@ -38,9 +38,9 @@ Phase 1: Load Architectural Framework
 
 Actions:
 - Load component decision guidance:
-  @docs/frameworks/claude/reference/component-decision-framework.md
+  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md}
 - Load composition patterns:
-  @docs/frameworks/claude/reference/dans-composition-pattern.md
+  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md}
 - These guide all component creation decisions throughout the build process
 
 Phase 2: Initialize Todo List and Verify Location
