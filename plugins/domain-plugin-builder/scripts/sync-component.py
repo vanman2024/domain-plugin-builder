@@ -30,6 +30,9 @@ MARKETPLACE_PATHS = {
     "domain-plugin-builder": "/home/gotime2022/.claude/plugins/marketplaces/domain-plugin-builder",
 }
 
+# Special marker for standalone plugins (not in a marketplace)
+STANDALONE_MARKER = "standalone"
+
 def extract_frontmatter(file_path):
     """Extract YAML frontmatter from markdown file"""
     try:
@@ -76,11 +79,18 @@ def get_plugin_record_id(api, plugin_name, marketplace_name):
 
     # Plugin doesn't exist - create it
     print(f"📝 Creating plugin '{plugin_name}' in Airtable...")
-    print(f"   Note: Marketplace '{marketplace_name}' will need to be linked manually in Airtable")
+    print(f"   Marketplace: {marketplace_name}")
 
-    # Create with just the Name field - other fields can be filled manually
+    # Determine if this is a marketplace or standalone plugin
+    # Marketplace plugins are in: /marketplaces/{marketplace}/plugins/{plugin}/
+    # Standalone plugins are in: /repos/{plugin}/ or other locations
+    is_marketplace = marketplace_name in MARKETPLACE_PATHS
+
+    # Create with Name and Is Marketplace fields
     plugin_data = {
         "Name": plugin_name,
+        "Is Marketplace": is_marketplace,
+        "Marketplace Name": marketplace_name if is_marketplace else None,
     }
 
     try:
@@ -265,14 +275,16 @@ def main():
 
     # Validate Airtable token
     if not AIRTABLE_TOKEN:
-        print("❌ ERROR: AIRTABLE_TOKEN environment variable not set")
+        print("❌ ERROR: AIRTABLE_TOKEN or MCP_AIRTABLE_TOKEN environment variable not set")
         print("   Export it: export AIRTABLE_TOKEN=your_token_here")
+        print("   Or: export MCP_AIRTABLE_TOKEN=your_token_here")
         return 1
 
     # Validate marketplace
-    if args.marketplace not in MARKETPLACE_PATHS:
+    valid_marketplaces = list(MARKETPLACE_PATHS.keys()) + [STANDALONE_MARKER]
+    if args.marketplace not in valid_marketplaces:
         print(f"❌ ERROR: Unknown marketplace: {args.marketplace}")
-        print(f"   Valid marketplaces: {list(MARKETPLACE_PATHS.keys())}")
+        print(f"   Valid marketplaces: {valid_marketplaces}")
         return 1
 
     # Validate hook-specific arguments
@@ -285,19 +297,33 @@ def main():
             return 1
 
     # Construct file path
-    marketplace_root = MARKETPLACE_PATHS[args.marketplace]
-
-    if args.type == 'agent':
-        file_path = f"{marketplace_root}/plugins/{args.plugin}/agents/{args.name}.md"
-    elif args.type == 'command':
-        file_path = f"{marketplace_root}/plugins/{args.plugin}/commands/{args.name}.md"
-    elif args.type == 'skill':
-        file_path = f"{marketplace_root}/plugins/{args.plugin}/skills/{args.name}/"
-    elif args.type == 'hook':
-        file_path = args.script_path  # Use provided script path
+    if args.marketplace == STANDALONE_MARKER:
+        # Standalone plugin - use current directory
+        if args.type == 'agent':
+            file_path = f"agents/{args.name}.md"
+        elif args.type == 'command':
+            file_path = f"commands/{args.name}.md"
+        elif args.type == 'skill':
+            file_path = f"skills/{args.name}/"
+        elif args.type == 'hook':
+            file_path = args.script_path  # Use provided script path
+        else:
+            print(f"❌ ERROR: Unknown component type: {args.type}")
+            return 1
     else:
-        print(f"❌ ERROR: Unknown component type: {args.type}")
-        return 1
+        # Marketplace plugin
+        marketplace_root = MARKETPLACE_PATHS[args.marketplace]
+        if args.type == 'agent':
+            file_path = f"{marketplace_root}/plugins/{args.plugin}/agents/{args.name}.md"
+        elif args.type == 'command':
+            file_path = f"{marketplace_root}/plugins/{args.plugin}/commands/{args.name}.md"
+        elif args.type == 'skill':
+            file_path = f"{marketplace_root}/plugins/{args.plugin}/skills/{args.name}/"
+        elif args.type == 'hook':
+            file_path = args.script_path  # Use provided script path
+        else:
+            print(f"❌ ERROR: Unknown component type: {args.type}")
+            return 1
 
     # Check if file exists
     if args.type in ['agent', 'command']:
