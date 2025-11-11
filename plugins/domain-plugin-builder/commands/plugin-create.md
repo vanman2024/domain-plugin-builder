@@ -104,6 +104,7 @@ my-plugin/
 ├── hooks/                    # Hook configurations (optional)
 ├── .mcp.json                # MCP servers (optional)
 ├── scripts/                 # Utility scripts (optional)
+├── CHANGELOG.md             # Version history
 └── README.md                # Plugin documentation
 ```
 
