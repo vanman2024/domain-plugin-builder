@@ -106,6 +106,16 @@ Your validation should prioritize plugin functionality and framework compliance 
    - `.env.example` exists if environment variables needed
    - Proper error handling in commands/agents
 
+9. **Settings.json Registration**:
+   - Check if commands are registered in `~/.claude/settings.json`
+   - Each command should have entry: `SlashCommand(/<plugin-name>:<command-name>)`
+   - Check if skills are registered in `~/.claude/settings.json`
+   - Each skill should have entry: `Skill(<plugin-name>:<skill-name>)`
+   - If not registered, report missing registrations and provide registration commands
+   - Registration commands:
+     * For commands: `bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/register-commands-in-settings.sh <plugin-name>`
+     * For skills: `bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/register-skills-in-settings.sh <plugin-name>`
+
 ## What NOT to Focus On
 
 - General code style preferences
@@ -210,8 +220,15 @@ For each agent in `agents/`:
 
 **Check settings.json registration:**
 - Read `~/.claude/settings.json`
-- Verify plugin slash commands are registered in permissions.allow array
-- Check for wildcard permission: `"SlashCommand(/<plugin-name>:*)"`
+- Verify ALL plugin slash commands are registered in permissions.allow array
+- Check each command has entry: `SlashCommand(/<plugin-name>:<command-name>)`
+- Verify ALL plugin skills are registered in permissions.allow array
+- Check each skill has entry: `Skill(<plugin-name>:<skill-name>)`
+- **If missing registrations:**
+  - List all unregistered commands and skills
+  - Provide exact registration commands to fix:
+    * `cd <plugin-path> && bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/register-commands-in-settings.sh <plugin-name>`
+    * `cd <plugin-path> && bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/register-skills-in-settings.sh <plugin-name>`
 - Verify individual command permissions if needed
 - **NEW:** Verify plugin skills are registered
   - For each skill in plugins/<plugin-name>/skills/
