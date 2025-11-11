@@ -36,21 +36,27 @@ Phase 0: Create Todo List
 
 Create todo list for all phases below.
 
-Phase 1: Verify Plugin Exists
+Phase 1: Verify Plugin Exists and Determine Mode
 
-Check if plugin directory exists:
+Check if we're in a plugin directory or need to look in plugins/:
 
-!{bash test -d "plugins/$ARGUMENTS" && echo "Found" || echo "Not found"}
+!{bash test -f .claude-plugin/plugin.json && echo "standalone" || (test -d "plugins/$ARGUMENTS" && echo "marketplace" || echo "not-found")}
+
+Store mode:
+- If "standalone": PLUGIN_PATH="." (current directory is the plugin)
+- If "marketplace": PLUGIN_PATH="plugins/$ARGUMENTS"
+- If "not-found": Display error and exit
 
 If not found, display error:
-- "Plugin 'plugins/$ARGUMENTS' not found"
-- "Available plugins: !{bash ls -d plugins/*/ | sed 's|plugins/||; s|/||'}"
+- "Plugin not found. Either:"
+- "  1. Run from inside plugin directory (with .claude-plugin/plugin.json)"
+- "  2. Run from marketplace root with plugin name as argument"
 
 Phase 2: Invoke Plugin Validator Agent
 
 Launch the plugin-validator agent to perform comprehensive validation:
 
-Task(description="Validate plugin structure and compliance", subagent_type="domain-plugin-builder:plugin-validator", prompt="You are the plugin-validator agent. Perform comprehensive validation on plugins/$ARGUMENTS.
+Task(description="Validate plugin structure and compliance", subagent_type="domain-plugin-builder:plugin-validator", prompt="You are the plugin-validator agent. Perform comprehensive validation on $PLUGIN_PATH.
 
 Run all validation scripts:
 - validate-plugin.sh for structure
