@@ -62,13 +62,14 @@ If plugin not specified:
 
 !{bash basename $(pwd)}
 
-Determine base path based on --marketplace flag:
+Determine base path - check if already in a plugin directory:
 
-!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "plugins/$(basename $(pwd))" || echo "."}
+!{bash test -f .claude-plugin/plugin.json && echo "." || (echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "plugins/$(basename $(pwd))" || echo ".")}
 
 Store as $BASE_PATH:
-- If --marketplace present: BASE_PATH="plugins/$PLUGIN_NAME"
-- If --marketplace absent: BASE_PATH="." (standalone plugin mode)
+- If .claude-plugin/plugin.json exists: BASE_PATH="." (already in plugin directory)
+- Else if --marketplace present: BASE_PATH="plugins/$PLUGIN_NAME"
+- Else: BASE_PATH="." (standalone plugin mode)
 
 All subsequent file operations use $BASE_PATH instead of hardcoded "plugins/$PLUGIN_NAME"
 
