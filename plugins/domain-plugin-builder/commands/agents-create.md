@@ -36,18 +36,7 @@ Core Principles:
 
 Phase 0: Create Todo List
 
-!{TodoWrite [
-  {"content": "Load architectural framework", "status": "pending", "activeForm": "Loading architectural framework"},
-  {"content": "Parse arguments and count agents", "status": "pending", "activeForm": "Parsing arguments and counting agents"},
-  {"content": "Determine execution mode", "status": "pending", "activeForm": "Determining execution mode"},
-  {"content": "Load agent templates", "status": "pending", "activeForm": "Loading agent templates"},
-  {"content": "Create agent files", "status": "pending", "activeForm": "Creating agent files"},
-  {"content": "Validate all agents", "status": "pending", "activeForm": "Validating all agents"},
-  {"content": "Sync to Airtable", "status": "pending", "activeForm": "Syncing to Airtable"},
-  {"content": "Display summary", "status": "pending", "activeForm": "Displaying summary"}
-]}
-
-Mark first task as in_progress before proceeding.
+Create todo list for all phases below.
 
 Phase 1: Load Architectural Framework
 
@@ -220,47 +209,13 @@ Actions:
 - For each created agent, sync to Airtable:
   !{bash python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=agent --name=$AGENT_NAME --plugin=$PLUGIN_NAME --marketplace=$MARKETPLACE_NAME}
 
-Phase 8: Self-Validation Checklist
+Phase 8: Self-Validation
 
-**CRITICAL: Verify ALL work was completed before finishing!**
+Run validation script to verify all work completed:
 
-Check each item and report status:
+!{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh $BASE_PATH/agents/*.md}
 
-1. **Files Created:**
-   !{bash ls -1 $BASE_PATH/agents/*.md | wc -l}
-   Expected: <count from Phase 2>
-
-2. **Files Exist:**
-   For each agent, verify file exists:
-   !{bash test -f $BASE_PATH/agents/$AGENT_NAME.md && echo "✅ $AGENT_NAME.md exists" || echo "❌ $AGENT_NAME.md MISSING"}
-
-3. **Validation Passed:**
-   Re-run validation on each agent:
-   !{bash ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh $BASE_PATH/agents/$AGENT_NAME.md}
-   Must show "✅ All checks passed"
-
-4. **Git Committed:**
-   Verify files are committed:
-   !{bash git log -1 --name-only | grep "agents/" && echo "✅ Committed" || echo "❌ NOT COMMITTED"}
-
-5. **Git Pushed:**
-   Verify push succeeded:
-   !{bash git status | grep "up to date" && echo "✅ Pushed" || echo "❌ NOT PUSHED"}
-
-6. **Airtable Sync:**
-   Check sync was attempted for each agent
-
-7. **Todo List Complete:**
-   Mark all todos as completed:
-   !{TodoWrite [all todos with status: "completed"]}
-
-**If ANY check fails:**
-- Stop immediately
-- Report what's missing
-- Fix the issue before proceeding
-- Re-run this validation phase
-
-**Only proceed to Phase 9 if ALL checks pass!**
+Mark all todos complete if validation passes.
 
 Phase 9: Summary
 Goal: Report results

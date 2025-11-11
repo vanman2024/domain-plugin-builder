@@ -34,13 +34,7 @@ Core Principles:
 
 Phase 0: Create Todo List
 
-!{TodoWrite [
-  {"content": "Verify plugin exists", "status": "pending", "activeForm": "Verifying plugin exists"},
-  {"content": "Invoke plugin validator agent", "status": "pending", "activeForm": "Invoking plugin validator agent"},
-  {"content": "Display validation results", "status": "pending", "activeForm": "Displaying validation results"}
-]}
-
-Mark first task as in_progress before proceeding.
+Create todo list for all phases below.
 
 Phase 1: Verify Plugin Exists
 

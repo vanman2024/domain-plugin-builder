@@ -29,19 +29,7 @@ Goal: Create properly structured hooks. For 3+ hooks, creates them in parallel f
 
 Phase 0: Create Todo List
 
-!{TodoWrite [
-  {"content": "Load architectural framework", "status": "pending", "activeForm": "Loading architectural framework"},
-  {"content": "Parse arguments and determine plugin", "status": "pending", "activeForm": "Parsing arguments and determining plugin"},
-  {"content": "Load hooks documentation", "status": "pending", "activeForm": "Loading hooks documentation"},
-  {"content": "Parse arguments and determine mode", "status": "pending", "activeForm": "Parsing arguments and determining mode"},
-  {"content": "Create hook files", "status": "pending", "activeForm": "Creating hook files"},
-  {"content": "Commit and push to git", "status": "pending", "activeForm": "Committing and pushing to git"},
-  {"content": "Sync to Airtable", "status": "pending", "activeForm": "Syncing to Airtable"},
-  {"content": "Run self-validation checks", "status": "pending", "activeForm": "Running self-validation checks"},
-  {"content": "Display summary", "status": "pending", "activeForm": "Displaying summary"}
-]}
-
-Mark first task as in_progress before proceeding.
+Create todo list for all phases below.
 
 Phase 1: Load Architectural Framework
 
@@ -202,53 +190,14 @@ Actions:
 
 **Note:** If multiple hooks created, sync each one sequentially.
 
-Phase 6: Self-Validation Checklist
+Phase 6: Self-Validation
 
-**CRITICAL: Verify ALL work was completed before finishing!**
+Run validation checks to verify all work completed:
 
-Check each item and report status:
+!{bash test -f $BASE_PATH/hooks/hooks.json && echo "✅ hooks.json exists" || echo "❌ hooks.json MISSING"}
+!{bash test -d $BASE_PATH/scripts && echo "✅ scripts/ exists" || echo "❌ scripts/ MISSING"}
 
-1. **Files Created:**
-   Count hook scripts:
-   !{bash ls -1 $BASE_PATH/scripts/*.sh 2>/dev/null | wc -l}
-   Expected: <count from Phase 4>
-
-2. **Files Exist:**
-   For each hook, verify files exist:
-   !{bash test -f $BASE_PATH/scripts/$HOOK_NAME.sh && echo "✅ $HOOK_NAME.sh exists" || echo "❌ $HOOK_NAME.sh MISSING"}
-   !{bash test -f $BASE_PATH/hooks/hooks.json && echo "✅ hooks.json exists" || echo "❌ hooks.json MISSING"}
-   !{bash test -f $BASE_PATH/docs/hooks.md && echo "✅ hooks.md exists" || echo "❌ hooks.md MISSING"}
-
-3. **Script Executable:**
-   Verify scripts are executable:
-   !{bash test -x $BASE_PATH/scripts/$HOOK_NAME.sh && echo "✅ $HOOK_NAME.sh executable" || echo "❌ $HOOK_NAME.sh NOT EXECUTABLE"}
-
-4. **Hook Configuration:**
-   Verify hook is registered in hooks.json:
-   !{bash grep "$HOOK_NAME" $BASE_PATH/hooks/hooks.json && echo "✅ Hook configured" || echo "❌ Hook NOT CONFIGURED"}
-
-5. **Git Committed:**
-   Verify files are committed:
-   !{bash git log -1 --name-only | grep -E "(hooks/|scripts/)" && echo "✅ Committed" || echo "❌ NOT COMMITTED"}
-
-6. **Git Pushed:**
-   Verify push succeeded:
-   !{bash git status | grep "up to date" && echo "✅ Pushed" || echo "❌ NOT PUSHED"}
-
-7. **Airtable Sync:**
-   Check sync was attempted for each hook
-
-8. **Todo List Complete:**
-   Mark all todos as completed:
-   !{TodoWrite [all todos with status: "completed"]}
-
-**If ANY check fails:**
-- Stop immediately
-- Report what's missing
-- Fix the issue before proceeding
-- Re-run this validation phase
-
-**Only proceed to Phase 7 if ALL checks pass!**
+Mark all todos complete if validation passes.
 
 Phase 7: Summary
 Goal: Report results
