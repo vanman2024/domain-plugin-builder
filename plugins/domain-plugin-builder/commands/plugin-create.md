@@ -46,14 +46,31 @@ Phase 0: Create Todo List
 
 Mark first task as in_progress before proceeding.
 
-Phase 1: Load Architectural Framework
+Phase 1: Load Plugin Structure Documentation
 
 Actions:
+- Load official Claude Code plugin structure:
+  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/plugins/claude-code-plugin-structure.md}
+
+  **CRITICAL SECTIONS TO FOLLOW:**
+  - "Plugin Structure" (lines 36-61) - Shows exact directory layout
+  - "Critical: Directories are at plugin root, not inside .claude-plugin/" (line 59)
+
+- Load marketplace structure differences:
+  !{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/plugins/plugin-marketplaces.md}
+
+  **KEY SECTION:**
+  - "Plugin Installation Scoping" (lines 26-73) - Understand global vs project scoped
+
 - Load component decision guidance:
   @docs/frameworks/claude/reference/component-decision-framework.md
 - Load composition patterns:
   @docs/frameworks/claude/reference/dans-composition-pattern.md
-- These inform the plugin structure and component organization
+
+**Understanding the Structure:**
+- Standalone mode (no --marketplace): Creates structure at current directory (.)
+- Marketplace mode (--marketplace): Creates structure at plugins/$PLUGIN_NAME/
+- BOTH modes use IDENTICAL directory structure as defined in official docs
 
 Phase 2: Verify Location and Parse Arguments
 
