@@ -102,29 +102,24 @@ Use AskUserQuestion to get:
 
 Phase 4: Create Directory Structure
 
-!{bash mkdir -p $BASE_PATH/.claude-plugin}
-!{bash mkdir -p $BASE_PATH/commands}
-!{bash mkdir -p $BASE_PATH/agents}
-!{bash mkdir -p $BASE_PATH/skills}
-!{bash mkdir -p $BASE_PATH/hooks}
-!{bash mkdir -p $BASE_PATH/scripts}
-!{bash mkdir -p $BASE_PATH/docs}
+Reference structure from docs and create directories:
 
-Phase 5: Create plugin.json Manifest
+!{bash mkdir -p $BASE_PATH/.claude-plugin $BASE_PATH/commands $BASE_PATH/agents $BASE_PATH/skills $BASE_PATH/hooks $BASE_PATH/scripts $BASE_PATH/docs}
 
-Write $BASE_PATH/.claude-plugin/plugin.json:
+Phase 5: Create Plugin Files from Templates
 
-```json
-{
-  "name": "$ARGUMENTS", "version": "1.0.0", "description": "<from Phase 2>", "author": {
-    "name": "Plugin Builder", "email": "builder@example.com"
-  }, "license": "MIT", "keywords": []
-}
-```
+Set template variables:
+- PLUGIN_NAME=$ARGUMENTS
+- DESCRIPTION=<from Phase 3>
+- DATE=$(date +%Y-%m-%d)
 
-Phase 6: Create Plugin Files from Templates
+Copy and customize templates:
 
-Load templates and create plugin files:
+!{bash sed "s/{{PLUGIN_NAME}}/$PLUGIN_NAME/g; s/{{DESCRIPTION}}/$DESCRIPTION/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/plugin.json.template > $BASE_PATH/.claude-plugin/plugin.json}
+
+!{bash sed "s/{{PLUGIN_NAME}}/$PLUGIN_NAME/g; s/{{DESCRIPTION}}/$DESCRIPTION/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/README.md.template > $BASE_PATH/README.md}
+
+!{bash sed "s/{{DATE}}/$DATE/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/CHANGELOG.md.template > $BASE_PATH/CHANGELOG.md}
 
 !{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/hooks.json.template $BASE_PATH/hooks/hooks.json}
 
@@ -134,11 +129,7 @@ Load templates and create plugin files:
 
 !{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/LICENSE.template $BASE_PATH/LICENSE}
 
-!{bash CURRENT_DATE=$(date +%Y-%m-%d) && sed "s/{{DATE}}/$CURRENT_DATE/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugin/CHANGELOG.md.template > $BASE_PATH/CHANGELOG.md}
-
-Phase 7: Create README.md
-
-Write $BASE_PATH/README.md:
+Phase 6: Update Marketplace Registration
 
 ```
 MIT License

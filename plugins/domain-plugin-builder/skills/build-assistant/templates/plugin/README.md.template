@@ -1,0 +1,24 @@
+# {{PLUGIN_NAME}}
+
+{{DESCRIPTION}}
+
+## Installation
+
+```bash
+/plugin install {{PLUGIN_NAME}}@marketplace-name
+```
+
+## Usage
+
+[Add usage instructions]
+
+## Components
+
+- **Commands**: Available slash commands
+- **Agents**: Specialized AI agents
+- **Skills**: Reusable capabilities
+- **Hooks**: Event-driven automation
+
+## License
+
+MIT
