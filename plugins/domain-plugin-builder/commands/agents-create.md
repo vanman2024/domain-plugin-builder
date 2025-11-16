@@ -1,45 +1,18 @@
 ---
 description: Create agent(s) using templates - supports parallel creation for 3+ agents
 argument-hint: <agent-name> "<description>" [--marketplace] | <agent-1> "<desc-1>" <agent-2> "<desc-2>" ... [--marketplace]
+allowed-tools: Task, Read, Write, Edit, Bash, Glob, Grep, TodoWrite
 ---
-
-## Security Requirements
-
-**CRITICAL:** All generated files must follow security rules:
-
-@~/.claude/plugins/marketplaces/dev-lifecycle-marketplace/docs/security/SECURITY-RULES.md
-
-**Key requirements:**
-- Never hardcode API keys or secrets
-- Use placeholders: `your_service_key_here`
-- Protect `.env` files with `.gitignore`
-- Create `.env.example` with placeholders only
-- Document key acquisition for users
 
 **Arguments**: $ARGUMENTS
 
-## Architectural Framework
+**Security**: Follow @~/.claude/plugins/marketplaces/dev-lifecycle-marketplace/docs/security/SECURITY-RULES.md (never hardcode API keys)
 
-Load component decision guidance and composition patterns:
+**Framework**: Load @component-decision-framework.md and @dans-composition-pattern.md
 
-@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/component-decision-framework.md
-@~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/reference/dans-composition-pattern.md
+**Goal**: Create properly structured agent file(s). For 3+ agents, use parallel execution.
 
-Goal: Create properly structured agent file(s) following framework templates. For 3+ agents, creates them in parallel for faster execution.
-
-**CRITICAL EXECUTION INSTRUCTIONS:**
-- DO NOT wait for phases to run automatically
-- DO NOT just explain what the phases do
-- EXECUTE each phase immediately using the actual tools (Bash, Read, Write, Edit, TodoWrite, Task)
-- The `!{tool command}` syntax shows you WHAT to execute - use the real tool to DO IT
-- Complete all phases in order before finishing
-
-Core Principles:
-- Study templates before generating
-- Keep agents concise using WebFetch (not embedding docs)
-- Match complexity to task (simple vs complex)
-- Validate line count and structure
-- Use parallel execution for 3+ agents
+**EXECUTE each phase immediately** using actual tools (Bash, Read, Write, Task, TodoWrite). Complete all phases in order.
 
 Phase 0: Create Todo List
 
@@ -132,40 +105,20 @@ No need for Task() overhead when building 1-2 agents
 
 **CRITICAL: Send ALL Task() calls in a SINGLE MESSAGE for parallel execution!**
 
-Example for 3 agents - send all at once:
-
-```
-Task(description="Create agent 1", subagent_type="domain-plugin-builder:agents-builder", prompt="You are the agents-builder agent. Create a complete agent following framework templates.
-
-Agent name: $AGENT_1_NAME
-Description: $AGENT_1_DESC
-
-Load templates:
-- Read: plugins/domain-plugin-builder/skills/build-assistant/templates/agents/agent-with-phased-webfetch.md
-
-Create agent file at: $BASE_PATH/agents/$AGENT_1_NAME.md
-- Frontmatter with name, description, model: inherit, color (determine from description)
-- **NO tools field** - agents inherit tools from parent
-- Include 'Available Tools & Resources' section listing:
-  - Specific MCP servers to use (e.g., mcp__github, mcp__supabase)
-  - Specific skills to invoke (e.g., !{skill plugin:skill-name})
-  - Specific slash commands (e.g., /plugin:command-name)
-- Include progressive WebFetch for documentation
+For each agent, create a Task() call with subagent_type="domain-plugin-builder:agents-builder" that includes:
+- Agent name and description
+- Instructions to load templates from build-assistant/templates/agents/
+- File path: $BASE_PATH/agents/{agent-name}.md
+- Frontmatter: name, description, model: inherit, color (from agent-color-decision.md)
+- **NO tools field** - agents inherit from parent
+- Available Tools & Resources section (MCP servers, skills, slash commands)
+- Progressive WebFetch for docs
 - Keep under 300 lines
 - Validate with validation script
 
-Deliverable: Complete validated agent file")
+**Send ALL Task() calls together in ONE message - they will execute in parallel!**
 
-Task(description="Create agent 2", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure with $AGENT_2_NAME, $AGENT_2_DESC]")
-
-Task(description="Create agent 3", subagent_type="domain-plugin-builder:agents-builder", prompt="[Same structure with $AGENT_3_NAME, $AGENT_3_DESC]")
-
-[Continue for all N agents from $ARGUMENTS]
-```
-
-**DO NOT wait between Task() calls - send them ALL together in one response!**
-
-The agents will run in parallel automatically. Only proceed to Phase 4 after all Task() calls complete.
+Only proceed to Phase 4 after all Task() calls complete.
 
 Phase 4: Validation and Registration
 
@@ -200,8 +153,20 @@ Phase 6: Sync to Airtable
 Goal: Sync created agent(s) to Airtable immediately
 
 Actions:
-- For each created agent, sync to Airtable:
-  !{bash python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=agent --name=$AGENT_NAME --plugin=$PLUGIN_NAME --marketplace=$MARKETPLACE_NAME}
+
+**CRITICAL: Actually execute the sync command for each agent created!**
+
+For each agent that was created, run the Bash tool to sync to Airtable.
+
+**You MUST execute this for EVERY agent you created in Phase 3:**
+
+Extract the list of agent names from Phase 1 parsing, then for each agent execute:
+
+Bash: python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=agent --name={agent-name} --plugin={plugin-name} --marketplace=domain-plugin-builder
+
+Wait for each sync to complete before proceeding to next agent.
+
+**DO NOT skip this phase!** Airtable sync is critical for marketplace integration.
 
 Phase 7: Self-Validation
 
