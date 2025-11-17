@@ -119,9 +119,14 @@ def sync_agent(api, name, plugin_name, marketplace_name, file_path):
     }
 
     # Check if agent exists
+    # Get all agents with this name, then filter by plugin in Python
+    # (Airtable formulas for linked records are unreliable)
     agents_table = api.table(BASE_ID, "Agents")
-    formula = f"AND({{Agent Name}}='{name}', {{Plugin}}='{plugin_record_id}')"
-    existing = agents_table.all(formula=formula)
+    all_with_name = agents_table.all(formula=f"{{Agent Name}}='{name}'")
+    existing = [
+        agent for agent in all_with_name
+        if plugin_record_id in agent['fields'].get('Plugin', [])
+    ]
 
     if existing:
         # Update existing
@@ -201,9 +206,14 @@ def sync_skill(api, name, plugin_name, marketplace_name, dir_path):
     }
 
     # Check if skill exists
+    # Get all skills with this name, then filter by plugin in Python
+    # (Airtable formulas for linked records are unreliable)
     skills_table = api.table(BASE_ID, "Skills")
-    formula = f"AND({{Skill Name}}='{name}', {{Plugin}}='{plugin_record_id}')"
-    existing = skills_table.all(formula=formula)
+    all_with_name = skills_table.all(formula=f"{{Skill Name}}='{name}'")
+    existing = [
+        skill for skill in all_with_name
+        if plugin_record_id in skill['fields'].get('Plugin', [])
+    ]
 
     if existing:
         # Update existing
@@ -234,9 +244,14 @@ def sync_hook(api, name, event_type, plugin_name, marketplace_name, script_path)
     }
 
     # Check if hook exists
+    # Get all hooks with this name, then filter by plugin in Python
+    # (Airtable formulas for linked records are unreliable)
     hooks_table = api.table(BASE_ID, "Hooks")
-    formula = f"AND({{Hook Name}}='{name}', {{Plugin}}='{plugin_record_id}')"
-    existing = hooks_table.all(formula=formula)
+    all_with_name = hooks_table.all(formula=f"{{Hook Name}}='{name}'")
+    existing = [
+        hook for hook in all_with_name
+        if plugin_record_id in hook['fields'].get('Plugin', [])
+    ]
 
     if existing:
         # Update existing
