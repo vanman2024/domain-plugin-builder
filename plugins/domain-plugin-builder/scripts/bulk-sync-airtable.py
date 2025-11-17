@@ -69,6 +69,48 @@ def discover_components(plugin_path, component_types):
 
     return components
 
+def validate_component(component_type, component_name, plugin_path):
+    """Validate a component before syncing"""
+    validation_scripts = {
+        'agent': os.path.expanduser('~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-agent.sh'),
+        'command': os.path.expanduser('~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-command.sh'),
+        'skill': os.path.expanduser('~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/scripts/validate-skill.sh'),
+    }
+
+    if component_type not in validation_scripts:
+        # No validation for hooks yet
+        return True, "No validation script available"
+
+    script = validation_scripts[component_type]
+    if not os.path.exists(script):
+        return True, f"Validation script not found: {script}"
+
+    # Build component path
+    if component_type == 'agent':
+        component_path = os.path.join(plugin_path, 'agents', f'{component_name}.md')
+    elif component_type == 'command':
+        component_path = os.path.join(plugin_path, 'commands', f'{component_name}.md')
+    elif component_type == 'skill':
+        component_path = os.path.join(plugin_path, 'skills', component_name)
+    else:
+        return True, "Unknown component type"
+
+    # Run validation
+    try:
+        result = subprocess.run(
+            ['bash', script, component_path],
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+
+        if result.returncode == 0:
+            return True, "Validation passed"
+        else:
+            return False, result.stdout + result.stderr
+    except Exception as e:
+        return False, str(e)
+
 def sync_single_component(component_type, component_name, plugin_name, marketplace_name):
     """Sync a single component using sync-component.py"""
     script_path = os.path.join(
@@ -166,13 +208,42 @@ def main():
         print(f"   - {component_type}: {component_name}")
     print()
 
-    # Sync components in parallel
-    print(f"🚀 Syncing {len(components)} components in parallel...")
+    # Validate components first
+    print("🔍 Validating components...")
+    valid_components = []
+    validation_failures = []
+
+    for comp_type, comp_name in components:
+        is_valid, message = validate_component(comp_type, comp_name, plugin_path)
+        if is_valid:
+            valid_components.append((comp_type, comp_name))
+            print(f"   ✅ {comp_type}: {comp_name}")
+        else:
+            validation_failures.append((comp_type, comp_name, message))
+            print(f"   ❌ {comp_type}: {comp_name} - VALIDATION FAILED")
+
+    print()
+
+    if validation_failures:
+        print(f"⚠️  {len(validation_failures)} component(s) failed validation and will NOT be synced:")
+        for comp_type, comp_name, message in validation_failures[:5]:  # Show first 5
+            print(f"   ❌ {comp_type}: {comp_name}")
+            # Show first line of error
+            first_line = message.split('\n')[0][:100]
+            print(f"      Error: {first_line}")
+        print()
+
+    if not valid_components:
+        print("❌ No valid components to sync!")
+        return 1
+
+    # Sync only valid components in parallel
+    print(f"🚀 Syncing {len(valid_components)} valid components in parallel...")
     print()
 
     results = []
     with ThreadPoolExecutor(max_workers=args.max_workers) as executor:
-        # Submit all sync tasks
+        # Submit all sync tasks (only for valid components)
         futures = {
             executor.submit(
                 sync_single_component,
@@ -181,7 +252,7 @@ def main():
                 args.plugin,
                 args.marketplace
             ): (comp_type, comp_name)
-            for comp_type, comp_name in components
+            for comp_type, comp_name in valid_components
         }
 
         # Process results as they complete
@@ -203,22 +274,34 @@ def main():
     print("=" * 80)
 
     success_count = sum(1 for s, _, _, _ in results if s)
-    failure_count = len(results) - success_count
+    sync_failure_count = len(results) - success_count
 
-    print(f"   Total: {len(results)}")
-    print(f"   ✅ Success: {success_count}")
-    print(f"   ❌ Failed: {failure_count}")
+    print(f"   Total Discovered: {len(components)}")
+    print(f"   ❌ Validation Failed: {len(validation_failures)}")
+    print(f"   ✅ Validated: {len(valid_components)}")
+    print(f"   ✅ Synced Successfully: {success_count}")
+    print(f"   ❌ Sync Failed: {sync_failure_count}")
     print()
 
-    if failure_count > 0:
-        print("Failed components:")
+    if validation_failures:
+        print("Components that failed validation (not synced):")
+        for comp_type, comp_name, _ in validation_failures:
+            print(f"   - {comp_type}: {comp_name}")
+        print()
+
+    if sync_failure_count > 0:
+        print("Components that failed to sync:")
         for success, comp_type, comp_name, output in results:
             if not success:
                 print(f"   - {comp_type}: {comp_name}")
         print()
+
+    if validation_failures or sync_failure_count > 0:
+        print("⚠️  Some components were not synced due to failures")
+        print("=" * 80)
         return 1
 
-    print("✅ All components synced successfully!")
+    print("✅ All components validated and synced successfully!")
     print("=" * 80)
     return 0
 
