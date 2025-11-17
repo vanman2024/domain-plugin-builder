@@ -176,20 +176,19 @@ EOF
 - Push to GitHub: !{bash git push origin master}
 
 Phase 5.6: Sync to Airtable
-Goal: Sync created hook(s) to Airtable immediately
+Goal: Sync ALL created hooks to Airtable in bulk
 
 Actions:
-- Determine marketplace name from current directory:
-  !{bash pwd | grep -oE '(dev-lifecycle-marketplace|ai-dev-marketplace|mcp-servers-marketplace|domain-plugin-builder)' | head -1}
-- For each created hook, sync to Airtable:
-  !{bash python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=hook --name=<hook-name> --plugin=<plugin-name> --marketplace=<marketplace-name> --event-type=<event-type> --script-path=<full-path-to-script>}
+
+**Use bulk sync script for efficiency:**
+
+Bash: python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/bulk-sync-airtable.py --plugin={plugin-name} --marketplace={marketplace-name} --type=hooks
+
+This syncs ALL hooks in parallel instead of one at a time.
 
 **Environment Requirement:**
 - Requires AIRTABLE_TOKEN environment variable
 - If not set, displays error message with instructions
-- Sync will fail gracefully without blocking hook creation
-
-**Note:** If multiple hooks created, sync each one sequentially.
 
 Phase 6: Self-Validation
 

@@ -159,29 +159,15 @@ If validation fails, read errors and fix issues.
 
 Phase 5: Sync to Airtable
 
-**CRITICAL: Sync each skill to Airtable as source of truth!**
+**Use bulk sync script for efficiency:**
 
-Actions:
+Bash: python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/bulk-sync-airtable.py --plugin={plugin-name} --marketplace={marketplace-name} --type=skills
 
-Determine marketplace name from current directory:
-
-!{bash pwd | grep -oE '(dev-lifecycle-marketplace|ai-dev-marketplace|mcp-servers-marketplace|domain-plugin-builder)' | head -1}
-
-For each created skill, sync to Airtable:
-
-!{bash python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=skill --name=$SKILL_NAME --plugin=$PLUGIN_NAME --marketplace=$MARKETPLACE_NAME}
-
-This:
-- Extracts frontmatter from SKILL.md (name, description)
-- Finds or creates Skill record in Airtable
-- Links to Plugin record
-- Updates Directory Path field
-- Updates Has SKILL.md, Has Scripts, Has Templates, Has Examples checkboxes
+This syncs ALL skills in parallel instead of one at a time.
 
 **Environment Requirement:**
 - Requires AIRTABLE_TOKEN environment variable
 - If not set, displays error message with instructions
-- Sync will fail gracefully without blocking skill creation
 
 Phase 6: Register Skills in Settings
 

@@ -33,27 +33,32 @@ Phase 0: Create Todo List using TodoWrite tool
 
 Create todo list for all phases below.
 
-Phase 1: Verify Location and Parse Arguments
+Phase 1: Parse Arguments and Setup Structure
 
-Parse $ARGUMENTS to extract plugin name and check for --marketplace flag:
+Parse $ARGUMENTS to extract plugin name:
 
 !{bash echo "$ARGUMENTS" | sed 's/--marketplace//g' | xargs}
 
-Store plugin name.
+Store as $PLUGIN_NAME.
 
-Determine base path based on --marketplace flag:
+**CRITICAL: Always create marketplace structure**
 
-!{bash echo "$ARGUMENTS" | grep -q "\-\-marketplace" && echo "plugins/$(echo "$ARGUMENTS" | sed 's/--marketplace//g' | xargs)" || echo "."}
+Structure to create:
+```
+$PLUGIN_NAME/
+├── .claude-plugin/
+│   └── marketplace.json    ← Marketplace manifest
+└── plugins/
+    └── $PLUGIN_NAME/
+        ├── .claude-plugin/
+        │   └── plugin.json  ← Plugin manifest
+        ├── commands/
+        ├── agents/
+        ├── skills/
+        └── ...
+```
 
-Store as $BASE_PATH:
-- If --marketplace present: BASE_PATH="plugins/$PLUGIN_NAME"
-- If --marketplace absent: BASE_PATH="." (standalone plugin mode)
-
-All subsequent file operations use $BASE_PATH instead of hardcoded "plugins/$PLUGIN_NAME"
-
-!{bash pwd}
-
-Expected: domain-plugin-builder directory (for marketplace mode) or project root (for standalone mode).
+This matches domain-plugin-builder's structure exactly.
 
 Phase 2: Gather Basic Info
 
@@ -61,53 +66,48 @@ Use AskUserQuestion to get:
 - Plugin description (one sentence)
 - Plugin type (SDK, Framework, Custom)
 
-Phase 3: Create Directory Structure
+Phase 3: Create Marketplace and Plugin Directory Structure
 
-Load official plugin structure to understand what to create:
+Create marketplace root structure:
 
-!{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/docs/frameworks/claude/plugins/claude-code-plugin-structure.md}
+!{bash mkdir -p $PLUGIN_NAME/.claude-plugin}
 
-**Reference lines 40-56 which show the complete plugin layout:**
-```
-my-plugin/
-├── .claude-plugin/
-│   └── plugin.json          # Required: plugin manifest
-├── commands/                 # Slash commands (optional)
-├── agents/                   # Agent definitions (optional)
-├── skills/                   # Agent Skills (optional)
-├── hooks/                    # Hook configurations (optional)
-├── .mcp.json                # MCP servers (optional)
-├── scripts/                 # Utility scripts (optional)
-├── CHANGELOG.md             # Version history
-└── README.md                # Plugin documentation
-```
+Create plugin subdirectory structure:
 
-Create this exact structure at $BASE_PATH:
+!{bash mkdir -p $PLUGIN_NAME/plugins/$PLUGIN_NAME/.claude-plugin $PLUGIN_NAME/plugins/$PLUGIN_NAME/commands $PLUGIN_NAME/plugins/$PLUGIN_NAME/agents $PLUGIN_NAME/plugins/$PLUGIN_NAME/skills $PLUGIN_NAME/plugins/$PLUGIN_NAME/hooks $PLUGIN_NAME/plugins/$PLUGIN_NAME/scripts $PLUGIN_NAME/plugins/$PLUGIN_NAME/docs}
 
-!{bash mkdir -p $BASE_PATH/.claude-plugin $BASE_PATH/commands $BASE_PATH/agents $BASE_PATH/skills $BASE_PATH/hooks $BASE_PATH/scripts $BASE_PATH/docs}
+Result:
+- Marketplace root: `$PLUGIN_NAME/.claude-plugin/`
+- Plugin: `$PLUGIN_NAME/plugins/$PLUGIN_NAME/`
 
-Phase 4: Create Plugin Files from Templates
+Phase 4: Create Marketplace and Plugin Files from Templates
 
 Set template variables:
-- PLUGIN_NAME=$ARGUMENTS
-- DESCRIPTION=<from Phase 3>
+- PLUGIN_NAME=<from Phase 1>
+- DESCRIPTION=<from Phase 2>
 - DATE=$(date +%Y-%m-%d)
 
-Copy and customize templates:
+**Create marketplace.json at root:**
 
-!{bash sed "s/{{PLUGIN_NAME}}/$PLUGIN_NAME/g; s/{{DESCRIPTION}}/$DESCRIPTION/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/plugin.json.template > $BASE_PATH/.claude-plugin/plugin.json}
+!{bash sed "s/{{PLUGIN_NAME}}/$PLUGIN_NAME/g; s/{{DESCRIPTION}}/$DESCRIPTION/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/marketplace.json.template > $PLUGIN_NAME/.claude-plugin/marketplace.json}
 
-!{bash sed "s/{{PLUGIN_NAME}}/$PLUGIN_NAME/g; s/{{DESCRIPTION}}/$DESCRIPTION/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/README.md.template > $BASE_PATH/README.md}
+**Create plugin.json in plugins subdirectory:**
 
-!{bash sed "s/{{DATE}}/$DATE/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/CHANGELOG.md.template > $BASE_PATH/CHANGELOG.md}
+!{bash sed "s/{{PLUGIN_NAME}}/$PLUGIN_NAME/g; s/{{DESCRIPTION}}/$DESCRIPTION/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/plugin.json.template > $PLUGIN_NAME/plugins/$PLUGIN_NAME/.claude-plugin/plugin.json}
 
-!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/hooks.json.template $BASE_PATH/hooks/hooks.json}
+**Create plugin files:**
 
-!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/.gitignore.template $BASE_PATH/.gitignore}
+!{bash sed "s/{{PLUGIN_NAME}}/$PLUGIN_NAME/g; s/{{DESCRIPTION}}/$DESCRIPTION/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/README.md.template > $PLUGIN_NAME/plugins/$PLUGIN_NAME/README.md}
 
-!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/mcp.json.template $BASE_PATH/.mcp.json}
+!{bash sed "s/{{DATE}}/$DATE/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/CHANGELOG.md.template > $PLUGIN_NAME/plugins/$PLUGIN_NAME/CHANGELOG.md}
 
-!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/LICENSE.template $BASE_PATH/LICENSE}
+!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/hooks.json.template $PLUGIN_NAME/plugins/$PLUGIN_NAME/hooks/hooks.json}
+
+!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/.gitignore.template $PLUGIN_NAME/plugins/$PLUGIN_NAME/.gitignore}
+
+!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/mcp.json.template $PLUGIN_NAME/plugins/$PLUGIN_NAME/.mcp.json}
+
+!{bash cp ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/LICENSE.template $PLUGIN_NAME/plugins/$PLUGIN_NAME/LICENSE}
 
 Phase 5: Self-Validation
 

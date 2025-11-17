@@ -150,21 +150,15 @@ EOF
 - Push to GitHub: !{bash git push origin master}
 
 Phase 6: Sync to Airtable
-Goal: Sync created agent(s) to Airtable immediately
+Goal: Sync ALL created agents to Airtable in bulk
 
 Actions:
 
-**CRITICAL: Actually execute the sync command for each agent created!**
+**Use bulk sync script for efficiency:**
 
-For each agent that was created, run the Bash tool to sync to Airtable.
+Bash: python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/bulk-sync-airtable.py --plugin={plugin-name} --marketplace={marketplace-name} --type=agents
 
-**You MUST execute this for EVERY agent you created in Phase 3:**
-
-Extract the list of agent names from Phase 1 parsing, then for each agent execute:
-
-Bash: python ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/scripts/sync-component.py --type=agent --name={agent-name} --plugin={plugin-name} --marketplace=domain-plugin-builder
-
-Wait for each sync to complete before proceeding to next agent.
+This syncs ALL agents in parallel instead of one at a time.
 
 **DO NOT skip this phase!** Airtable sync is critical for marketplace integration.
 
