@@ -84,6 +84,13 @@ Phase 2: Gather Basic Info
 Use AskUserQuestion to get:
 - Plugin description (one sentence)
 - Plugin type (SDK, Framework, Custom)
+- Author name (default: "Plugin Developer")
+- Author email (default: "noreply@example.com")
+- License (default: "MIT")
+- Repository URL (default: "https://github.com/username/{{PLUGIN_NAME}}")
+- Homepage URL (default: "https://github.com/username/{{PLUGIN_NAME}}")
+
+Store these values for Phase 4.
 
 Phase 3: Create Marketplace and Plugin Directory Structure
 
@@ -104,6 +111,13 @@ Phase 4: Create Marketplace and Plugin Files from Templates
 Set template variables:
 - PLUGIN_NAME=<from Phase 1>
 - DESCRIPTION=<from Phase 2>
+- AUTHOR_NAME=<from Phase 2>
+- AUTHOR_EMAIL=<from Phase 2>
+- LICENSE=<from Phase 2>
+- REPOSITORY_URL=<from Phase 2>
+- HOMEPAGE_URL=<from Phase 2>
+- VERSION="1.0.0"
+- KEYWORDS='["plugin", "claude-code"]'
 - DATE=$(date +%Y-%m-%d)
 
 **Create marketplace.json at root:**
@@ -112,7 +126,9 @@ Set template variables:
 
 **Create plugin.json in plugins subdirectory:**
 
-!{bash sed "s/{{PLUGIN_NAME}}/$PLUGIN_NAME/g; s/{{DESCRIPTION}}/$DESCRIPTION/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/plugin.json.template > $PLUGIN_NAME/plugins/$PLUGIN_NAME/.claude-plugin/plugin.json}
+Replace ALL template variables in plugin.json:
+
+!{bash sed "s/{{PLUGIN_NAME}}/$PLUGIN_NAME/g; s/{{VERSION}}/$VERSION/g; s/{{DESCRIPTION}}/$DESCRIPTION/g; s/{{AUTHOR_NAME}}/$AUTHOR_NAME/g; s/{{AUTHOR_EMAIL}}/$AUTHOR_EMAIL/g; s/{{HOMEPAGE_URL}}/$HOMEPAGE_URL/g; s/{{REPOSITORY_URL}}/$REPOSITORY_URL/g; s/{{LICENSE}}/$LICENSE/g; s/{{KEYWORDS}}/$KEYWORDS/g" ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/plugin.json.template > $PLUGIN_NAME/plugins/$PLUGIN_NAME/.claude-plugin/plugin.json}
 
 **Create plugin files:**
 

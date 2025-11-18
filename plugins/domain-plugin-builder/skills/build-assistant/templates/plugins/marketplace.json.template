@@ -1,0 +1,23 @@
+{
+    "name": "{{PLUGIN_NAME}}",
+    "version": "1.0.0",
+    "description": "{{DESCRIPTION}}",
+    "owner": {
+        "name": "Plugin Developer",
+        "email": "noreply@{{PLUGIN_NAME}}.dev"
+    },
+    "plugins": [
+        {
+            "name": "{{PLUGIN_NAME}}",
+            "description": "{{DESCRIPTION}}",
+            "version": "1.0.0",
+            "author": {
+                "name": "Plugin Developer",
+                "email": "noreply@{{PLUGIN_NAME}}.dev"
+            },
+            "source": "./plugins/{{PLUGIN_NAME}}",
+            "category": "development",
+            "keywords": []
+        }
+    ]
+}
