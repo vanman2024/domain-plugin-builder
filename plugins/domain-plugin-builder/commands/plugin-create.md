@@ -52,6 +52,18 @@ Phase 0: Create Todo List using TodoWrite tool
 
 Create todo list for all phases below.
 
+Phase 0.5: Load Template Files
+
+Read the template files to understand what variables need to be replaced:
+
+!{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/marketplace.json.template}
+
+!{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/plugin.json.template}
+
+!{Read ~/.claude/plugins/marketplaces/domain-plugin-builder/plugins/domain-plugin-builder/skills/build-assistant/templates/plugins/README.md.template}
+
+This shows exactly what template variables exist and need to be replaced in Phase 4.
+
 Phase 1: Parse Arguments and Setup Structure
 
 Parse $ARGUMENTS to extract plugin name:
