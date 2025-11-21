@@ -4,6 +4,31 @@
 
 **Use this when:** Building plugins, creating skills, designing agents, or deciding "what kind of component should this be?"
 
+**Last Updated:** November 20, 2025
+
+---
+
+## ⚠️ Critical Architectural Constraint
+
+**Agents CANNOT invoke slash commands.** This is a Claude Code limitation - subagents cannot spawn other subagents.
+
+| What Can Do What | Slash Commands | Agents | Skills |
+|------------------|----------------|--------|--------|
+| **Commands can...** | Chain other commands ✅ | Spawn agents ✅ | Use skills ✅ |
+| **Agents can...** | ❌ **CANNOT** | ❌ **CANNOT** | Use skills ✅ |
+| **Skills can...** | ❌ No | ❌ No | Provide templates only |
+
+**The 2-Level Maximum:**
+```
+User → Command → Agent (MAX DEPTH)
+         ↓
+       Skill (knowledge only)
+```
+
+**Agent allowed-tools:** `Read, Write, Bash(*), Grep, Glob, Skill, TodoWrite`
+
+**See also:** [AGENT-SKILL-PATTERN.md](../../../../../dev-lifecycle-marketplace/docs/AGENT-SKILL-PATTERN.md)
+
 ---
 
 ## Overview
@@ -129,7 +154,9 @@ Read: plugins/my-plugin/skills/my-skill/examples/tutorial.md
 ---
 name: my-agent
 description: Does complex multi-step workflow
-tools: Bash, Read, Write, Edit, WebFetch
+model: inherit
+color: blue
+allowed-tools: Read, Write, Bash(*), Grep, Glob, Skill, TodoWrite
 ---
 
 You are a specialist in [domain].
@@ -183,6 +210,26 @@ Provide the agent with:
 - Orchestrate agents and tools
 - Ask clarifying questions (AskUserQuestion)
 - Return structured output to user
+
+**Three Types of Commands:**
+
+| Type | Description | When to Use | Example |
+|------|-------------|-------------|---------|
+| **Direct Execution** | Does work inline, no agent | Simple operations | `/versioning:bump`, `/foundation:env-vars` |
+| **Single-Agent** | Spawns 1 agent | Complex autonomous task | `/clerk:init` → clerk-setup-agent |
+| **Orchestrator** | Spawns N agents in parallel | Multi-domain coordination | `/implementation:execute` |
+
+**Orchestrator Pattern (Preferred for Complex Tasks):**
+```markdown
+Phase 1: Analyze context
+Phase 2: Determine which agents to spawn
+Phase 3: Spawn ALL agents in parallel (single message):
+  Task(clerk:clerk-oauth-specialist, ...)
+  Task(clerk:clerk-api-builder, ...)
+  Task(clerk:clerk-nextjs-app-router-agent, ...)
+Phase 4: Aggregate results
+Phase 5: Update status
+```
 
 **When to create a command:**
 - ✅ User needs to trigger a workflow directly
